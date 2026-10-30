@@ -9,10 +9,10 @@ export function ServiceView({ service }: { service: Service }) {
   const related = getRelatedServices(service.slug);
 
   return (
-    <main className="pt-16">
+    <main>
       <section className="border-b border-line py-16 md:py-24">
         <Container>
-          <Link href="/#services" className="text-[12px] text-[#8a8a86] hover:text-white">
+          <Link href="/services" className="text-[12px] text-[#8a8a86] hover:text-white">
             ← All services
           </Link>
           <p className="mt-8 text-[10px] uppercase tracking-[0.18em] text-[#8a8a86]">

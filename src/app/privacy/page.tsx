@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <main className="border-b border-line pb-24 pt-32">
+    <main className="border-b border-line pb-24 pt-16">
       <Container className="max-w-2xl">
         <p className="text-[10px] uppercase tracking-[0.18em] text-[#8a8a86]">Beyond OS</p>
         <h1 className="mt-4 text-4xl tracking-[-0.04em]">Privacy Policy</h1>

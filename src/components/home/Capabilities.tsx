@@ -5,7 +5,7 @@ const bars = [42, 68, 54, 88, 46, 72, 58, 92, 64, 78];
 
 export function Capabilities() {
   return (
-    <section className="section-pad border-t border-line">
+    <section className="section-pad border-t border-line" id="capabilities">
       <Container>
         <div className="grid gap-4 md:grid-cols-2">
           <Reveal className="glass relative min-h-[340px] overflow-hidden p-6 md:p-8">
