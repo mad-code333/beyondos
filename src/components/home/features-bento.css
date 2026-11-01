@@ -100,17 +100,19 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     0 22px 52px rgba(0, 0, 0, 0.467);
   transition:
-    border-color 0.4s,
+    border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
     background 0.4s;
+  will-change: transform;
 }
 
 .features-bento .bento-card:hover,
 .features-bento .bento-card:focus-within {
-  border-color: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.28);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.133),
-    0 24px 56px rgba(0, 0, 0, 0.6);
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    0 28px 64px rgba(0, 0, 0, 0.62),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 .features-bento .bento-card h3 {
@@ -204,34 +206,12 @@
 .features-bento .dash-bars i {
   flex: 1 1 0;
   display: block;
-  border-radius: 6px 6px 2px 2px;
-  background: linear-gradient(#cfcfcf, #3a3a3a);
+  min-width: 0;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #ffffff 0%, #c8c8c8 55%, #9a9a9a 100%);
   transform-origin: center bottom;
-  transform: scaleY(0.12);
-  opacity: 0.85;
-}
-
-.features-bento.is-live .dash-bars i {
-  animation: barRise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.features-bento.is-live .dash-bars i:nth-child(2) {
-  animation-delay: 0.08s;
-}
-.features-bento.is-live .dash-bars i:nth-child(3) {
-  animation-delay: 0.16s;
-}
-.features-bento.is-live .dash-bars i:nth-child(4) {
-  animation-delay: 0.24s;
-}
-.features-bento.is-live .dash-bars i:nth-child(5) {
-  animation-delay: 0.32s;
-}
-.features-bento.is-live .dash-bars i:nth-child(6) {
-  animation-delay: 0.4s;
-}
-.features-bento.is-live .dash-bars i:nth-child(7) {
-  animation-delay: 0.48s;
+  transform: scaleY(0.42);
+  will-change: transform;
 }
 
 .features-bento .dash-bars-sm {
@@ -240,7 +220,63 @@
 }
 
 .features-bento .dash-bars-sm i {
-  border-radius: 5px 5px 2px 2px;
+  border-radius: 5px;
+}
+
+/* Live audio equalizer — CSS only, independent bar motion */
+.features-bento.is-live .eq-bars i {
+  animation-name: eqPulse;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.features-bento.is-live .eq-bars i:nth-child(1) {
+  animation-duration: 2.6s;
+  animation-delay: -0.5s;
+}
+
+.features-bento.is-live .eq-bars i:nth-child(2) {
+  animation-duration: 2.1s;
+  animation-delay: -1.35s;
+}
+
+.features-bento.is-live .eq-bars i:nth-child(3) {
+  animation-duration: 3s;
+  animation-delay: -0.3s;
+}
+
+.features-bento.is-live .eq-bars i:nth-child(4) {
+  animation-duration: 2.35s;
+  animation-delay: -1.7s;
+}
+
+.features-bento.is-live .eq-bars i:nth-child(5) {
+  animation-duration: 2.75s;
+  animation-delay: -0.9s;
+}
+
+.features-bento.is-live .eq-bars i:nth-child(6) {
+  animation-duration: 2.2s;
+  animation-delay: -1.2s;
+}
+
+@keyframes eqPulse {
+  0% {
+    transform: scaleY(0.32);
+  }
+  35% {
+    transform: scaleY(0.78);
+  }
+  55% {
+    transform: scaleY(1);
+  }
+  75% {
+    transform: scaleY(0.52);
+  }
+  100% {
+    transform: scaleY(0.68);
+  }
 }
 
 .features-bento .bento-count {
@@ -277,7 +313,7 @@
   border: 1px solid rgba(255, 255, 255, 0.19);
   background: #111;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.533);
-  animation: envDrift 7s ease-in-out infinite;
+  will-change: transform;
 }
 
 .features-bento .phone-hero {
@@ -297,7 +333,21 @@
 }
 
 .features-bento .bento-card:hover .phone-hero img {
-  transform: scale(1.1);
+  transform: scale(1.12);
+}
+
+.features-bento .bento-card:hover .bento-photo img {
+  transform: scale(1.06);
+  transition: transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.features-bento .bento-photo img {
+  transition: transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.features-bento .bento-card:hover .phone-strip span {
+  transform: scale(1.04);
+  filter: brightness(1.08);
 }
 
 .features-bento .phone-hero::after {
@@ -465,6 +515,9 @@
   border: 1px solid rgba(255, 255, 255, 0.086);
   background-size: cover;
   background-position: 50% center;
+  transition:
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.7s ease;
 }
 
 .features-bento .bento-visual.live {
@@ -601,17 +654,6 @@
   font-weight: 560;
 }
 
-@keyframes barRise {
-  from {
-    transform: scaleY(0.12);
-    opacity: 0.4;
-  }
-  to {
-    transform: scaleY(1);
-    opacity: 1;
-  }
-}
-
 @keyframes bentoGlow {
   from {
     opacity: 0.55;
@@ -620,16 +662,6 @@
   to {
     opacity: 1;
     transform: translate3d(2%, -1%, 0) scale(1.04);
-  }
-}
-
-@keyframes envDrift {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-4px);
   }
 }
 
@@ -677,18 +709,20 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .features-bento .bento-glow,
-  .features-bento .phone-screen,
-  .features-bento.is-live .dash-bars i {
+  .features-bento .bento-glow {
     animation: none !important;
   }
 
-  .features-bento .dash-bars i {
-    transform: none;
-    opacity: 1;
+  .features-bento .dash-bars i,
+  .features-bento.is-live .eq-bars i {
+    animation: none !important;
+    transform: scaleY(0.72) !important;
   }
 
-  .features-bento .bento-card:hover .phone-hero img {
-    transform: scale(1.04);
+  .features-bento .bento-card:hover .phone-hero img,
+  .features-bento .bento-card:hover .bento-photo img,
+  .features-bento .bento-card:hover .phone-strip span {
+    transform: none;
+    filter: none;
   }
 }
