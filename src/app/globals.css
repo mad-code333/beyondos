@@ -130,6 +130,12 @@ body {
   }
 }
 
+html[data-motion="paused"] *,
+html[data-motion="paused"] *::before,
+html[data-motion="paused"] *::after {
+  animation-play-state: paused !important;
+}
+
 .wrap {
   width: min(1320px, calc(100% - 100px));
   margin-left: auto;

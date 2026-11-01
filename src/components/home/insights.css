@@ -1,0 +1,274 @@
+.insights-section {
+  padding: 100px 0;
+}
+
+.insights-section .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8f8f88;
+}
+
+.insights-section .eyebrow::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: #858585;
+}
+
+.insights-section .section-head {
+  margin-bottom: 40px;
+}
+
+.insights-section .section-head h2 {
+  margin: 0;
+  max-width: 760px;
+  font-size: clamp(38px, 4.7vw, 64px);
+  font-weight: 560;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  color: #f4f4f0;
+}
+
+.insights-section .section-head h2 em {
+  font-style: normal;
+  color: #f4f4f0;
+}
+
+.insights-section .journal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  align-items: stretch;
+}
+
+.insights-section .journal-grid > * {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+}
+
+.insights-section .journal-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-decoration: none;
+  text-align: left;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.insights-section .journal-card:hover {
+  transform: translateY(-6px);
+}
+
+.insights-section .journal-card:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.35);
+  outline-offset: 4px;
+}
+
+.insights-section .journal-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 210px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.125);
+  border-radius: 24px;
+  background: radial-gradient(#272727, #111 70%);
+  perspective: 900px;
+  transition:
+    background 0.35s ease,
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease;
+}
+
+.insights-section .journal-card:hover .journal-art {
+  background: radial-gradient(#383838, #111 70%);
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: scale(1.02);
+}
+
+.insights-section .journal-art .shape {
+  width: 85px;
+  height: 85px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: linear-gradient(120deg, rgba(136, 136, 136, 0.267), #111);
+  box-shadow:
+    #202020 15px 15px 0 -1px,
+    rgba(255, 255, 255, 0.2) 15px 15px 0,
+    #171717 30px 30px 0 -1px,
+    rgba(255, 255, 255, 0.133) 30px 30px 0;
+  transform: rotate(-30deg) skew(10deg);
+  transform-origin: center;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.insights-section .journal-card:hover .shape {
+  transform: rotate(-22deg) skew(8deg) scale(1.04);
+}
+
+.insights-section .journal-art .disc {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border-style: solid;
+  border-width: 18px;
+  border-color: #ddd #777 #222;
+  box-shadow:
+    #222 0 15px 0,
+    #888 0 16px 0;
+  transform: rotateX(55deg) rotate(-35deg);
+  transform-origin: center;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.insights-section .journal-card:hover .disc {
+  transform: rotateX(48deg) rotate(-28deg) scale(1.05);
+}
+
+.insights-section .journal-art .graph-lines {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  width: 60%;
+  height: 100px;
+  transform: rotate(-8deg);
+  transform-origin: center bottom;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.insights-section .journal-card:hover .graph-lines {
+  transform: rotate(-4deg) scale(1.04);
+}
+
+.insights-section .graph-lines i {
+  flex: 1 1 0;
+  display: block;
+  border: 1px solid rgba(221, 221, 221, 0.267);
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(0deg, #333, #ccc);
+  transform-origin: center bottom;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.insights-section .journal-card:hover .graph-lines i {
+  transform: scaleY(1.06);
+}
+
+.insights-section .journal-meta {
+  display: block;
+  margin: 20px 0 10px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b8b8b2;
+}
+
+.insights-section .journal-card h3 {
+  margin: 12px 0 0;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: #f4f4f0;
+  transition: color 0.35s ease;
+}
+
+.insights-section .journal-card:hover h3 {
+  color: #fff;
+}
+
+.insights-section .journal-dek {
+  margin: 10px 0 0;
+  max-width: 36ch;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #d0d0ca;
+}
+
+.insights-section .journal-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 16px;
+  font-size: 14px;
+  color: #ecece8;
+  white-space: nowrap;
+  transition: color 0.35s ease;
+}
+
+.insights-section .journal-link i {
+  display: inline-block;
+  font-style: normal;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.insights-section .journal-card:hover .journal-link {
+  color: #fff;
+}
+
+.insights-section .journal-card:hover .journal-link i {
+  transform: translate(3px, -3px);
+}
+
+@media (max-width: 900px) {
+  .insights-section .journal-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+
+@media (max-width: 760px) {
+  .insights-section {
+    padding: 72px 0;
+  }
+
+  .insights-section .section-head h2 {
+    font-size: clamp(32px, 9vw, 44px);
+    max-width: none;
+  }
+
+  .insights-section .journal-card:hover {
+    transform: none;
+  }
+
+  .insights-section .journal-card:hover .journal-art {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .insights-section .journal-card,
+  .insights-section .journal-art,
+  .insights-section .shape,
+  .insights-section .disc,
+  .insights-section .graph-lines,
+  .insights-section .graph-lines i,
+  .insights-section .journal-link i,
+  .insights-section .journal-card h3 {
+    transition: none !important;
+  }
+
+  .insights-section .journal-card:hover,
+  .insights-section .journal-card:hover .journal-art,
+  .insights-section .journal-card:hover .shape,
+  .insights-section .journal-card:hover .disc,
+  .insights-section .journal-card:hover .graph-lines,
+  .insights-section .journal-card:hover .graph-lines i,
+  .insights-section .journal-card:hover .journal-link i {
+    transform: none !important;
+  }
+}

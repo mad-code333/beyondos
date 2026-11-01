@@ -1,38 +1,42 @@
 export type Insight = {
   id: string;
   category: string;
-  date: string;
+  readTime: string;
   title: string;
   excerpt: string;
-  art: "glow" | "bars" | "orbit";
+  art: "sheets" | "ring" | "bars";
+  href: string;
 };
 
 export const insights: Insight[] = [
   {
-    id: "crm-or-shelf",
-    category: "Software",
-    date: "14 Oct 2026",
-    title: "Custom CRM or off-the-shelf? How to decide in 2026",
+    id: "guest-journey-before-check-in",
+    category: "Guest experience",
+    readTime: "6 min read",
+    title: "The guest journey starts before check-in.",
     excerpt:
-      "Licence fees, workarounds and integrations add up. Here is the framework we use with clients.",
-    art: "glow",
+      "A guest decides how a stay will feel long before the key is in their hand. The website, the enquiry and the reply are already part of the room.",
+    art: "sheets",
+    href: "#contact",
   },
   {
-    id: "modern-hms",
-    category: "Hospitality",
-    date: "30 Sept 2026",
-    title: "What a modern hotel management system should do for you",
+    id: "connected-kitchen",
+    category: "Restaurant operations",
+    readTime: "5 min read",
+    title: "A connected kitchen is a calmer service.",
     excerpt:
-      "Reservations are table stakes. The real gains come from housekeeping, POS and guest data in one place.",
+      "The best dining rooms in Georgia are full for a reason. The floor, the pass and the guest should be looking at the same service, not three versions of it.",
+    art: "ring",
+    href: "#contact",
+  },
+  {
+    id: "stronger-brand-growth",
+    category: "Brand & digital",
+    readTime: "7 min read",
+    title: "A clearer brand. A direct path to the booking.",
+    excerpt:
+      "Hospitality in Georgia is not short of beautiful places. It is short of properties that are easy to find, easy to trust, and easy to book without a third party in the middle.",
     art: "bars",
-  },
-  {
-    id: "direct-bookings",
-    category: "Growth",
-    date: "12 Sept 2026",
-    title: "Direct bookings: how hotels win back margin from OTAs",
-    excerpt:
-      "A fast site, a frictionless booking engine and a reason to book direct. The playbook, step by step.",
-    art: "orbit",
+    href: "#contact",
   },
 ];

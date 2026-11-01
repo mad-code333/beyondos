@@ -232,33 +232,33 @@
 }
 
 .features-bento.is-live .eq-bars i:nth-child(1) {
-  animation-duration: 2.6s;
-  animation-delay: -0.5s;
+  animation-duration: 5s;
+  animation-delay: -0.8s;
 }
 
 .features-bento.is-live .eq-bars i:nth-child(2) {
-  animation-duration: 2.1s;
-  animation-delay: -1.35s;
+  animation-duration: 5.4s;
+  animation-delay: -2.2s;
 }
 
 .features-bento.is-live .eq-bars i:nth-child(3) {
-  animation-duration: 3s;
-  animation-delay: -0.3s;
+  animation-duration: 4.6s;
+  animation-delay: -0.4s;
 }
 
 .features-bento.is-live .eq-bars i:nth-child(4) {
-  animation-duration: 2.35s;
-  animation-delay: -1.7s;
+  animation-duration: 5.2s;
+  animation-delay: -3.1s;
 }
 
 .features-bento.is-live .eq-bars i:nth-child(5) {
-  animation-duration: 2.75s;
-  animation-delay: -0.9s;
+  animation-duration: 4.8s;
+  animation-delay: -1.6s;
 }
 
 .features-bento.is-live .eq-bars i:nth-child(6) {
-  animation-duration: 2.2s;
-  animation-delay: -1.2s;
+  animation-duration: 5.1s;
+  animation-delay: -2.7s;
 }
 
 @keyframes eqPulse {

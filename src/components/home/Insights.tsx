@@ -1,59 +1,105 @@
+"use client";
+
+import Link from "next/link";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { insights } from "@/content/insights";
-import { Container } from "@/components/ui/Container";
-import { Reveal } from "@/components/ui/Reveal";
+import "./insights.css";
+
+const ease = [0.22, 1, 0.36, 1] as const;
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 28 },
+  show: (delay = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease, delay },
+  }),
+};
+
+const barHeights = [40, 70, 55, 90, 65, 78];
+
+function JournalArt({ art }: { art: (typeof insights)[number]["art"] }) {
+  if (art === "sheets") {
+    return <div className="shape" aria-hidden />;
+  }
+
+  if (art === "ring") {
+    return <div className="disc" aria-hidden />;
+  }
+
+  return (
+    <div className="graph-lines" aria-hidden>
+      {barHeights.map((height, index) => (
+        <i key={index} style={{ height: `${height}%` }} />
+      ))}
+    </div>
+  );
+}
 
 export function Insights() {
-  return (
-    <section className="section-pad border-t border-line" id="insights">
-      <Container>
-        <Reveal>
-          <p className="text-[10px] uppercase tracking-[0.18em] text-[#8a8a86]">Insights</p>
-          <h2 className="mt-4 max-w-2xl text-4xl font-medium tracking-[-0.045em] md:text-5xl">
-            Notes on software & hospitality growth
-          </h2>
-          <p className="mt-4 text-[15px] text-muted">Practical guides from the projects we ship.</p>
-        </Reveal>
+  const reduceMotion = useReducedMotion();
+  const reduce = Boolean(reduceMotion);
 
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
+  return (
+    <section className="section insights-section" id="insights">
+      <div className="wrap">
+        <motion.div
+          className="eyebrow"
+          initial={reduce ? false : { opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.55, ease }}
+        >
+          06 / Notes from the work
+        </motion.div>
+
+        <motion.div
+          className="section-head"
+          initial={reduce ? false : { opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.7, ease, delay: reduce ? 0 : 0.06 }}
+        >
+          <h2>
+            On the guest,
+            <br />
+            <em>the kitchen, the booking.</em>
+          </h2>
+        </motion.div>
+
+        <div className="journal-grid">
           {insights.map((item, index) => (
-            <Reveal key={item.id} delay={index * 0.05}>
-              <article className="group">
-                <div className="relative mb-5 h-[210px] overflow-hidden rounded-2xl border border-line bg-[radial-gradient(circle_at_50%_80%,#2a2a2a,#111_70%)]">
-                  {item.art === "glow" ? (
-                    <div className="absolute inset-x-8 bottom-0 h-28 rounded-t-full bg-[radial-gradient(circle_at_50%_100%,#f4f4f0,transparent_70%)]" />
-                  ) : null}
-                  {item.art === "bars" ? (
-                    <div className="absolute inset-x-8 bottom-8 flex items-end gap-3">
-                      {[40, 64, 92, 120].map((height) => (
-                        <div
-                          key={height}
-                          className="w-full rounded-t-md bg-gradient-to-t from-[#6a6a66] to-[#f1f1ee]"
-                          style={{ height }}
-                        />
-                      ))}
-                    </div>
-                  ) : null}
-                  {item.art === "orbit" ? (
-                    <div className="absolute inset-0 grid place-items-center">
-                      <div className="h-16 w-16 rounded-full bg-white" />
-                      <div className="absolute h-28 w-44 rounded-full border border-white/30" />
-                      <div className="absolute h-40 w-60 rounded-full border border-white/20" />
-                    </div>
-                  ) : null}
+            <motion.div
+              key={item.id}
+              custom={reduce ? 0 : 0.08 + index * 0.1}
+              variants={fadeUp}
+              initial={reduce ? false : "hidden"}
+              whileInView="show"
+              viewport={{ once: true, margin: "-40px" }}
+            >
+              <Link className="journal-card" href={item.href}>
+                <motion.div
+                  className="journal-art"
+                  initial={reduce ? false : { opacity: 0.7, scale: 0.96 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true, amount: 0.5 }}
+                  transition={{ duration: 0.75, ease, delay: reduce ? 0 : 0.12 + index * 0.08 }}
+                >
+                  <JournalArt art={item.art} />
+                </motion.div>
+                <div className="journal-meta">
+                  {item.category} / {item.readTime}
                 </div>
-                <p className="text-[10px] uppercase tracking-[0.14em] text-[#8a8a86]">
-                  {item.category} · {item.date}
-                </p>
-                <h3 className="mt-3 text-[20px] leading-snug tracking-[-0.03em] group-hover:text-white">
-                  {item.title}
-                </h3>
-                <p className="mt-3 text-[13px] leading-6 text-muted">{item.excerpt}</p>
-                <span className="mt-4 inline-flex text-[12px] text-[#d8d8d4]">Read article ↗</span>
-              </article>
-            </Reveal>
+                <h3>{item.title}</h3>
+                <p className="journal-dek">{item.excerpt}</p>
+                <span className="journal-link">
+                  Read the perspective <i aria-hidden>↗</i>
+                </span>
+              </Link>
+            </motion.div>
           ))}
         </div>
-      </Container>
+      </div>
     </section>
   );
 }
