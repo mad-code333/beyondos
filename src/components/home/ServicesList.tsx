@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { animate, motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
@@ -7,54 +8,46 @@ import { services, type Service } from "@/content/services";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 
+const ROW = 88;
+
 const previews: Record<
   Service["slug"],
-  { kicker: string; title: string; stats: [string, string][] }
+  { lane: string; tags: string; blurb: string; image: string; alt: string }
 > = {
   crm: {
-    kicker: "Guest workspace",
-    title: "From a first hello to a confirmed stay.",
-    stats: [
-      ["Open", "03"],
-      ["Pipeline", "₾7,080"],
-      ["Next", "Today"],
-    ],
+    lane: "The desk",
+    tags: "Profiles · enquiries · follow-ups",
+    blurb: "Guest profiles, enquiries and follow-ups, held in one place.",
+    image: "/media/desk.jpg",
+    alt: "Front desk workspace",
   },
   oms: {
-    kicker: "Service floor",
-    title: "Tables, tickets and the pass in one rhythm.",
-    stats: [
-      ["Covers", "42"],
-      ["Open", "06"],
-      ["Pace", "Calm"],
-    ],
+    lane: "The floor",
+    tags: "Tables · tickets · the pass",
+    blurb: "Tables, orders and the kitchen, on one picture of service.",
+    image: "/media/dining.jpg",
+    alt: "Restaurant dining room",
   },
   hms: {
-    kicker: "Property desk",
-    title: "Rooms, arrivals and readiness on one board.",
-    stats: [
-      ["Arrivals", "11"],
-      ["Ready", "08"],
-      ["Stay", "3 nts"],
-    ],
+    lane: "The stay",
+    tags: "Rooms · arrivals · departure",
+    blurb: "Rooms, arrivals and readiness on one board for the property.",
+    image: "/media/suite.jpg",
+    alt: "Hotel suite",
   },
   web: {
-    kicker: "Still House",
-    title: "A site with a sense of place, and a next step.",
-    stats: [
-      ["Pages", "12"],
-      ["Path", "Book"],
-      ["Direct", "On"],
-    ],
+    lane: "The front door",
+    tags: "Pages · enquiry · booking",
+    blurb: "Websites with a sense of place, and a clear path to enquire or book.",
+    image: "/media/facade.jpg",
+    alt: "Property facade at night",
   },
   growth: {
-    kicker: "Demand",
-    title: "Brand, search and campaigns for the right guests.",
-    stats: [
-      ["Reach", "86%"],
-      ["Direct", "+41%"],
-      ["Brand", "Live"],
-    ],
+    lane: "The next guest",
+    tags: "Brand · search · campaigns",
+    blurb: "Brand, search and campaigns that bring the right guests back.",
+    image: "/media/river.jpg",
+    alt: "Landscape for brand and growth",
   },
 };
 
@@ -75,13 +68,13 @@ export function ServicesList() {
   const reduce = Boolean(mounted && reduceMotion);
 
   const barY = useSpring(0, { stiffness: 420, damping: 38, mass: 0.75 });
-  const barH = useSpring(96, { stiffness: 420, damping: 40, mass: 0.75 });
+  const barH = useSpring(ROW - 12, { stiffness: 420, damping: 40, mass: 0.75 });
   const cardY = useSpring(0, { stiffness: 280, damping: 30, mass: 0.85 });
   const cardScale = useMotionValue(0.86);
   const barOpacity = useSpring(0, { stiffness: 380, damping: 34, mass: 0.7 });
   const cardOpacity = useSpring(0, { stiffness: 300, damping: 30, mass: 0.75 });
   const inset = useSpring(50, { stiffness: 340, damping: 32, mass: 0.7 });
-  const clipPath = useTransform(inset, (value) => `inset(0px ${value}% round 14px)`);
+  const clipPath = useTransform(inset, (value) => `inset(0px ${value}% round 16px)`);
 
   useEffect(() => {
     setMounted(true);
@@ -95,14 +88,12 @@ export function ServicesList() {
     const list = listRef.current;
     if (!row || !list) return null;
 
-    const top = row.offsetTop;
-    const height = row.offsetHeight;
-    const cardHeight = cardRef.current?.offsetHeight ?? 0;
+    const top = row.offsetTop + (row.offsetHeight - (ROW - 12)) / 2;
+    const height = ROW - 12;
+    const cardHeight = cardRef.current?.offsetHeight ?? 220;
     const listHeight = list.offsetHeight;
-    const centered = top + (height - cardHeight) / 2;
-    const nextCard = cardHeight
-      ? Math.min(Math.max(0, centered), Math.max(0, listHeight - cardHeight))
-      : top;
+    const centered = row.offsetTop + (row.offsetHeight - cardHeight) / 2;
+    const nextCard = Math.min(Math.max(0, centered), Math.max(0, listHeight - cardHeight));
 
     return { top, height, nextCard };
   }
@@ -171,7 +162,6 @@ export function ServicesList() {
     const behavior = lastIndex.current === active ? "enter" : "move";
     place(active, behavior);
     lastIndex.current = active;
-    // Springs are stable; placement is keyed to the active row + live state.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, live, reduce]);
 
@@ -226,19 +216,19 @@ export function ServicesList() {
                 — 02 / The Beyond toolkit
               </p>
               <h2 className="mt-4 max-w-xl text-4xl font-medium tracking-[-0.045em] md:text-6xl">
-                The right tools.
-                <span className="mt-1 block text-[#b5b5b0]">The bigger picture.</span>
+                Five practices.
+                <span className="mt-1 block text-[#b5b5b0]">One property view.</span>
               </h2>
             </div>
             <p className="max-w-xs text-[14px] leading-6 text-muted md:text-right">
-              Software to run your operation. Digital experiences to represent it. Growth to take
-              it further.
+              CRM, restaurant orders, hotel operations, websites and growth — built to move with the
+              same guest.
             </p>
           </div>
         </Reveal>
 
         <div
-          className="relative mt-14 lg:pr-[320px]"
+          className="svc-board relative mt-10 overflow-visible rounded-[32px] border border-white/10 bg-[linear-gradient(165deg,#161616,#0c0c0c_55%,#090909)] px-[14px] pb-3 pt-14 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_28px_70px_rgba(0,0,0,0.53)] md:mt-12 md:pb-4 md:pt-16"
           onMouseEnter={() => {
             armed.current = true;
           }}
@@ -257,10 +247,14 @@ export function ServicesList() {
             }
           }}
         >
-          <div ref={listRef} className="relative border-t border-white/10">
+          <p className="pointer-events-none absolute right-5 top-5 text-[10px] uppercase tracking-[0.14em] text-[#6f6f6b] sm:right-7 sm:top-6 sm:text-[11px] sm:tracking-[0.12em]">
+            Hover or use the arrow keys
+          </p>
+
+          <div ref={listRef} className="relative w-full">
             <motion.div
               aria-hidden
-              className="pointer-events-none absolute inset-x-0 top-0 rounded-[14px] bg-[#161616] shadow-[0_18px_40px_-18px_rgba(0,0,0,0.45)]"
+              className="pointer-events-none absolute inset-x-0 top-0 z-0 rounded-[16px] border border-white/[0.14] bg-[linear-gradient(#222,#151515)] shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_18px_40px_-18px_rgba(0,0,0,0.65)]"
               style={{
                 y: barY,
                 height: barH,
@@ -269,8 +263,10 @@ export function ServicesList() {
                 willChange: "transform, opacity",
               }}
             />
+
             {services.map((service, index) => {
               const selected = live && index === active;
+              const item = previews[service.slug];
               return (
                 <Link
                   key={service.slug}
@@ -282,141 +278,133 @@ export function ServicesList() {
                   onFocus={() => select(index)}
                   onClick={() => select(index)}
                   aria-current={selected ? "true" : undefined}
-                  className="group relative z-10 grid grid-cols-[42px_1fr_auto] items-center gap-4 border-b border-white/10 px-3 py-7 sm:px-6 md:grid-cols-[72px_minmax(220px,0.9fr)_minmax(280px,1.35fr)_88px] md:gap-10 md:px-8 md:py-8"
+                  className="relative z-10 grid h-[76px] grid-cols-[minmax(120px,1fr)_auto_minmax(56px,1fr)] items-center px-2 text-[#bdbdb6] transition-colors duration-300 sm:h-[88px] sm:grid-cols-[minmax(180px,1fr)_auto_minmax(72px,1fr)] sm:px-4 md:px-5"
+                  style={{
+                    color: selected ? "#f4f4f0" : undefined,
+                    transitionTimingFunction: "cubic-bezier(0.2, 0.7, 0.1, 1)",
+                  }}
                 >
+                  <span className="flex min-w-0 items-center gap-3 sm:gap-4 md:gap-5">
+                    <span
+                      className="shrink-0 text-[12px] tracking-[0.04em] transition-opacity duration-300"
+                      style={{ opacity: selected ? 0.9 : 0.45 }}
+                    >
+                      ({service.number})
+                    </span>
+                    <span
+                      className="hidden min-w-0 flex-col gap-0.5 transition-[opacity,transform] duration-300 sm:flex"
+                      style={{
+                        opacity: selected ? 1 : 0,
+                        transform: selected ? "none" : "translateY(6px)",
+                        transitionTimingFunction: "cubic-bezier(0.2, 0.7, 0.1, 1)",
+                      }}
+                    >
+                      <span className="truncate text-[11px] uppercase tracking-[0.06em] text-[#d8d8d2]">
+                        {item.lane}
+                      </span>
+                      <span className="truncate text-[11px] uppercase tracking-[0.06em] text-[#d8d8d2]/60">
+                        {item.tags}
+                      </span>
+                    </span>
+                  </span>
+
                   <span
-                    className="text-[12px] tracking-[0.14em] transition-colors duration-300"
+                    className="justify-self-center text-center text-[28px] font-medium tracking-[-0.04em] transition-transform duration-500 sm:text-[36px] md:text-[44px]"
                     style={{
-                      color: selected ? "#f4f4f1" : "#6d6d69",
+                      transform: selected ? "scale(1.04)" : "scale(1)",
+                      transformOrigin: "center",
                       transitionTimingFunction: "cubic-bezier(0.2, 0.7, 0.1, 1)",
                     }}
                   >
-                    {service.number}
+                    {service.name}
                   </span>
-                  <span>
-                    <span className="block text-[26px] tracking-[-0.04em] text-[#f4f4f1] md:text-[32px]">
-                      {service.name}
-                    </span>
-                    <span className="mt-1 block text-[10px] uppercase tracking-[0.14em] text-[#6f6f6b]">
-                      {service.category}
-                    </span>
+
+                  <span className="justify-self-end">
+                    <motion.span
+                      aria-hidden
+                      animate={
+                        selected
+                          ? {
+                              rotate: 0,
+                              x: 2,
+                              backgroundColor: "#f4f4f0",
+                              color: "#111111",
+                              borderColor: "rgba(255,255,255,0)",
+                            }
+                          : {
+                              rotate: -45,
+                              x: 0,
+                              backgroundColor: "rgba(255,255,255,0)",
+                              color: "#cfcfc8",
+                              borderColor: "rgba(255,255,255,0.16)",
+                            }
+                      }
+                      transition={reduce ? { duration: 0 } : { duration: 0.5, ease }}
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-full border sm:h-8 sm:w-8"
+                    >
+                      <Arrow />
+                    </motion.span>
                   </span>
-                  <span className="hidden text-[14px] leading-6 text-[#8d8d88] md:block">
-                    {service.summary}
-                  </span>
-                  <motion.span
-                    aria-hidden
-                    animate={
-                      selected
-                        ? { rotate: 0, backgroundColor: "#f4f4f1", color: "#111111" }
-                        : { rotate: -45, backgroundColor: "rgba(255,255,255,0)", color: "#d8d8d4" }
-                    }
-                    transition={reduce ? { duration: 0 } : { duration: 0.5, ease }}
-                    className="inline-flex h-11 w-11 items-center justify-center justify-self-end rounded-full border border-white/15"
-                  >
-                    <Arrow />
-                  </motion.span>
                 </Link>
               );
             })}
-          </div>
 
-          <motion.aside
-            ref={cardRef}
-            aria-hidden
-            className="pointer-events-none mt-6 hidden w-[280px] lg:absolute lg:right-0 lg:top-0 lg:mt-0 lg:block"
-            style={{
-              y: cardY,
-              opacity: cardOpacity,
-              scale: cardScale,
-              rotateX: reduce ? 0 : 8,
-              rotateY: reduce ? 0 : -14,
-              rotateZ: reduce ? 0 : -2,
-              transformPerspective: 900,
-              transformOrigin: "50% 50%",
-              willChange: "transform, opacity",
-            }}
-          >
-            <PreviewCard
-              key={live ? `${current.slug}-${cardKey}` : current.slug}
-              preview={preview}
-              footer={`${current.number} · ${current.shortName}`}
-            />
-          </motion.aside>
+            <motion.aside
+              ref={cardRef}
+              aria-hidden
+              className="pointer-events-none absolute -right-2 top-0 z-20 hidden w-[200px] overflow-hidden rounded-[22px] border border-white/10 bg-[#121212] shadow-[0_24px_50px_-20px_rgba(0,0,0,0.7)] lg:-right-6 lg:block lg:w-[220px]"
+              style={{
+                y: cardY,
+                opacity: cardOpacity,
+                scale: cardScale,
+                rotateX: reduce ? 0 : 8,
+                rotateY: reduce ? 0 : -14,
+                rotateZ: reduce ? 0 : -2,
+                transformPerspective: 900,
+                transformOrigin: "50% 50%",
+                willChange: "transform, opacity",
+              }}
+            >
+              <PreviewCard
+                key={live ? `${current.slug}-${cardKey}` : current.slug}
+                name={current.name}
+                preview={preview}
+              />
+            </motion.aside>
+          </div>
         </div>
       </Container>
-      <style>{`
-        @keyframes svc-type { from { clip-path: inset(0 100% 0 0) } to { clip-path: inset(0 0 0 0) } }
-        @keyframes svc-scan { from { transform: translateY(0); opacity: 1 } to { transform: translateY(240px); opacity: 0 } }
-        .svc-type { animation: svc-type .42s steps(7, end) both }
-        .svc-scan { animation: svc-scan .5s cubic-bezier(.7, 0, .2, 1) both }
-        @media (prefers-reduced-motion: reduce) {
-          .svc-type, .svc-scan { animation: none }
-        }
-      `}</style>
     </section>
   );
 }
 
 function PreviewCard({
+  name,
   preview,
-  footer,
 }: {
+  name: string;
   preview: (typeof previews)[Service["slug"]];
-  footer: string;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-[18px] border border-white/12 bg-[linear-gradient(160deg,rgba(34,35,40,0.94),rgba(12,12,14,0.96))] p-4 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.12)]">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(255,255,255,0.10)_0%,rgba(255,255,255,0)_32%)]"
+    <div className="relative h-[220px] w-full">
+      <Image
+        src={preview.image}
+        alt={preview.alt}
+        fill
+        sizes="220px"
+        className="object-cover"
       />
-      <div
-        aria-hidden
-        className="svc-scan pointer-events-none absolute inset-x-0 top-0 z-10 h-16 bg-gradient-to-b from-white/25 to-transparent"
-      />
-      <p
-        className="svc-type relative text-[10px] uppercase tracking-[0.16em] text-[#8a8a86]"
-        style={{ animationDelay: "0.02s" }}
-      >
-        {preview.kicker}
-      </p>
-      <p
-        className="svc-type relative mt-3 text-[18px] leading-6 tracking-[-0.03em] text-[#f4f4f1]"
-        style={{ animationDelay: "0.07s" }}
-      >
-        {preview.title}
-      </p>
-      <div className="relative mt-4 space-y-2">
-        <span className="svc-type block h-2 w-full rounded-full bg-white/10" style={{ animationDelay: "0.12s" }} />
-        <span className="svc-type block h-2 w-4/5 rounded-full bg-white/10" style={{ animationDelay: "0.17s" }} />
-        <span className="svc-type block h-2 w-3/5 rounded-full bg-white/15" style={{ animationDelay: "0.22s" }} />
+      <div className="absolute inset-x-0 bottom-0 grid gap-1 bg-gradient-to-t from-black/90 to-transparent px-3.5 pb-3.5 pt-12 text-[13px] leading-[1.35] text-[#f4f4f0]">
+        <strong className="text-[15px] tracking-[-0.03em]">{name}</strong>
+        <span className="text-[#cfcfc8]">{preview.blurb}</span>
       </div>
-      <div className="relative mt-4 grid grid-cols-3 gap-2">
-        {preview.stats.map(([label, value], index) => (
-          <div
-            key={label}
-            className="svc-type rounded-xl border border-white/10 bg-black/30 px-2 py-2"
-            style={{ animationDelay: `${0.22 + index * 0.05}s` }}
-          >
-            <div className="text-[9px] uppercase tracking-[0.12em] text-[#6f6f6b]">{label}</div>
-            <div className="mt-1 text-[13px] text-[#f4f4f1]">{value}</div>
-          </div>
-        ))}
-      </div>
-      <p
-        className="svc-type relative mt-4 text-[10px] uppercase tracking-[0.14em] text-[#6f6f6b]"
-        style={{ animationDelay: "0.38s" }}
-      >
-        {footer}
-      </p>
     </div>
   );
 }
 
 function Arrow() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
       <path
         d="M3 8h10M9 4l4 4-4 4"
         stroke="currentColor"

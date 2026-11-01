@@ -1,8 +1,7 @@
-import { Capabilities } from "@/components/home/Capabilities";
 import { Connected } from "@/components/home/Connected";
 import { Contact } from "@/components/home/Contact";
-import { CoreFeatures } from "@/components/home/CoreFeatures";
 import { Faq } from "@/components/home/Faq";
+import { FeaturesBento } from "@/components/home/FeaturesBento";
 import { GuestJourney } from "@/components/home/GuestJourney";
 import { Hero } from "@/components/home/Hero";
 import { Insights } from "@/components/home/Insights";
@@ -19,9 +18,8 @@ export default function Home() {
       <PropertyStage />
       <GuestJourney />
       <WorkspaceDemo />
-      <Capabilities />
       <ServicesList />
-      <CoreFeatures />
+      <FeaturesBento />
       <Connected />
       <Process />
       <WorkMix />
