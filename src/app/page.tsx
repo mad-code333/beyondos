@@ -15,9 +15,9 @@ export default function Home() {
   return (
     <main>
       <Hero />
+      <WorkspaceDemo />
       <PropertyStage />
       <GuestJourney />
-      <WorkspaceDemo />
       <ServicesList />
       <FeaturesBento />
       <Connected />

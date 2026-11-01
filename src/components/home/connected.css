@@ -1,0 +1,486 @@
+.vision {
+  position: relative;
+  overflow: clip;
+  min-height: 500px;
+  padding: 100px 0;
+  background: radial-gradient(at 80% 70%, rgba(255, 255, 255, 0.035), transparent 55%);
+}
+
+.vision-ambient {
+  position: absolute;
+  inset: 12% 4% auto auto;
+  width: min(520px, 48vw);
+  height: 72%;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 55% 48%, rgba(255, 255, 255, 0.07), transparent 62%);
+  filter: blur(2px);
+  animation: visionAmbient 16s ease-in-out infinite alternate;
+}
+
+.vision-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: clamp(36px, 6vw, 80px);
+  align-items: center;
+}
+
+.vision-copy {
+  max-width: 36rem;
+}
+
+.vision-copy .eyebrow {
+  font-family: var(--font-display), Manrope, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #9a9a94;
+}
+
+.vision-title {
+  display: grid;
+  gap: 0.02em;
+  margin: 14px 0 0;
+  max-width: 640px;
+  font-family: var(--font-display), Manrope, sans-serif;
+  font-size: clamp(28px, 3.6vw, 44px);
+  font-weight: 800;
+  letter-spacing: 0.045em;
+  line-height: 1.12;
+  text-transform: uppercase;
+  color: #f1f1ee;
+}
+
+.vision-title em {
+  display: block;
+  margin-top: 0.12em;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.045em;
+  color: #c8c8c0;
+}
+
+.vision-copy > p {
+  margin: 26px 0 0;
+  max-width: 42ch;
+  font-size: 15px;
+  line-height: 1.75;
+  letter-spacing: 0.01em;
+  color: #b4b4ae;
+}
+
+.vision-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 22px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.251);
+  color: #f1f1ee;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  transition:
+    border-color 0.35s ease,
+    gap 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.3s ease;
+}
+
+.vision-link span {
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.vision-link:hover {
+  border-color: rgba(255, 255, 255, 0.627);
+  gap: 14px;
+}
+
+.vision-link:hover span {
+  transform: translate(3px, -3px);
+}
+
+.vision-orbit {
+  position: relative;
+  display: grid;
+  height: 360px;
+  place-items: center;
+  perspective: 1100px;
+  transform-style: preserve-3d;
+  touch-action: pan-y;
+}
+
+.vision-orbit-aura {
+  position: absolute;
+  width: min(340px, 72%);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.14), transparent 60%);
+  filter: blur(22px);
+  animation: visionAura 8s ease-in-out infinite alternate;
+}
+
+.vision-orbit-rings {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transform-style: preserve-3d;
+  pointer-events: none;
+  transform: rotateZ(-8deg);
+  animation: visionRingsDrift 18s ease-in-out infinite alternate;
+}
+
+.vision-ring {
+  position: absolute;
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  transform-style: preserve-3d;
+  animation:
+    visionOrbitSpin var(--spin, 16s) linear infinite,
+    visionRingBreath var(--breath, 7s) ease-in-out infinite alternate;
+  animation-delay: var(--d, 0s), var(--d, 0s);
+}
+
+.vision-ring.is-reverse {
+  animation-name: visionOrbitSpinRev, visionRingBreath;
+}
+
+.vision-ring--far {
+  z-index: 1;
+}
+
+.vision-ring--mid {
+  z-index: 2;
+}
+
+.vision-ring--near {
+  z-index: 3;
+}
+
+.vision-ring-edge,
+.vision-ring-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.vision-ring-edge {
+  border: 1px solid rgba(255, 255, 255, 0.267);
+  box-shadow:
+    0 6px 10px rgba(0, 0, 0, 0.533),
+    inset 0 2px 3px rgba(255, 255, 255, 0.133);
+  background: radial-gradient(ellipse, transparent 60%, rgba(255, 255, 255, 0.067));
+}
+
+.vision-ring--far .vision-ring-edge {
+  border-color: rgba(255, 255, 255, 0.133);
+}
+
+.vision-ring--near .vision-ring-edge {
+  border-color: rgba(255, 255, 255, 0.333);
+}
+
+.vision-ring-glow {
+  inset: -1px;
+  border-color: rgba(255, 255, 255, 0.941) rgba(255, 255, 255, 0.333) transparent transparent;
+  border-style: solid;
+  border-width: 1.5px;
+  mask-image: linear-gradient(115deg, #000 4%, transparent 38%);
+  -webkit-mask-image: linear-gradient(115deg, #000 4%, transparent 38%);
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.45));
+  animation: visionTrailPulse 2.8s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+
+.vision-ring-node {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 10px rgba(255, 255, 255, 0.753),
+    0 0 18px rgba(255, 255, 255, 0.376);
+  pointer-events: none;
+}
+
+.vision-ring-node.is-second {
+  top: auto;
+  bottom: 0;
+  margin: 0 0 -3px -2px;
+  width: 4px;
+  height: 4px;
+  opacity: 0.7;
+  box-shadow:
+    0 0 8px rgba(255, 255, 255, 0.627),
+    0 0 14px rgba(255, 255, 255, 0.251);
+}
+
+.vision-ring--far .vision-ring-node {
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  opacity: 0.65;
+}
+
+.vision-core-track {
+  position: relative;
+  z-index: 4;
+  transform-style: preserve-3d;
+  transform: rotateX(12deg) rotateY(-18deg);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.vision-core {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 118px;
+  height: 118px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.376);
+  border-radius: 28px;
+  background: linear-gradient(145deg, #6a6a6a 0%, #1a1a1a 32%, #070707 62%, #3a3a3a 100%);
+  box-shadow:
+    inset 2px 2px 6px rgba(255, 255, 255, 0.28),
+    inset -8px -12px 18px rgba(0, 0, 0, 0.55),
+    20px 28px 50px rgba(0, 0, 0, 0.6),
+    0 0 32px rgba(255, 255, 255, 0.08);
+  transform-style: preserve-3d;
+  animation: visionCoreGlow 7.5s ease-in-out infinite;
+}
+
+.vision-core::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.28) 0%, transparent 46%);
+}
+
+.vision-core-sheen {
+  position: absolute;
+  inset: -40% -30%;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.22) 50%,
+    transparent 62%
+  );
+  transform: translateX(-30%) rotate(8deg);
+  animation: visionSheen 5.5s ease-in-out infinite;
+}
+
+.vision-core-mark {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display), Manrope, sans-serif;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  color: #f4f4ef;
+}
+
+.vision-orbit-label {
+  position: absolute;
+  bottom: 8px;
+  margin: 0;
+  font-family: var(--font-display), Manrope, sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #8f8f88;
+}
+
+@keyframes visionAmbient {
+  0% {
+    opacity: 0.4;
+    transform: scale(0.96) translate(4px, 10px);
+  }
+  to {
+    opacity: 0.85;
+    transform: scale(1.06) translate(-8px, -6px);
+  }
+}
+
+@keyframes visionAura {
+  0% {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 0.9;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes visionRingsDrift {
+  0% {
+    transform: rotate(-8deg) translateY(2px);
+  }
+  to {
+    transform: rotate(-4deg) translateY(-3px);
+  }
+}
+
+@keyframes visionOrbitSpin {
+  0% {
+    transform: rotateX(74deg) rotateY(-10deg) rotate(var(--r)) scale(1);
+  }
+  to {
+    transform: rotateX(74deg) rotateY(-10deg) rotate(calc(var(--r) + 1turn)) scale(1);
+  }
+}
+
+@keyframes visionOrbitSpinRev {
+  0% {
+    transform: rotateX(74deg) rotateY(-10deg) rotate(var(--r)) scale(1);
+  }
+  to {
+    transform: rotateX(74deg) rotateY(-10deg) rotate(calc(var(--r) - 1turn)) scale(1);
+  }
+}
+
+@keyframes visionRingBreath {
+  0% {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes visionTrailPulse {
+  0%,
+  to {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes visionCoreGlow {
+  0%,
+  to {
+    box-shadow:
+      inset 2px 2px 6px rgba(255, 255, 255, 0.28),
+      inset -8px -12px 18px rgba(0, 0, 0, 0.55),
+      20px 28px 50px rgba(0, 0, 0, 0.6),
+      0 0 0 rgba(255, 255, 255, 0);
+  }
+  50% {
+    box-shadow:
+      inset 2px 2px 6px rgba(255, 255, 255, 0.32),
+      inset -8px -12px 18px rgba(0, 0, 0, 0.55),
+      20px 30px 54px rgba(0, 0, 0, 0.667),
+      0 0 34px rgba(255, 255, 255, 0.078);
+  }
+}
+
+@keyframes visionSheen {
+  0%,
+  28% {
+    transform: translateX(-48%) rotate(8deg);
+    opacity: 0;
+  }
+  42% {
+    opacity: 0.95;
+  }
+  58%,
+  to {
+    transform: translateX(48%) rotate(8deg);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vision-ambient,
+  .vision-core,
+  .vision-core-sheen,
+  .vision-orbit-aura,
+  .vision-orbit-rings,
+  .vision-ring,
+  .vision-ring-glow {
+    animation: none !important;
+  }
+
+  .vision-ring {
+    opacity: 0.72;
+    transform: rotateX(74deg) rotateY(-10deg) rotate(var(--r));
+  }
+
+  .vision-ring-glow,
+  .vision-ring-node {
+    opacity: 0.35;
+  }
+
+  .vision-core-sheen {
+    opacity: 0.18;
+    transform: translateX(0) rotate(8deg);
+  }
+}
+
+html[data-motion="paused"] .vision-ambient,
+html[data-motion="paused"] .vision-orbit-aura,
+html[data-motion="paused"] .vision-orbit-rings,
+html[data-motion="paused"] .vision-ring,
+html[data-motion="paused"] .vision-ring-glow,
+html[data-motion="paused"] .vision-core,
+html[data-motion="paused"] .vision-core-sheen {
+  animation: none !important;
+}
+
+html[data-motion="paused"] .vision-ring {
+  opacity: 0.72;
+  transform: rotateX(74deg) rotateY(-10deg) rotate(var(--r));
+}
+
+html[data-motion="paused"] .vision-core-sheen {
+  opacity: 0.18;
+  transform: translateX(0) rotate(8deg);
+}
+
+@media (max-width: 900px) {
+  .vision {
+    padding: 70px 0;
+  }
+
+  .vision-grid {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .vision-orbit {
+    height: 300px;
+    transform: scale(0.9);
+    margin-top: -12px;
+    margin-bottom: -8px;
+    order: -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .vision-orbit {
+    height: 260px;
+    transform: scale(0.82);
+  }
+
+  .vision-core {
+    width: 96px;
+    height: 96px;
+    border-radius: 22px;
+  }
+
+  .vision-core-mark {
+    font-size: 22px;
+  }
+}
