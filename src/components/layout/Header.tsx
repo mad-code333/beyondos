@@ -38,7 +38,7 @@ const links = [
   { href: "/", label: "Home" },
   { href: "/#work", label: "Selected work" },
   { href: "/#approach", label: "Our approach" },
-  { href: "/#ecosystem", label: "Ecosystem" },
+  { href: "/#insights", label: "Insights" },
 ];
 
 export function Header() {
@@ -117,7 +117,7 @@ export function Header() {
       </nav>
 
       <Link href="/#contact" className="nav-cta" onClick={closeAll}>
-        Get in touch <span>↗</span>
+        Let&apos;s talk <span>↗</span>
       </Link>
 
       <button
@@ -157,7 +157,7 @@ export function Header() {
                 </Link>
               ))}
               <Link href="/#contact" onClick={closeAll} className="mobile-nav-cta">
-                Get in touch ↗
+                Let&apos;s talk ↗
               </Link>
             </div>
           </motion.div>

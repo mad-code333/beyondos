@@ -7,9 +7,17 @@ export type Service = {
   shortName: string;
   name: string;
   category: string;
+  code: string;
   tagline: string;
+  heroLine: string;
+  heroEm: string;
   heroTitle: string;
   heroLead: string;
+  heroImage: string;
+  heroAlt: string;
+  conceptLine: string;
+  conceptEm: string;
+  workspacePill: string;
   summary: string;
   features: { title: string; body: string }[];
   steps: { title: string; body: string }[];
@@ -25,37 +33,45 @@ export const services: Service[] = [
     shortName: "CRM",
     name: "CRM",
     category: "Customer Relationship Management",
-    tagline: "Every relationship. Made personal.",
-    heroTitle: "Turn a first hello. Into a lasting relationship.",
+    code: "CRM",
+    tagline: "Every relationship, remembered.",
+    heroLine: "Turn a first hello",
+    heroEm: "into a guest you know.",
+    heroTitle: "Turn a first hello into a guest you know.",
     heroLead:
-      "Bring guest profiles, enquiries and follow-ups into one clear workspace. Give your team the context to make every conversation feel personal.",
-    summary: "Guest relationships, enquiries and follow-ups. All in one place.",
+      "Profiles, enquiries and follow-ups in one workspace, so the next conversation starts with what was already said.",
+    heroImage: "/media/desk.jpg",
+    heroAlt: "A hotel reception desk in stone and warm lamplight, before the first guest.",
+    conceptLine: "Every relationship",
+    conceptEm: "remembered.",
+    workspacePill: "CRM · Interactive preview",
+    summary: "Guest profiles, enquiries and follow-ups, held in one place.",
     features: [
       {
         title: "One guest profile",
-        body: "Keep contact details, preferences and conversation notes together, so the next interaction starts with context.",
+        body: "Contact details, preferences and the last conversation, together, so the next reply starts with context.",
       },
       {
         title: "A clearer pipeline",
-        body: "See new enquiries, active conversations and confirmed opportunities without losing the next step.",
+        body: "New enquiries, open conversations and confirmed stays, with the next step still attached.",
       },
       {
-        title: "Follow-ups that flow",
-        body: "Explore reminders and repeatable workflows that help your team stay in touch at the right moment.",
+        title: "Follow-ups that land",
+        body: "A reminder when a promise was made, so Tuesday’s note is still there on Friday.",
       },
     ],
     steps: [
       {
         title: "Map the relationship",
-        body: "Start with your priorities, people and current workflow.",
+        body: "We start with how enquiries arrive, who answers, and where a promise gets lost between the inbox and the desk.",
       },
       {
         title: "Design the workspace",
-        body: "Shape a practical experience and review it together.",
+        body: "Profiles, pipeline and follow-ups, laid out the way your team already talks about a guest.",
       },
       {
         title: "Connect the next step",
-        body: "Agree the next steps, implementation scope and handover.",
+        body: "The website, the reservation and the profile share the same facts, so a guest never has to repeat them.",
       },
     ],
     demoLabel: "Guest relationships & sales",
@@ -68,37 +84,45 @@ export const services: Service[] = [
     shortName: "Restaurant OMS",
     name: "Restaurant OMS",
     category: "Restaurant Order Management",
-    tagline: "Every order. In perfect rhythm.",
-    heroTitle: "From the floor to the kitchen. In one calm flow.",
+    code: "OMS",
+    tagline: "Every order, in sync.",
+    heroLine: "From the first order",
+    heroEm: "to the last plate.",
+    heroTitle: "From the first order to the last plate.",
     heroLead:
-      "Give every team a shared view of tables, tickets and timing. Clear orders. Thoughtful handoffs. A calmer service.",
-    summary: "Tables, orders and kitchen workflows for a calmer service.",
+      "A shared view of the floor, the ticket and the pass, so the room and the kitchen move through service together.",
+    heroImage: "/media/kitchen.jpg",
+    heroAlt: "The pass between a restaurant kitchen and the dining room, plates ready.",
+    conceptLine: "Every order",
+    conceptEm: "in sync.",
+    workspacePill: "Restaurant OMS · Interactive preview",
+    summary: "Tables, orders and the kitchen, on one picture of service.",
     features: [
       {
-        title: "Floor awareness",
-        body: "See table status, open tickets and pacing so the room and the pass stay aligned.",
+        title: "A live service view",
+        body: "Tables and open orders in one picture the floor and the kitchen can both read.",
       },
       {
-        title: "Kitchen clarity",
-        body: "Route orders with timing and modifiers that reduce noise during peak service.",
+        title: "A handoff the pass can trust",
+        body: "Each ticket moves from received to preparing to ready, with the table, the covers and the note still on it.",
       },
       {
-        title: "Service overview",
-        body: "Spot bottlenecks early and keep guests moving without rushing the experience.",
+        title: "A close that holds",
+        body: "The shift is already summarised when service ends, so the morning is not spent reconstructing the night.",
       },
     ],
     steps: [
       {
         title: "Map the service",
-        body: "Walk the floor, pass and handover points that define your rhythm.",
+        body: "We sit with a real service: how an order is taken, where it is shouted, and what the pass still has to ask.",
       },
       {
-        title: "Design the flow",
-        body: "Shape screens and states around how your team actually works.",
+        title: "Configure the floor",
+        body: "Tables, courses and the notes that change a dish, set up so the ticket matches the room.",
       },
       {
-        title: "Launch & refine",
-        body: "Roll out with training, then tune timing and views after real service.",
+        title: "Rehearse the handoff",
+        body: "Floor and kitchen run the same states — received, preparing, ready, served — before a full night depends on it.",
       },
     ],
     demoLabel: "Restaurant order management",
@@ -111,37 +135,45 @@ export const services: Service[] = [
     shortName: "Hotel HMS",
     name: "Hotel HMS",
     category: "Hotel Management System",
-    tagline: "Every stay. From enquiry to arrival.",
-    heroTitle: "Reservations, rooms and the guest journey. Connected.",
+    code: "HMS",
+    tagline: "Every stay, connected.",
+    heroLine: "More room for the guest.",
+    heroEm: "Less for the workaround.",
+    heroTitle: "More room for the guest. Less for the workaround.",
     heroLead:
-      "Manage availability, arrivals and in-stay needs in one property workspace built for hospitality teams.",
-    summary: "Reservations, room availability and the entire guest journey.",
+      "Reservations, room readiness and the guest’s notes in one workspace, so the desk is ready before anyone is at the door.",
+    heroImage: "/media/suite.jpg",
+    heroAlt: "A boutique hotel bedroom in morning light, linen and a chair by the window.",
+    conceptLine: "Every stay",
+    conceptEm: "connected.",
+    workspacePill: "Hotel HMS · Interactive preview",
+    summary: "Reservations, rooms and the guest journey, from enquiry to departure.",
     features: [
       {
-        title: "Availability that holds",
-        body: "Keep rooms, rates and blocks clear so the front desk trusts what they see.",
+        title: "One reservation view",
+        body: "Availability and upcoming stays on a calendar the front desk can use during a check-in, not only after it.",
       },
       {
-        title: "Arrival readiness",
-        body: "Give housekeeping and reception the same view of who is coming and what they need.",
+        title: "The guest, already known",
+        body: "Arrival time, preferences and the note from the first message, waiting at the desk.",
       },
       {
-        title: "Guest journey continuity",
-        body: "Carry preferences and notes from booking through checkout without spreadsheet gaps.",
+        title: "Rooms, ready to receive",
+        body: "Housekeeping and the front desk share one list of what is ready and what is not.",
       },
     ],
     steps: [
       {
-        title: "Map the property",
-        body: "Understand inventory, channels and the guest touchpoints that matter most.",
+        title: "Understand the property",
+        body: "Rooms, arrivals and the tools already in use — channel manager, payments, the inbox the desk actually checks.",
       },
       {
-        title: "Design the stay OS",
-        body: "Shape reservation, arrival and housekeeping views around your team.",
+        title: "Shape the guest journey",
+        body: "From the enquiry to the room: what the guest shared, and who on the team needs to see it.",
       },
       {
-        title: "Connect & grow",
-        body: "Link website, CRM and growth so each stay feeds the next booking.",
+        title: "Prepare the team",
+        body: "Front desk and housekeeping leave with the same arrivals list, and a way to run the day without us in the room.",
       },
     ],
     demoLabel: "Hotel & property management",
@@ -154,37 +186,45 @@ export const services: Service[] = [
     shortName: "Web Development",
     name: "Web Development",
     category: "Websites & Digital Experiences",
-    tagline: "Your digital front door.",
-    heroTitle: "A website with a sense of place. And a clear next step.",
+    code: "</>",
+    tagline: "A front door, worth staying for.",
+    heroLine: "Make the first impression",
+    heroEm: "worth the stay.",
+    heroTitle: "Make the first impression worth the stay.",
     heroLead:
-      "Distinctive hospitality websites, thoughtful journeys and interfaces that turn curiosity into bookings and enquiries.",
-    summary: "Distinctive websites, clear journeys and thoughtful interfaces.",
+      "Websites for hotels, restaurants and hospitality brands. From the first scroll to the enquiry, the page should help a guest take the next step.",
+    heroImage: "/media/facade.jpg",
+    heroAlt: "A hotel entrance at blue hour, one warm doorway on a dark stone facade.",
+    conceptLine: "A front door",
+    conceptEm: "worth staying for.",
+    workspacePill: "Web Development · Interactive preview",
+    summary: "Websites with a sense of place, and a clear path to enquire or book.",
     features: [
       {
-        title: "Brand-led craft",
-        body: "Typography, space and imagery that feel like the property — not a template.",
+        title: "A site that feels like the place",
+        body: "Typography, photography and language that belong to the property, not a template with the name swapped in.",
       },
       {
-        title: "Journeys that convert",
-        body: "Structure rooms, menus and stories so guests always know what to do next.",
+        title: "A path to the booking",
+        body: "Rooms, menus and the character of the stay, with a deliberate route to enquire or book direct.",
       },
       {
-        title: "Built to connect",
-        body: "Wire forms, booking and CRM so the website starts conversations your team can finish.",
+        title: "Built to stay current",
+        body: "Pages your team can update after launch — rooms, menus, offers — without a developer for every change.",
       },
     ],
     steps: [
       {
-        title: "Discover the brand",
-        body: "Capture voice, audience and the experience guests should feel online.",
+        title: "Define the story",
+        body: "What a guest should understand in one visit: the place, who it is for, and the next step you want them to take.",
       },
       {
-        title: "Design the journey",
-        body: "Prototype key pages and paths before a single production build.",
+        title: "Design the experience",
+        body: "Pages you can click through before they are built, judged against the room or the table a guest will actually find.",
       },
       {
-        title: "Ship & measure",
-        body: "Launch with analytics and iterate on the pages that move enquiries.",
+        title: "Develop and refine",
+        body: "A site your team can keep current, connected to the enquiry or booking path you already use.",
       },
     ],
     demoLabel: "Websites & digital experiences",
@@ -197,37 +237,45 @@ export const services: Service[] = [
     shortName: "Digital Growth",
     name: "Digital Growth",
     category: "Growth, Marketing & Branding",
-    tagline: "Your next chapter.",
-    heroTitle: "Brand, search and campaigns. Tuned for hospitality.",
+    code: "↗",
+    tagline: "The right guest, a clear reason.",
+    heroLine: "Be found by the right guest.",
+    heroEm: "Give them a way to book.",
+    heroTitle: "Be found by the right guest. Give them a way to book.",
     heroLead:
-      "Build a clearer brand, stronger search presence and campaigns that bring the right guests back again.",
-    summary: "Branding, search, content and campaigns for hospitality.",
+      "Brand, search, content and campaigns with one promise, and a path from that promise to a direct enquiry.",
+    heroImage: "/media/table.jpg",
+    heroAlt: "A set table for two, a candle and a glass, the guest's side of the evening.",
+    conceptLine: "The right guest",
+    conceptEm: "a clear reason.",
+    workspacePill: "Digital Growth · Interactive preview",
+    summary: "Brand, search, content and campaigns for the guest you want.",
     features: [
       {
-        title: "Brand that holds",
-        body: "Positioning, visual system and voice that travel from website to floor.",
+        title: "A name that holds",
+        body: "Positioning and a visual identity that carry from the first search result through to the confirmation.",
       },
       {
-        title: "Search & content",
-        body: "Pages and stories that help travelers and locals find you for the right reasons.",
+        title: "One growth plan",
+        body: "Search, content and campaigns chosen for the guest you want, not for reach on its own.",
       },
       {
-        title: "Campaigns with craft",
-        body: "Seasonal pushes and always-on channels measured against real enquiries — not vanity metrics.",
+        title: "Numbers that decide",
+        body: "Enquiries, direct bookings and the channels that produced them — the figures that change next month’s plan.",
       },
     ],
     steps: [
       {
-        title: "Audit the signal",
-        body: "Review brand, channels and where demand is leaking today.",
+        title: "Find the opportunity",
+        body: "Who the property is for, what a guest should expect, and which channels deserve the budget.",
       },
       {
-        title: "Set the system",
-        body: "Align messaging, creative and measurement around your offer.",
+        title: "Launch with focus",
+        body: "Brand, site and campaigns telling one story, with a path from the visit to a real enquiry.",
       },
       {
-        title: "Grow in loops",
-        body: "Ship campaigns, read the signal, refine the next chapter.",
+        title: "Learn and improve",
+        body: "We watch enquiries and direct bookings, then put the next effort where those actually came from.",
       },
     ],
     demoLabel: "Digital growth & branding",

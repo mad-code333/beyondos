@@ -161,10 +161,16 @@ const growthPath =
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-export function WorkspaceDemo() {
+export function WorkspaceDemo({
+  lockedTab,
+  pill,
+}: {
+  lockedTab?: TabId;
+  pill?: string;
+} = {}) {
   const reduce = useReducedMotion();
-  const [tab, setTab] = useState<TabId>("crm");
-  const [navIndex, setNavIndex] = useState(defaultNav.crm);
+  const [tab, setTab] = useState<TabId>(lockedTab ?? "crm");
+  const [navIndex, setNavIndex] = useState(defaultNav[lockedTab ?? "crm"]);
   const [leads, setLeads] = useState(seedLeads);
   const [tickets, setTickets] = useState(seedTickets);
   const [occupied, setOccupied] = useState(18);
@@ -177,55 +183,59 @@ export function WorkspaceDemo() {
   }
 
   return (
-    <div className="workspace-demo">
-      <section className="wrap demo-section" id="workspace">
+    <div className={`workspace-demo${lockedTab ? " is-locked" : ""}`}>
+      <section className={`${lockedTab ? "" : "wrap "}demo-section`} id={lockedTab ? undefined : "workspace"}>
         <Reveal>
           <div className="demo-top">
             <span className="ws-kicker">The workspace</span>
-            <LayoutGroup>
-              <div
-                className="ws-tabs"
-                role="tablist"
-                aria-label="Product demo"
-                onKeyDown={(event) => {
-                  const index = tabs.findIndex((item) => item.id === tab);
-                  if (index < 0) return;
-                  if (event.key === "ArrowRight" || event.key === "ArrowDown") {
-                    event.preventDefault();
-                    selectTab(tabs[(index + 1) % tabs.length].id);
-                  } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
-                    event.preventDefault();
-                    selectTab(tabs[(index - 1 + tabs.length) % tabs.length].id);
-                  } else if (event.key === "Home") {
-                    event.preventDefault();
-                    selectTab(tabs[0].id);
-                  } else if (event.key === "End") {
-                    event.preventDefault();
-                    selectTab(tabs[tabs.length - 1].id);
-                  }
-                }}
-              >
-                {tabs.map((item) => (
-                  <button
-                    key={item.id}
-                    role="tab"
-                    type="button"
-                    aria-selected={tab === item.id}
-                    tabIndex={tab === item.id ? 0 : -1}
-                    onClick={() => selectTab(item.id)}
-                  >
-                    {tab === item.id ? (
-                      <motion.span
-                        layoutId="workspace-tab-pill"
-                        className="ws-tab-pill"
-                        transition={{ type: "spring", stiffness: 380, damping: 34 }}
-                      />
-                    ) : null}
-                    <span className="relative z-[1]">{item.label}</span>
-                  </button>
-                ))}
-              </div>
-            </LayoutGroup>
+            {lockedTab ? (
+              <span className="pill">{pill ?? `${explore[tab].label.replace("Explore ", "").replace(" ↗", "")} · Interactive preview`}</span>
+            ) : (
+              <LayoutGroup>
+                <div
+                  className="ws-tabs"
+                  role="tablist"
+                  aria-label="Product demo"
+                  onKeyDown={(event) => {
+                    const index = tabs.findIndex((item) => item.id === tab);
+                    if (index < 0) return;
+                    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+                      event.preventDefault();
+                      selectTab(tabs[(index + 1) % tabs.length].id);
+                    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+                      event.preventDefault();
+                      selectTab(tabs[(index - 1 + tabs.length) % tabs.length].id);
+                    } else if (event.key === "Home") {
+                      event.preventDefault();
+                      selectTab(tabs[0].id);
+                    } else if (event.key === "End") {
+                      event.preventDefault();
+                      selectTab(tabs[tabs.length - 1].id);
+                    }
+                  }}
+                >
+                  {tabs.map((item) => (
+                    <button
+                      key={item.id}
+                      role="tab"
+                      type="button"
+                      aria-selected={tab === item.id}
+                      tabIndex={tab === item.id ? 0 : -1}
+                      onClick={() => selectTab(item.id)}
+                    >
+                      {tab === item.id ? (
+                        <motion.span
+                          layoutId="workspace-tab-pill"
+                          className="ws-tab-pill"
+                          transition={{ type: "spring", stiffness: 380, damping: 34 }}
+                        />
+                      ) : null}
+                      <span className="relative z-[1]">{item.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </LayoutGroup>
+            )}
           </div>
 
           <motion.div

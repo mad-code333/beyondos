@@ -45,6 +45,17 @@
   perspective: 1600px;
 }
 
+.workspace-demo.is-locked .demo-section {
+  padding: 0;
+}
+
+.workspace-demo.is-locked .demo-top .pill {
+  text-transform: none;
+  letter-spacing: 0.04em;
+  font-size: 10px;
+  color: #c8c8c2;
+}
+
 .workspace-demo .demo-top {
   display: flex;
   justify-content: space-between;
