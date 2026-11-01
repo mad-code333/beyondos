@@ -178,22 +178,33 @@ export function WorkspaceDemo() {
 
   return (
     <div className="workspace-demo">
-      <section className="wrap intro">
-        <p className="ws-kicker">01 / Built for the day</p>
-        <Reveal>
-          <h2>
-            Hotels and restaurants already have enough moving parts.
-            <span>The software, the site and the brand should hold them together.</span>
-          </h2>
-        </Reveal>
-      </section>
-
       <section className="wrap demo-section" id="workspace">
         <Reveal>
           <div className="demo-top">
             <span className="ws-kicker">The workspace</span>
             <LayoutGroup>
-              <div className="ws-tabs" role="tablist" aria-label="Product demo">
+              <div
+                className="ws-tabs"
+                role="tablist"
+                aria-label="Product demo"
+                onKeyDown={(event) => {
+                  const index = tabs.findIndex((item) => item.id === tab);
+                  if (index < 0) return;
+                  if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+                    event.preventDefault();
+                    selectTab(tabs[(index + 1) % tabs.length].id);
+                  } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+                    event.preventDefault();
+                    selectTab(tabs[(index - 1 + tabs.length) % tabs.length].id);
+                  } else if (event.key === "Home") {
+                    event.preventDefault();
+                    selectTab(tabs[0].id);
+                  } else if (event.key === "End") {
+                    event.preventDefault();
+                    selectTab(tabs[tabs.length - 1].id);
+                  }
+                }}
+              >
                 {tabs.map((item) => (
                   <button
                     key={item.id}
