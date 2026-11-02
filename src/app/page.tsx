@@ -1,3 +1,4 @@
+import { Capabilities } from "@/components/home/Capabilities";
 import { Connected } from "@/components/home/Connected";
 import { Contact } from "@/components/home/Contact";
 import { Faq } from "@/components/home/Faq";
@@ -22,6 +23,7 @@ export default function Home() {
       <FeaturesBento />
       <Connected />
       <Process />
+      <Capabilities />
       <WorkMix />
       <Insights />
       <Faq />
