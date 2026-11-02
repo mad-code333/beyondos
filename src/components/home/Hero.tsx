@@ -344,7 +344,7 @@ export function Hero() {
               {paused ? "▶" : "Ⅱ"}
             </button>
           </div>
-          <a className="hero-scroll mono" href="#property">
+          <a className="hero-scroll mono" href="#workspace">
             SCROLL TO DISCOVER <span>↓</span>
           </a>
           <div className="hero-bottom-spacer" aria-hidden="true" />

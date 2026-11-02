@@ -1,0 +1,330 @@
+.closing {
+  position: relative;
+  overflow: clip;
+  isolation: isolate;
+  padding: 110px 0;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.125);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.125);
+  background: #080808;
+}
+
+.closing-glow {
+  position: absolute;
+  inset: auto 12% -28% 12%;
+  z-index: 0;
+  height: 70%;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 100%, rgba(255, 255, 255, 0.055), transparent 65%);
+  filter: blur(8px);
+  animation: closing-ambient 16s ease-in-out infinite;
+}
+
+.closing .wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.closing-inner {
+  width: min(720px, 100%);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.closing-inner .eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 auto 24px;
+  font-family: var(--font-display), Orbitron, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  color: #9a9a94;
+}
+
+.closing-inner .eyebrow::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  flex: none;
+  background: #858585;
+}
+
+.closing-heading {
+  display: grid;
+  justify-items: center;
+  gap: 0;
+  margin: 0 auto;
+  font-family: var(--font-display), Orbitron, sans-serif;
+  font-size: clamp(28px, 3.6vw, 44px);
+  font-weight: 800;
+  letter-spacing: 0.045em;
+  line-height: 1.12;
+  text-transform: uppercase;
+  color: #f4f4f0;
+}
+
+.closing-heading-line {
+  display: block;
+  overflow: hidden;
+}
+
+.closing-heading-line > * {
+  display: inline-block;
+}
+
+.closing-heading em {
+  font-family: inherit;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.045em;
+  color: #f4f4f0;
+}
+
+.closing-inner > p {
+  margin: 18px auto 28px;
+  max-width: 36ch;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.6;
+  color: #a8a8a2;
+}
+
+.closing-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.closing-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  min-width: 210px;
+  min-height: 48px;
+  padding: 12px 22px 12px 24px;
+  border: 1px solid #f4f4f0;
+  border-radius: 100px;
+  background: #f4f4f0;
+  color: #111;
+  font-family: var(--font-display), Orbitron, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.7;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    background 0.3s ease,
+    box-shadow 0.35s ease;
+}
+
+.closing-btn span {
+  display: inline-flex;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.closing-btn svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+}
+
+.closing-btn:hover {
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+  transform: translateY(-3px);
+}
+
+.closing-btn:hover span {
+  transform: translateX(4px);
+}
+
+.closing-btn:focus-visible {
+  outline: 1px solid #f4f4f0;
+  outline-offset: 5px;
+}
+
+.closing-btn:active {
+  transform: translateY(-1px);
+}
+
+.closing-inner small {
+  display: block;
+  margin: 16px 0 0;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.7;
+  color: #8a8a84;
+}
+
+.closing-dialog {
+  width: min(560px, calc(100% - 32px));
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.125);
+  border-radius: 18px;
+  background: #111;
+  color: #f1f1ee;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.55);
+}
+
+.closing-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.72);
+}
+
+.closing-dialog-inner {
+  padding: 32px 28px 28px;
+}
+
+.closing-dialog-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.closing-dialog-head h2 {
+  margin: 0;
+  font-family: var(--font-display), Orbitron, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: #f4f4f0;
+}
+
+.closing-dialog-head p {
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #a8a8a2;
+}
+
+.closing-dialog-close {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  background: transparent;
+  color: #d8d8d4;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.closing-dialog-close:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.closing-form {
+  display: grid;
+  gap: 14px;
+}
+
+.closing-form label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: #bdbdb8;
+}
+
+.closing-form input,
+.closing-form select,
+.closing-form textarea {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.125);
+  border-radius: 12px;
+  background: #0c0c0c;
+  padding: 12px 14px;
+  color: #f1f1ee;
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+}
+
+.closing-form input:focus,
+.closing-form select:focus,
+.closing-form textarea:focus {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.closing-form textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.closing-form .closing-btn {
+  margin-top: 6px;
+  justify-self: start;
+}
+
+.closing-form-done {
+  padding: 8px 0 4px;
+}
+
+.closing-form-done h3 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: -0.03em;
+}
+
+.closing-form-done p {
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: #a8a8a2;
+}
+
+@keyframes closing-ambient {
+  0%,
+  100% {
+    opacity: 0.65;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate3d(0, -14px, 0) scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .closing-glow,
+  .closing-btn,
+  .closing-btn span {
+    animation: none;
+    transition: none;
+  }
+}
+
+html[data-motion="paused"] .closing-glow {
+  animation: none;
+}
+
+@media (max-width: 760px) {
+  .closing {
+    padding: 75px 0;
+  }
+
+  .closing-heading {
+    font-size: clamp(26px, 8vw, 36px);
+  }
+
+  .closing-inner > p {
+    font-size: 13px;
+    margin: 14px auto 24px;
+  }
+
+  .closing-dialog-inner {
+    padding: 24px 18px 20px;
+  }
+}

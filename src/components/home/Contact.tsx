@@ -1,10 +1,59 @@
 "use client";
 
-import { FormEvent, useState } from "react";
-import { Container } from "@/components/ui/Container";
+import { FormEvent, useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
+import "./closing.css";
+
+const ease = [0.22, 1, 0.36, 1] as const;
+
+const headingLines = [
+  { text: "Let's build", em: false },
+  { text: "something that", em: false },
+  { text: "moves you forward.", em: true },
+] as const;
+
+const innerReveal = {
+  hidden: { opacity: 0, y: 28 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.75, ease, when: "beforeChildren" },
+  },
+} as const;
+
+const lineReveal = {
+  hidden: { y: "110%" },
+  show: (delay: number) => ({
+    y: 0,
+    transition: { duration: 0.7, ease, delay },
+  }),
+} as const;
 
 export function Contact() {
+  const reduce = Boolean(useReducedMotion());
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const [sent, setSent] = useState(false);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    function onClose() {
+      setSent(false);
+    }
+
+    dialog.addEventListener("close", onClose);
+    return () => dialog.removeEventListener("close", onClose);
+  }, []);
+
+  function openDialog() {
+    setSent(false);
+    dialogRef.current?.showModal();
+  }
+
+  function closeDialog() {
+    dialogRef.current?.close();
+  }
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -12,78 +61,139 @@ export function Contact() {
   }
 
   return (
-    <section className="section-pad border-t border-line" id="contact">
-      <Container className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr]">
-        <div>
-          <p className="text-[10px] uppercase tracking-[0.18em] text-[#8a8a86]">
-            Your next chapter
-          </p>
-          <h2 className="mt-4 text-4xl font-medium tracking-[-0.045em] md:text-5xl">
-            Let&apos;s build something that moves you forward.
+    <section className="closing" id="contact">
+      <div className="closing-glow" aria-hidden="true" />
+      <div className="wrap">
+        <motion.div
+          className="closing-inner"
+          initial={reduce ? false : "hidden"}
+          whileInView="show"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={innerReveal}
+        >
+          <div className="eyebrow">Ready when you are</div>
+
+          <h2 className="closing-heading">
+            {headingLines.map((line, index) => {
+              const Tag = line.em ? motion.em : motion.span;
+              return (
+                <span className="closing-heading-line" key={line.text}>
+                  <Tag custom={reduce ? 0 : 0.1 + index * 0.08} variants={lineReveal}>
+                    {line.text}
+                  </Tag>
+                </span>
+              );
+            })}
           </h2>
-          <p className="mt-5 max-w-md text-[15px] text-muted">
-            Tell us where you are today. We&apos;ll explore what better could look like for your
-            hotel or restaurant.
-          </p>
-        </div>
 
-        {sent ? (
-          <div className="glass p-8">
-            <h3 className="text-2xl tracking-[-0.03em]">Message received.</h3>
-            <p className="mt-3 text-[14px] text-muted">
-              This form is a local prototype. Wire it to email when you are ready to take live
-              enquiries.
-            </p>
-          </div>
-        ) : (
-          <form onSubmit={onSubmit} className="grid gap-4">
-            <Field label="Name" name="name" placeholder="Your name" />
-            <Field label="Business" name="business" placeholder="Hotel, restaurant, group" />
-            <Field label="Email" name="email" type="email" placeholder="you@venue.com" />
-            <label className="grid gap-2 text-[12px] text-[#bdbdb8]">
-              What do you need?
-              <textarea
-                name="message"
-                required
-                rows={4}
-                placeholder="CRM, OMS, HMS, website, growth — or a mix."
-                className="rounded-2xl border border-line bg-[#0c0c0c] px-4 py-3 text-[14px] text-[#f1f1ee] outline-none placeholder:text-[#5c5c5c] focus:border-white/30"
-              />
-            </label>
-            <button
-              type="submit"
-              className="mt-2 inline-flex w-fit rounded-full bg-[#f1f1ee] px-6 py-3 text-[12px] tracking-[0.04em] text-[#080808] transition hover:bg-white"
-            >
-              Start a conversation ↗
+          <motion.p
+            initial={reduce ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease, delay: reduce ? 0 : 0.28 }}
+          >
+            Tell us where you are today. Let&apos;s explore what better could look like for your
+            business.
+          </motion.p>
+
+          <motion.div
+            className="closing-actions"
+            initial={reduce ? false : { opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease, delay: reduce ? 0 : 0.36 }}
+          >
+            <button className="closing-btn" type="button" onClick={openDialog}>
+              Start a conversation
+              <span aria-hidden="true">
+                <svg viewBox="0 0 16 16" fill="none">
+                  <path
+                    d="M3 8h9.5M8.5 4.5 13 8l-4.5 3.5"
+                    stroke="currentColor"
+                    strokeWidth="1.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </span>
             </button>
-          </form>
-        )}
-      </Container>
-    </section>
-  );
-}
+          </motion.div>
 
-function Field({
-  label,
-  name,
-  placeholder,
-  type = "text",
-}: {
-  label: string;
-  name: string;
-  placeholder: string;
-  type?: string;
-}) {
-  return (
-    <label className="grid gap-2 text-[12px] text-[#bdbdb8]">
-      {label}
-      <input
-        required
-        name={name}
-        type={type}
-        placeholder={placeholder}
-        className="rounded-full border border-line bg-[#0c0c0c] px-4 py-3 text-[14px] text-[#f1f1ee] outline-none placeholder:text-[#5c5c5c] focus:border-white/30"
-      />
-    </label>
+          <motion.small
+            initial={reduce ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, ease, delay: reduce ? 0 : 0.44 }}
+          >
+            Better operations. Stronger digital presence. One connected partner.
+          </motion.small>
+        </motion.div>
+      </div>
+
+      <dialog className="closing-dialog" ref={dialogRef} aria-labelledby="conversation-title">
+        <div className="closing-dialog-inner">
+          <div className="closing-dialog-head">
+            <div>
+              <h2 id="conversation-title">Your next chapter starts here.</h2>
+              <p>A short brief is enough. The property, what runs today, and what should feel better.</p>
+            </div>
+            <button className="closing-dialog-close" type="button" onClick={closeDialog} aria-label="Close dialog">
+              ×
+            </button>
+          </div>
+
+          {sent ? (
+            <div className="closing-form-done">
+              <h3>Message received.</h3>
+              <p>
+                This form is a local prototype. Wire it to email when you are ready to take live
+                enquiries.
+              </p>
+            </div>
+          ) : (
+            <form className="closing-form" onSubmit={onSubmit}>
+              <label>
+                Your name
+                <input required name="name" autoComplete="name" placeholder="Nino Beridze" />
+              </label>
+              <label>
+                Work email
+                <input
+                  required
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="nino@yourhotel.ge"
+                />
+              </label>
+              <label>
+                Business name
+                <input required name="business" placeholder="Still House, Table / 07, or your property" />
+              </label>
+              <label>
+                What are you interested in?
+                <select name="interest" defaultValue="crm">
+                  <option value="crm">CRM</option>
+                  <option value="oms">Restaurant OMS</option>
+                  <option value="hms">Hotel HMS</option>
+                  <option value="web">Web Development</option>
+                  <option value="growth">Digital Growth</option>
+                  <option value="connected">A connected solution</option>
+                </select>
+              </label>
+              <label>
+                A little about your project
+                <textarea
+                  name="message"
+                  rows={4}
+                  placeholder="Rooms, covers, the tools you use today, and what should feel better."
+                />
+              </label>
+              <button className="closing-btn" type="submit">
+                Send enquiry
+                <span aria-hidden="true">↗</span>
+              </button>
+            </form>
+          )}
+        </div>
+      </dialog>
+    </section>
   );
 }

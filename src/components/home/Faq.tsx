@@ -1,52 +1,114 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { faqItems } from "@/content/faq";
-import { Container } from "@/components/ui/Container";
+import "./faq.css";
+
+const ease = [0.22, 1, 0.36, 1] as const;
+
+const copyReveal = {
+  hidden: { opacity: 0, y: 22 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease, when: "beforeChildren" },
+  },
+} as const;
+
+const lineReveal = {
+  hidden: { y: "110%" },
+  show: (delay: number) => ({
+    y: 0,
+    transition: { duration: 0.7, ease, delay },
+  }),
+} as const;
 
 export function Faq() {
+  const reduce = Boolean(useReducedMotion());
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section className="section-pad border-t border-line" id="faq">
-      <Container className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-        <div>
-          <p className="text-[10px] uppercase tracking-[0.18em] text-[#8a8a86]">Good questions</p>
-          <h2 className="mt-4 text-4xl font-medium tracking-[-0.045em] md:text-5xl">
-            A few things you might be wondering.
+    <section className="faq-section" id="faq">
+      <div className="faq-section-glow" aria-hidden="true" />
+      <div className="wrap faq-layout">
+        <motion.div
+          className="faq-copy"
+          initial={reduce ? false : "hidden"}
+          whileInView="show"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={copyReveal}
+        >
+          <div className="eyebrow">Good questions</div>
+          <h2 className="faq-heading">
+            <span className="faq-heading-line">
+              <motion.span custom={reduce ? 0 : 0.08} variants={lineReveal}>
+                A few things
+              </motion.span>
+            </span>
+            <span className="faq-heading-line">
+              <motion.span custom={reduce ? 0 : 0.16} variants={lineReveal}>
+                you might be
+              </motion.span>
+            </span>
+            <span className="faq-heading-line">
+              <motion.em custom={reduce ? 0 : 0.24} variants={lineReveal}>
+                wondering.
+              </motion.em>
+            </span>
           </h2>
-        </div>
-        <div className="border-t border-line">
+        </motion.div>
+
+        <div className="faq-stack">
           {faqItems.map((item, index) => {
             const isOpen = open === index;
+
             return (
-              <div key={item.question} className="border-b border-line">
+              <motion.div
+                key={item.question}
+                className={`faq-row${isOpen ? " is-open" : ""}`}
+                initial={reduce ? false : { opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.55, ease, delay: reduce ? 0 : 0.08 + index * 0.07 }}
+              >
                 <button
                   type="button"
+                  className="faq-trigger"
+                  aria-expanded={isOpen}
                   onClick={() => setOpen(isOpen ? null : index)}
-                  className="flex w-full items-center justify-between gap-6 py-5 text-left text-[16px]"
                 >
-                  {item.question}
-                  <span className="text-[#6f6f6f]">{isOpen ? "−" : "+"}</span>
+                  <span className="faq-q">{item.question}</span>
+                  <span className="faq-icon" aria-hidden="true">
+                    <i className="faq-icon-h" />
+                    <i className="faq-icon-v" />
+                  </span>
                 </button>
                 <AnimatePresence initial={false}>
                   {isOpen ? (
-                    <motion.p
-                      initial={{ height: 0, opacity: 0 }}
+                    <motion.div
+                      className="faq-answer"
+                      initial={reduce ? false : { height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden pb-5 text-[14px] text-muted"
+                      exit={reduce ? undefined : { height: 0, opacity: 0 }}
+                      transition={{ duration: 0.42, ease }}
                     >
-                      {item.answer}
-                    </motion.p>
+                      <motion.p
+                        initial={reduce ? false : { opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={reduce ? undefined : { opacity: 0, y: 6 }}
+                        transition={{ duration: 0.36, ease, delay: reduce ? 0 : 0.06 }}
+                      >
+                        {item.answer}
+                      </motion.p>
+                    </motion.div>
                   ) : null}
                 </AnimatePresence>
-              </div>
+              </motion.div>
             );
           })}
         </div>
-      </Container>
+      </div>
     </section>
   );
 }

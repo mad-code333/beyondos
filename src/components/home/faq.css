@@ -1,0 +1,235 @@
+.faq-section {
+  position: relative;
+  overflow: clip;
+  padding: 100px 0;
+  isolation: isolate;
+  border-top: 1px solid rgba(255, 255, 255, 0.063);
+}
+
+.faq-section-glow {
+  position: absolute;
+  inset: 12% auto auto 6%;
+  z-index: 0;
+  width: min(520px, 46vw);
+  height: 58%;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 30% 40%, rgba(255, 255, 255, 0.016), transparent 68%);
+  filter: blur(10px);
+  animation: faq-ambient 18s ease-in-out infinite;
+}
+
+.faq-layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: 80px;
+  align-items: start;
+}
+
+.faq-copy {
+  max-width: none;
+}
+
+.faq-copy .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 24px;
+  font-family: var(--font-display), Orbitron, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  color: #9a9a94;
+}
+
+.faq-copy .eyebrow::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  flex: none;
+  background: #858585;
+}
+
+.faq-heading {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  font-family: var(--font-display), Orbitron, sans-serif;
+  font-size: clamp(28px, 3.6vw, 44px);
+  font-weight: 800;
+  letter-spacing: 0.045em;
+  line-height: 1.12;
+  text-transform: uppercase;
+  color: #f4f4f0;
+}
+
+.faq-heading-line {
+  display: block;
+  overflow: hidden;
+}
+
+.faq-heading-line > * {
+  display: inline-block;
+}
+
+.faq-heading em {
+  font-family: inherit;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.045em;
+  color: #f4f4f0;
+}
+
+.faq-stack {
+  min-width: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.094);
+}
+
+.faq-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.094);
+}
+
+.faq-trigger {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  padding: 22px 0;
+  border: 0;
+  background: transparent;
+  appearance: none;
+  font-family: var(--font-manrope), Manrope, sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  color: #f4f4f0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.faq-trigger:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.28);
+  outline-offset: 4px;
+}
+
+.faq-q {
+  min-width: 0;
+}
+
+.faq-icon {
+  position: relative;
+  flex: none;
+  width: 14px;
+  height: 14px;
+  margin-top: 4px;
+}
+
+.faq-icon i {
+  position: absolute;
+  display: block;
+  background: #888;
+  border-radius: 1px;
+  transition:
+    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.28s ease;
+}
+
+.faq-icon .faq-icon-h {
+  top: 50%;
+  left: 0;
+  width: 14px;
+  height: 1.5px;
+  transform: translateY(-50%);
+}
+
+.faq-icon .faq-icon-v {
+  top: 0;
+  left: 50%;
+  width: 1.5px;
+  height: 14px;
+  transform: translateX(-50%);
+}
+
+.faq-row.is-open .faq-icon-v {
+  transform: translateX(-50%) scaleY(0);
+  opacity: 0;
+}
+
+.faq-answer {
+  overflow: hidden;
+}
+
+.faq-answer p {
+  margin: 0;
+  padding: 0 28px 22px 0;
+  max-width: 500px;
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.7;
+  color: #b9b9b2;
+}
+
+@keyframes faq-ambient {
+  0%,
+  100% {
+    opacity: 0.7;
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    opacity: 1;
+    transform: translate3d(12px, -10px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-section-glow,
+  .faq-icon i {
+    animation: none;
+    transition: none;
+  }
+}
+
+html[data-motion="paused"] .faq-section-glow {
+  animation: none;
+}
+
+@media (max-width: 1100px) {
+  .faq-layout {
+    gap: 48px;
+  }
+}
+
+@media (max-width: 760px) {
+  .faq-section {
+    padding: 70px 0;
+  }
+
+  .faq-layout {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .faq-copy {
+    max-width: none;
+  }
+
+  .faq-heading {
+    font-size: clamp(26px, 8vw, 37px);
+  }
+
+  .faq-trigger {
+    font-size: 16px;
+    padding: 18px 0;
+  }
+
+  .faq-answer p {
+    font-size: 14px;
+    padding-bottom: 18px;
+  }
+}
