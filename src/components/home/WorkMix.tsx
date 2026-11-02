@@ -1,31 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import "./work-mix.css";
 
 const ease = [0.22, 1, 0.36, 1] as const;
-
-const cases = [
-  {
-    tag: "Hospitality / Stays",
-    kicker: "Still House · Boutique stay",
-    caption: "A slower kind of stay.",
-    title: "A stay, from discovery to arrival.",
-    tags: "Website · Guest journey · Hotel HMS",
-    image: "/media/suite.jpg",
-    alt: "A boutique hotel bedroom in morning light, linen and a chair by the window.",
-  },
-  {
-    tag: "Hospitality / Restaurants",
-    kicker: "Table / 07 · Restaurant",
-    caption: "Good service. Behind the scenes.",
-    title: "A service that moves as one.",
-    tags: "Restaurant OMS · Brand · Digital presence",
-    image: "/media/dining.jpg",
-    alt: "A restaurant dining room set for service, warm light on empty tables.",
-  },
-] as const;
 
 const rows = [
   {
@@ -101,48 +79,8 @@ export function WorkMix() {
             <br />
             <em>comes together.</em>
           </h2>
-          <p>
-            A boutique stay and a dining room, shown as directions — then the practice behind
-            hotels, restaurants and growth.
-          </p>
+          <p>The practice behind hotels, restaurants and growth — held in one place.</p>
         </motion.div>
-
-        <div className="case-grid">
-          {cases.map((item, index) => (
-            <motion.div
-              key={item.title}
-              custom={reduce ? 0 : 0.08 + index * 0.1}
-              variants={fadeUp}
-              initial={reduce ? false : "hidden"}
-              whileInView="show"
-              viewport={{ once: true, margin: "-40px" }}
-            >
-              <button className="case-card" type="button">
-                <div className="case-art">
-                  <Image
-                    src={item.image}
-                    alt={item.alt}
-                    fill
-                    sizes="(max-width: 760px) 100vw, 46vw"
-                    className="case-photo"
-                  />
-                  <span className="case-tag">{item.tag}</span>
-                  <span className="case-caption">
-                    <span className="mono">{item.kicker}</span>
-                    {item.caption}
-                  </span>
-                </div>
-                <div className="case-info">
-                  <div>
-                    <h3>{item.title}</h3>
-                    <p>{item.tags}</p>
-                  </div>
-                  <span aria-hidden>↗</span>
-                </div>
-              </button>
-            </motion.div>
-          ))}
-        </div>
 
         <div className="portfolio-rows">
           {rows.map((row, index) => (
