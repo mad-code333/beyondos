@@ -93,17 +93,28 @@ export function Header() {
             type="button"
             aria-expanded={servicesOpen}
             aria-controls="servicesMenu"
-            className={cn(servicesActive && "active")}
+            className={cn(servicesActive && "active", servicesOpen && "open")}
             onClick={() => setServicesOpen((value) => !value)}
           >
-            Services <span>⌄</span>
+            Services
+            <span className="nav-chevron" aria-hidden="true">
+              <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
+                <path
+                  d="M1 1.25L5 4.75L9 1.25"
+                  stroke="currentColor"
+                  strokeWidth="1.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
           </button>
           <div className="dropdown" id="servicesMenu" hidden={!servicesOpen}>
-            <span className="mono">WHAT WE BUILD</span>
+            <span className="dropdown-kicker mono">WHAT WE BUILD</span>
             {serviceItems.map((item) => (
               <Link key={item.href} href={item.href} onClick={closeAll}>
-                {item.label}
-                <small>{item.note}</small>
+                <span className="drop-label">{item.label}</span>
+                <span className="drop-note">{item.note}</span>
               </Link>
             ))}
           </div>
@@ -145,10 +156,11 @@ export function Header() {
               <Link href="/" onClick={closeAll} className={cn(pathname === "/" && "active")}>
                 Home
               </Link>
-              <p className="mobile-nav-label">Services</p>
+              <p className="mobile-nav-label">What we build</p>
               {serviceItems.map((item) => (
-                <Link key={item.href} href={item.href} onClick={closeAll}>
-                  {item.label}
+                <Link key={item.href} href={item.href} onClick={closeAll} className="mobile-service-link">
+                  <span>{item.label}</span>
+                  <small>{item.note}</small>
                 </Link>
               ))}
               {links.slice(1).map((link) => (
