@@ -10,7 +10,7 @@
 
 .service-hero {
   position: relative;
-  padding: 70px 0 80px;
+  padding: 88px 0 72px;
   background: radial-gradient(at 80% 50%, rgba(255, 255, 255, 0.035), transparent 55%);
 }
 
@@ -33,10 +33,12 @@
   align-items: center;
   gap: 12px;
   margin-bottom: 22px;
-  font-size: 11px;
-  letter-spacing: 0.16em;
+  font-family: var(--font-display), Orbitron, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #8f8f88;
+  color: #9a9a94;
 }
 
 .service-hero .eyebrow::before {
@@ -48,23 +50,29 @@
 
 .service-hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-  gap: 48px;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 50px;
   align-items: center;
 }
 
 .service-hero h1 {
-  font-size: clamp(40px, 4.7vw, 68px);
-  font-weight: 500;
-  line-height: 1.06;
-  letter-spacing: -0.045em;
+  margin: 0;
+  font-family: var(--font-display), Orbitron, sans-serif;
+  font-size: clamp(48px, 5.8vw, 80px);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #f4f4f0;
 }
 
 .service-hero h1 em,
 .service-page h2 em {
-  font-style: italic;
-  font-weight: 500;
-  color: #d8d8d2;
+  font-family: inherit;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.045em;
+  color: #f4f4f0;
 }
 
 .service-hero p {
@@ -79,7 +87,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-top: 32px;
+  margin-top: 6px;
 }
 
 .svc-btn {
@@ -87,15 +95,17 @@
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  min-height: 48px;
-  padding: 12px 20px;
+  min-height: 62px;
+  padding: 14px 22px;
   border: 1px solid #ececea;
   border-radius: 100px;
   background: #ececea;
   color: #0e0e0e;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  font-family: var(--font-display), Orbitron, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   text-decoration: none;
   transition:
     transform 0.25s var(--svc-ease),
@@ -163,14 +173,15 @@
 
 .service-section {
   padding: 100px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.125);
 }
 
 .service-section .section-head {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 24px;
-  margin-bottom: 42px;
+  gap: 40px;
+  margin-bottom: 40px;
 }
 
 .service-section .section-head.center-head {
@@ -185,10 +196,12 @@
   justify-content: center;
   gap: 12px;
   margin-bottom: 18px;
-  font-size: 11px;
-  letter-spacing: 0.16em;
+  font-family: var(--font-display), Orbitron, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #8f8f88;
+  color: #9a9a94;
 }
 
 .service-section .section-head .eyebrow::before {
@@ -199,10 +212,14 @@
 }
 
 .service-section h2 {
-  font-size: clamp(36px, 4.4vw, 56px);
-  font-weight: 500;
-  line-height: 1.08;
-  letter-spacing: -0.04em;
+  margin: 0;
+  font-family: var(--font-display), Orbitron, sans-serif;
+  font-size: clamp(28px, 3.6vw, 44px);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #f4f4f0;
 }
 
 .service-section .section-head > p {
@@ -260,6 +277,7 @@
 }
 
 .feature-card h3 {
+  font-family: var(--font-display), Orbitron, sans-serif;
   font-size: 22px;
   font-weight: 500;
   letter-spacing: -0.03em;
@@ -386,8 +404,9 @@
 }
 
 .service-row h3 {
+  font-family: var(--font-display), Orbitron, sans-serif;
   font-size: 28px;
-  font-weight: 560;
+  font-weight: 500;
   letter-spacing: -0.035em;
 }
 
