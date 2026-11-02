@@ -25,8 +25,16 @@ export function ServiceView({ service }: { service: Service }) {
     target: photoRef,
     offset: ["start end", "end start"],
   });
-  const photoY = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : ["-6%", "6%"]);
-  const photoScale = useTransform(scrollYProgress, [0, 1], reduce ? [1, 1] : [1.08, 1]);
+  const photoY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reduce ? ["0%", "0%"] : ["-6%", "6%"],
+  );
+  const photoScale = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reduce ? [1, 1] : [1.08, 1],
+  );
 
   return (
     <main className="service-page">

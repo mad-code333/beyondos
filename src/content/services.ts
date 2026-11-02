@@ -40,8 +40,8 @@ export const services: Service[] = [
     heroTitle: "Turn a first hello into a guest you know.",
     heroLead:
       "Profiles, enquiries and follow-ups in one workspace, so the next conversation starts with what was already said.",
-    heroImage: "/media/desk.jpg",
-    heroAlt: "A hotel reception desk in stone and warm lamplight, before the first guest.",
+    heroImage: "/media/residence.jpg",
+    heroAlt: "A hotel dining room and kitchen, table set for guests.",
     conceptLine: "Every relationship",
     conceptEm: "remembered.",
     workspacePill: "CRM · Interactive preview",
