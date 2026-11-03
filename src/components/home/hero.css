@@ -4,7 +4,7 @@
   overflow: clip;
   margin-top: -84px;
   min-height: 100svh;
-  padding: 96px 0 22px;
+  padding: calc(84px + 72px) 0 22px;
   background: #060606;
   color: #f6f6f1;
 }
@@ -72,7 +72,7 @@
 .hero-beyond-mark {
   position: absolute;
   left: 52%;
-  top: 8%;
+  top: calc(84px + 72px);
   z-index: 1;
   translate: -42%;
   font-family: var(--font-display), Manrope, sans-serif;
@@ -96,7 +96,7 @@
   justify-content: space-between;
   gap: 24px;
   width: min(1320px, calc(100% - 64px));
-  margin: 12px auto 0;
+  margin: 0 auto;
   font-family: var(--font-display), Manrope, sans-serif;
   font-size: 9px;
   font-weight: 600;
@@ -763,7 +763,7 @@
   }
 
   .hero-beyond-mark {
-    top: 8%;
+    top: calc(84px + 40px);
     font-size: clamp(96px, 28vw, 160px);
     opacity: 0.1;
   }
