@@ -9,7 +9,6 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import {
-  AnimatePresence,
   LayoutGroup,
   motion,
   useMotionTemplate,
@@ -293,17 +292,15 @@ export function ServicesList() {
             aria-label={`${current.name} preview`}
             aria-hidden={!live}
           >
-            <AnimatePresence initial={false}>
-              {live ? (
-                <PreviewPanel
-                  key={current.slug}
-                  slug={current.slug}
-                  name={current.name}
-                  preview={preview}
-                  reduce={reduce}
-                />
-              ) : null}
-            </AnimatePresence>
+            {/* Mount once while live — content swaps in place; enter anim runs only on first appear. */}
+            {live ? (
+              <PreviewPanel
+                slug={current.slug}
+                name={current.name}
+                preview={preview}
+                reduce={reduce}
+              />
+            ) : null}
           </aside>
 
           <div className="svc-side-nav" aria-label="Browse services">
@@ -417,7 +414,6 @@ function PreviewPanel({
       className={`svc-preview is-${slug}`}
       initial={reduce ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
       transition={reduce ? { duration: 0 } : snap}
     >
       <motion.div
@@ -429,7 +425,7 @@ function PreviewPanel({
         onPointerLeave={onLeave}
       >
         <LightBand reduce={reduce} />
-        <ScanBand variant={preview.scan} reduce={reduce} />
+        <ScanBand key={preview.scan} variant={preview.scan} reduce={reduce} />
 
         <div className="svc-preview-head">
           <span className="mono svc-preview-kicker">{preview.kicker}</span>

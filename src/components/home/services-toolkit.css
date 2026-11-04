@@ -199,19 +199,22 @@ html[data-motion="paused"] .svc-glow {
   position: relative;
   z-index: 1;
   display: grid;
-  /* Trailing track lets the white pill run under the preview card (red zone)
-     while the orange → stays visible just before that overlay. */
-  grid-template-columns: minmax(160px, 220px) minmax(0, 1fr) 44px min(300px, 28vw);
+  grid-template-columns: minmax(160px, 220px) minmax(0, 1fr);
   align-items: center;
   column-gap: clamp(14px, 1.8vw, 24px);
   height: var(--svc-row);
-  padding: 0 clamp(12px, 1.2vw, 20px) 0 clamp(24px, 2.2vw, 36px);
+  /* Extra right padding reserves the end-of-pill slot for .svc-go */
+  padding: 0 calc(36px + clamp(14px, 1.4vw, 22px)) 0 clamp(24px, 2.2vw, 36px);
   color: #a8a89e;
   text-decoration: none;
   isolation: isolate;
   transition:
     color 0.2s cubic-bezier(0.22, 1, 0.36, 1),
     opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.svc-line.is-live {
+  z-index: 7;
 }
 
 .svc-stage.is-idle .svc-line {
@@ -325,9 +328,12 @@ html[data-motion="paused"] .svc-glow {
 }
 
 .svc-go {
+  position: absolute;
+  top: 50%;
+  right: clamp(14px, 1.4vw, 22px);
+  z-index: 2;
   display: inline-grid;
   place-items: center;
-  justify-self: end;
   width: 36px;
   height: 36px;
   border-radius: 999px;
@@ -338,6 +344,7 @@ html[data-motion="paused"] .svc-glow {
   line-height: 1;
   opacity: 0;
   pointer-events: none;
+  transform: translateY(-50%);
   transition: opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -817,11 +824,15 @@ html[data-motion="paused"] .svc-glow {
 
   .svc-line {
     --svc-row: auto;
-    grid-template-columns: minmax(0, 1fr) 40px;
+    grid-template-columns: minmax(0, 1fr);
     height: auto;
     min-height: 72px;
-    padding: 16px 12px;
+    padding: 16px 52px 16px 12px;
     column-gap: 10px;
+  }
+
+  .svc-line.is-live {
+    z-index: 1;
   }
 
   .svc-meta {
@@ -833,7 +844,7 @@ html[data-motion="paused"] .svc-glow {
   }
 
   .svc-lead {
-    grid-column: 1 / -1;
+    grid-column: 1;
     grid-row: 1;
     display: flex;
     flex-wrap: wrap;
@@ -855,8 +866,7 @@ html[data-motion="paused"] .svc-glow {
   }
 
   .svc-go {
-    grid-column: 2;
-    grid-row: 2;
+    right: 12px;
   }
 
   .svc-preview-rail {

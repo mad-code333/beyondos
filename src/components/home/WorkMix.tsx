@@ -19,10 +19,12 @@ function pad(value: number) {
   return String(value).padStart(2, "0");
 }
 
-function strideOf(rail: HTMLElement) {
+function strideOf(rail: HTMLElement | null | undefined) {
+  if (!rail || !(rail instanceof Element)) return 0;
   const card = rail.querySelector<HTMLElement>(".work-project");
   if (!card) return 0;
-  const gap = Number.parseFloat(getComputedStyle(rail).columnGap || getComputedStyle(rail).gap) || 0;
+  const styles = getComputedStyle(rail);
+  const gap = Number.parseFloat(styles.columnGap || styles.gap) || 0;
   return card.getBoundingClientRect().width + gap;
 }
 
