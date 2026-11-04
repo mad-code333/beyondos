@@ -20,7 +20,8 @@ const TBILISI = { lat: 41.7151, lon: 44.8271 } as const;
 const RADIUS = 1.55;
 /** Rest pose: Caucasus / Georgia facing camera, slight axial tilt */
 const BASE_ROT = { x: 0.18, y: -0.72, z: 0.04 } as const;
-const AUTO_SPEED = 0.085;
+const AUTO_SPEED = 0.09;
+const PITCH_DRIFT = 0.012;
 
 function latLonToVec3(lat: number, lon: number, radius: number) {
   const phi = ((90 - lat) * Math.PI) / 180;
@@ -188,14 +189,19 @@ function EarthGroup({ reduceMotion, drag }: GlobeSceneProps) {
   const group = useRef<THREE.Group>(null);
   const positions = useEarthDots();
   const auto = useRef(0);
+  const clockRef = useRef(0);
 
   useFrame((_, delta) => {
     if (!group.current) return;
     const dt = Math.min(delta, 0.05);
-    if (!reduceMotion) auto.current += dt * AUTO_SPEED;
+    if (!reduceMotion) {
+      auto.current += dt * AUTO_SPEED;
+      clockRef.current += dt;
+    }
+    const pitchWave = reduceMotion ? 0 : Math.sin(clockRef.current * 0.35) * PITCH_DRIFT;
     group.current.rotation.y = BASE_ROT.y + auto.current + drag.current.yaw;
     group.current.rotation.x = THREE.MathUtils.clamp(
-      BASE_ROT.x + drag.current.pitch,
+      BASE_ROT.x + drag.current.pitch + pitchWave,
       -0.35,
       0.55,
     );
@@ -215,9 +221,10 @@ function EarthGroup({ reduceMotion, drag }: GlobeSceneProps) {
 function Lights() {
   return (
     <>
-      <ambientLight intensity={0.28} />
-      <directionalLight position={[4.2, 2.6, 3.4]} intensity={1.15} color="#ffffff" />
-      <directionalLight position={[-3.4, -1.0, -2.6]} intensity={0.2} color="#8a8a88" />
+      <ambientLight intensity={0.24} />
+      <directionalLight position={[4.4, 2.8, 3.6]} intensity={1.35} color="#ffffff" />
+      <directionalLight position={[-3.6, -0.8, -2.8]} intensity={0.28} color="#9a9a94" />
+      <pointLight position={[0.2, 1.8, 2.4]} intensity={0.35} color="#d8d8d0" distance={8} />
     </>
   );
 }
