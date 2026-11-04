@@ -16,13 +16,19 @@ import {
 } from "react";
 import * as THREE from "three";
 
+/** Tbilisi, Georgia — WGS84 */
 const TBILISI = { lat: 41.7151, lon: 44.8271 } as const;
 const RADIUS = 1.55;
-/** Rest pose: Caucasus / Georgia facing camera, slight axial tilt */
-const BASE_ROT = { x: 0.18, y: -0.72, z: 0.04 } as const;
-const AUTO_SPEED = 0.09;
-const PITCH_DRIFT = 0.012;
+/** Caucasus facing camera at rest */
+const BASE_ROT = { x: 0.16, y: -0.78, z: 0.03 } as const;
+/** One full revolution every ~75 seconds */
+const PERIOD_SEC = 75;
+const AUTO_SPEED = (Math.PI * 2) / PERIOD_SEC;
 
+/**
+ * Equirectangular → Three.js sphere.
+ * Lon west→east, lat north→south; X left-handed flip matches common globe demos.
+ */
 function latLonToVec3(lat: number, lon: number, radius: number) {
   const phi = ((90 - lat) * Math.PI) / 180;
   const theta = ((lon + 180) * Math.PI) / 180;
@@ -33,49 +39,68 @@ function latLonToVec3(lat: number, lon: number, radius: number) {
   );
 }
 
+type DotData = {
+  positions: Float32Array;
+  colors: Float32Array | null;
+};
+
 function useEarthDots() {
-  const [positions, setPositions] = useState<Float32Array | null>(null);
+  const [data, setData] = useState<DotData | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/media/earth-dots.bin")
-      .then((res) => {
-        if (!res.ok) throw new Error("dots missing");
-        return res.arrayBuffer();
-      })
-      .then((buf) => {
-        if (!cancelled) setPositions(new Float32Array(buf));
-      })
-      .catch(() => {
-        if (!cancelled) setPositions(buildFallbackDots());
-      });
+
+    async function load() {
+      try {
+        const [posRes, colRes] = await Promise.all([
+          fetch("/media/earth-dots.bin"),
+          fetch("/media/earth-dot-colors.bin").catch(() => null),
+        ]);
+        if (!posRes.ok) throw new Error("dots missing");
+        const posBuf = await posRes.arrayBuffer();
+        let colors: Float32Array | null = null;
+        if (colRes?.ok) {
+          const colBuf = await colRes.arrayBuffer();
+          if (colBuf.byteLength === posBuf.byteLength) {
+            colors = new Float32Array(colBuf);
+          }
+        }
+        if (!cancelled) {
+          setData({ positions: new Float32Array(posBuf), colors });
+        }
+      } catch {
+        if (!cancelled) {
+          setData({ positions: buildFallbackDots(), colors: null });
+        }
+      }
+    }
+
+    void load();
     return () => {
       cancelled = true;
     };
   }, []);
 
-  return positions;
+  return data;
 }
 
 function buildFallbackDots() {
   const pts: number[] = [];
-  const r = 1;
-  // Sparse Fibonacci-ish sphere sample — better than pure random blobs
-  const n = 12000;
+  const n = 16000;
   const golden = Math.PI * (3 - Math.sqrt(5));
   for (let i = 0; i < n; i++) {
     const y = 1 - (i / (n - 1)) * 2;
     const radiusAtY = Math.sqrt(Math.max(0, 1 - y * y));
     const theta = golden * i;
-    // Bias toward northern landmasses for recognizable silhouette
-    const lat = Math.asin(y) * (180 / Math.PI);
+    const lat = (Math.asin(y) * 180) / Math.PI;
     const lon = ((theta * 180) / Math.PI) % 360;
     const keep =
-      (lat > -55 && Math.abs(lon % 90) > 12) ||
-      (lat > 20 && lat < 75) ||
-      (lat > -40 && lat < 15 && lon > 100 && lon < 160);
-    if (!keep && i % 5 !== 0) continue;
-    pts.push(r * Math.cos(theta) * radiusAtY, r * y, r * Math.sin(theta) * radiusAtY);
+      (lat > -60 && Math.abs(((lon % 360) + 360) % 90) > 8) ||
+      (lat > 15 && lat < 75) ||
+      (lat > -45 && lat < 20 && lon > 90 && lon < 180);
+    if (!keep && i % 4 !== 0) continue;
+    const v = latLonToVec3(lat, ((lon + 540) % 360) - 180, 1);
+    pts.push(v.x, v.y, v.z);
   }
   return new Float32Array(pts);
 }
@@ -90,26 +115,31 @@ type GlobeSceneProps = {
   drag: MutableRefObject<DragState>;
 };
 
-function LandDots({ positions }: { positions: Float32Array }) {
+function LandDots({ data }: { data: DotData }) {
   const geom = useMemo(() => {
     const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    g.setAttribute("position", new THREE.BufferAttribute(data.positions, 3));
+    if (data.colors) {
+      g.setAttribute("color", new THREE.BufferAttribute(data.colors, 3));
+    }
     g.computeBoundingSphere();
     return g;
-  }, [positions]);
+  }, [data]);
 
   useEffect(() => () => geom.dispose(), [geom]);
 
   return (
     <points geometry={geom} scale={RADIUS} frustumCulled={false}>
       <pointsMaterial
-        color="#e8e8e2"
-        size={0.011}
+        color="#ecece6"
+        size={0.0095}
         sizeAttenuation
         transparent
-        opacity={0.92}
+        opacity={0.94}
         depthWrite={false}
         toneMapped={false}
+        vertexColors={!!data.colors}
+        blending={THREE.NormalBlending}
       />
     </points>
   );
@@ -118,22 +148,24 @@ function LandDots({ positions }: { positions: Float32Array }) {
 function Atmosphere() {
   return (
     <>
-      <mesh scale={RADIUS * 1.045}>
+      {/* Soft outer halo */}
+      <mesh scale={RADIUS * 1.055}>
         <sphereGeometry args={[1, 64, 64]} />
         <meshBasicMaterial
-          color="#c8c8c0"
+          color="#c4c4bc"
           transparent
-          opacity={0.055}
+          opacity={0.045}
           side={THREE.BackSide}
           depthWrite={false}
         />
       </mesh>
-      <mesh scale={RADIUS * 1.018}>
+      {/* Delicate rim */}
+      <mesh scale={RADIUS * 1.022}>
         <sphereGeometry args={[1, 64, 64]} />
         <meshBasicMaterial
-          color="#9a9a94"
+          color="#a8a8a0"
           transparent
-          opacity={0.04}
+          opacity={0.055}
           side={THREE.FrontSide}
           depthWrite={false}
         />
@@ -144,41 +176,79 @@ function Atmosphere() {
 
 function CoreSphere() {
   return (
-    <mesh scale={RADIUS * 0.994}>
+    <mesh scale={RADIUS * 0.992}>
       <sphereGeometry args={[1, 64, 64]} />
-      <meshStandardMaterial color="#040404" roughness={0.96} metalness={0.04} />
+      <meshStandardMaterial color="#030303" roughness={0.97} metalness={0.02} />
+    </mesh>
+  );
+}
+
+/** Invisible depth writer so the gold pin occludes on the far side */
+function OcclusionSphere() {
+  return (
+    <mesh scale={RADIUS * 0.999}>
+      <sphereGeometry args={[1, 48, 48]} />
+      <meshBasicMaterial colorWrite={false} depthWrite />
     </mesh>
   );
 }
 
 function TbilisiPin({ reduceMotion }: { reduceMotion: boolean }) {
-  const pos = useMemo(() => latLonToVec3(TBILISI.lat, TBILISI.lon, RADIUS * 1.014), []);
+  const group = useRef<THREE.Group>(null);
   const glow = useRef<THREE.Mesh>(null);
+  const core = useRef<THREE.Mesh>(null);
+  const pos = useMemo(() => latLonToVec3(TBILISI.lat, TBILISI.lon, RADIUS * 1.01), []);
+  const world = useMemo(() => new THREE.Vector3(), []);
+  const normal = useMemo(() => new THREE.Vector3(), []);
+  const camDir = useMemo(() => new THREE.Vector3(), []);
 
-  useFrame(({ clock }) => {
-    if (!glow.current || reduceMotion) return;
-    const s = 1 + Math.sin(clock.elapsedTime * 1.6) * 0.06;
-    glow.current.scale.setScalar(s);
+  useFrame(({ camera, clock }) => {
+    if (!group.current) return;
+    group.current.getWorldPosition(world);
+    normal.copy(world).normalize();
+    camDir.copy(camera.position).sub(world).normalize();
+    const facing = normal.dot(camDir);
+    // Soft fade when rotating to the far side
+    const visible = THREE.MathUtils.smoothstep(facing, -0.08, 0.12);
+    group.current.visible = visible > 0.02;
+    if (glow.current) {
+      (glow.current.material as THREE.MeshBasicMaterial).opacity = 0.2 * visible;
+    }
+    if (core.current) {
+      (core.current.material as THREE.MeshBasicMaterial).opacity = visible;
+    }
+    if (!reduceMotion && glow.current) {
+      const s = 1 + Math.sin(clock.elapsedTime * 1.4) * 0.05 * visible;
+      glow.current.scale.setScalar(s);
+    }
   });
 
   return (
-    <group position={pos}>
+    <group ref={group} position={pos}>
       <mesh ref={glow}>
-        <sphereGeometry args={[0.026, 16, 16]} />
-        <meshBasicMaterial color="#f0c14a" transparent opacity={0.18} depthWrite={false} />
-      </mesh>
-      <mesh>
-        <sphereGeometry args={[0.013, 16, 16]} />
-        <meshBasicMaterial color="#f5c84a" toneMapped={false} />
-      </mesh>
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[0.02, 0.03, 32]} />
+        <sphereGeometry args={[0.024, 16, 16]} />
         <meshBasicMaterial
           color="#f0c14a"
           transparent
-          opacity={0.45}
+          opacity={0.2}
+          depthWrite={false}
+          depthTest
+          toneMapped={false}
+        />
+      </mesh>
+      <mesh ref={core}>
+        <sphereGeometry args={[0.011, 16, 16]} />
+        <meshBasicMaterial color="#f5c84a" transparent depthTest toneMapped={false} />
+      </mesh>
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[0.016, 0.026, 28]} />
+        <meshBasicMaterial
+          color="#f0c14a"
+          transparent
+          opacity={0.4}
           side={THREE.DoubleSide}
           depthWrite={false}
+          depthTest
         />
       </mesh>
     </group>
@@ -187,23 +257,21 @@ function TbilisiPin({ reduceMotion }: { reduceMotion: boolean }) {
 
 function EarthGroup({ reduceMotion, drag }: GlobeSceneProps) {
   const group = useRef<THREE.Group>(null);
-  const positions = useEarthDots();
+  const data = useEarthDots();
   const auto = useRef(0);
-  const clockRef = useRef(0);
 
   useFrame((_, delta) => {
     if (!group.current) return;
-    const dt = Math.min(delta, 0.05);
+    // Cap only pathological stalls; keep motion continuous
+    const dt = Math.min(Math.max(delta, 0), 0.05);
     if (!reduceMotion) {
       auto.current += dt * AUTO_SPEED;
-      clockRef.current += dt;
     }
-    const pitchWave = reduceMotion ? 0 : Math.sin(clockRef.current * 0.35) * PITCH_DRIFT;
     group.current.rotation.y = BASE_ROT.y + auto.current + drag.current.yaw;
     group.current.rotation.x = THREE.MathUtils.clamp(
-      BASE_ROT.x + drag.current.pitch + pitchWave,
-      -0.35,
-      0.55,
+      BASE_ROT.x + drag.current.pitch,
+      -0.32,
+      0.48,
     );
     group.current.rotation.z = BASE_ROT.z;
   });
@@ -211,8 +279,9 @@ function EarthGroup({ reduceMotion, drag }: GlobeSceneProps) {
   return (
     <group ref={group}>
       <CoreSphere />
+      <OcclusionSphere />
       <Atmosphere />
-      {positions ? <LandDots positions={positions} /> : null}
+      {data ? <LandDots data={data} /> : null}
       <TbilisiPin reduceMotion={reduceMotion} />
     </group>
   );
@@ -221,10 +290,10 @@ function EarthGroup({ reduceMotion, drag }: GlobeSceneProps) {
 function Lights() {
   return (
     <>
-      <ambientLight intensity={0.24} />
-      <directionalLight position={[4.4, 2.8, 3.6]} intensity={1.35} color="#ffffff" />
-      <directionalLight position={[-3.6, -0.8, -2.8]} intensity={0.28} color="#9a9a94" />
-      <pointLight position={[0.2, 1.8, 2.4]} intensity={0.35} color="#d8d8d0" distance={8} />
+      <ambientLight intensity={0.22} />
+      <directionalLight position={[4.6, 2.9, 3.8]} intensity={1.25} color="#ffffff" />
+      <directionalLight position={[-3.8, -0.6, -2.6]} intensity={0.22} color="#9a9a94" />
+      <pointLight position={[0.15, 1.6, 2.6]} intensity={0.28} color="#d4d4cc" distance={9} />
     </>
   );
 }
@@ -232,7 +301,7 @@ function Lights() {
 function CameraRig() {
   const { camera } = useThree();
   useEffect(() => {
-    camera.position.set(0, 0.08, 4.25);
+    camera.position.set(0, 0.06, 4.2);
     camera.lookAt(0, 0, 0);
   }, [camera]);
   return null;
@@ -297,11 +366,12 @@ export function EarthGlobe({ className }: EarthGlobeProps) {
     const dx = e.clientX - last.current.x;
     const dy = e.clientY - last.current.y;
     last.current = { x: e.clientX, y: e.clientY };
-    drag.current.yaw += dx * 0.0045;
+    // Gentle drag offset — auto-rotation never stops
+    drag.current.yaw += dx * 0.0038;
     drag.current.pitch = THREE.MathUtils.clamp(
-      drag.current.pitch + dy * 0.0028,
-      -0.45,
-      0.45,
+      drag.current.pitch + dy * 0.0024,
+      -0.4,
+      0.4,
     );
   }, []);
 
