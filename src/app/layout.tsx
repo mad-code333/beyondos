@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Manrope, Orbitron } from "next/font/google";
+import { CursorRing } from "@/components/home/CursorRing";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import "./globals.css";
@@ -13,6 +14,7 @@ const manrope = Manrope({
 
 const orbitron = Orbitron({
   subsets: ["latin"],
+  weight: ["500", "600", "700", "800", "900"],
   variable: "--font-display",
   display: "swap",
 });
@@ -41,6 +43,7 @@ export default function RootLayout({
         <Header />
         {children}
         <Footer />
+        <CursorRing />
       </body>
     </html>
   );

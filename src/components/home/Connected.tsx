@@ -1,113 +1,187 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useRef, type CSSProperties, type PointerEvent } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Reveal } from "@/components/ui/Reveal";
-import "./connected.css";
+import "./ecosystem.css";
+
+const EarthGlobe = dynamic(
+  () => import("./EarthGlobe").then((m) => m.EarthGlobe),
+  {
+    ssr: false,
+    loading: () => <div className="earth-globe-wrap" aria-hidden="true" />,
+  },
+);
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-const rings = [
-  { key: "mid", cls: "vision-ring--mid", s: "320px", r: "0deg", spin: "16s", breath: "7s", d: "0s" },
-  {
-    key: "near",
-    cls: "vision-ring--near is-reverse",
-    s: "240px",
-    r: "65deg",
-    spin: "10s",
-    breath: "5.5s",
-    d: "-2s",
-  },
-  { key: "far", cls: "vision-ring--far", s: "400px", r: "-45deg", spin: "22s", breath: "9s", d: "-5s" },
+const navStrip = [
+  { href: "/services/crm", label: "CRM" },
+  { href: "/services/oms", label: "Restaurant OMS" },
+  { href: "/services/hms", label: "Hotel HMS" },
+  { href: "/services/web", label: "Web Development" },
+  { href: "/services/growth", label: "Digital Growth" },
 ] as const;
 
+const practices = [
+  {
+    n: "01",
+    title: "Beyond Georgia",
+    body: "Demand. A Georgia-only travel platform — stays, tours, transfers, dining, WhatsApp booking — so the right guests find your property with clear intent.",
+    href: "https://www.beyondgeorgia.com/",
+    cta: "Visit Beyond Georgia",
+    external: true,
+  },
+  {
+    n: "02",
+    title: "Beyond Supply",
+    body: "Cost. B2B ecommerce for hotels and restaurants — food, linen, amenities, equipment — so procurement is calmer than five vendor chats.",
+    href: "/beyondsupply",
+    cta: "Explore Beyond Supply",
+    external: false,
+  },
+  {
+    n: "03",
+    title: "Beyond OS",
+    body: "Operations. HMS, OMS, CRM, websites and digital growth — the systems that run the desk, the pass and the direct booking path.",
+    href: "/#services",
+    cta: "Explore Beyond OS",
+    external: false,
+  },
+] as const;
+
+const flow = [
+  {
+    n: "01",
+    title: "Guest books on Beyond Georgia",
+    body: "Stay or experience booked — often via WhatsApp — with clear intent.",
+  },
+  {
+    n: "02",
+    title: "Reservation lands in HMS",
+    body: "Dates and notes show up where the front desk already works.",
+  },
+  {
+    n: "03",
+    title: "Guest profile opens in CRM",
+    body: "Preferences and conversation history sit on one card.",
+  },
+  {
+    n: "04",
+    title: "Pre-arrival WhatsApp goes out",
+    body: "Directions and timing before check-in — less inbox chaos.",
+  },
+  {
+    n: "05",
+    title: "Low stock can trigger Beyond Supply",
+    body: "Linen, amenities or kitchen staples reorder without a scattered chase.",
+  },
+] as const;
+
+const fadeUp = (delay = 0, reduce: boolean) =>
+  reduce
+    ? {}
+    : {
+        initial: { opacity: 0, y: 16 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, margin: "-80px" as const },
+        transition: { duration: 0.55, ease, delay },
+      };
+
+const fadeCard = (delay = 0, reduce: boolean) =>
+  reduce
+    ? {}
+    : {
+        initial: { opacity: 0, y: 12 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, margin: "-60px" as const },
+        transition: { duration: 0.45, ease, delay },
+      };
+
+const fadeGlobe = (reduce: boolean) =>
+  reduce
+    ? {}
+    : {
+        initial: { opacity: 0, scale: 0.985 },
+        whileInView: { opacity: 1, scale: 1 },
+        viewport: { once: true, margin: "-60px" as const },
+        transition: { duration: 0.7, ease, delay: 0.1 },
+      };
+
 export function Connected() {
-  const reduce = useReducedMotion();
-  const trackRef = useRef<HTMLDivElement>(null);
-
-  function tilt(event: PointerEvent<HTMLDivElement>) {
-    if (reduce || !trackRef.current) return;
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const x = (event.clientX - bounds.left) / bounds.width - 0.5;
-    const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-    trackRef.current.style.transform = `rotateX(${12 - y * 10}deg) rotateY(${-18 + x * 16}deg)`;
-  }
-
-  function untilt() {
-    if (!trackRef.current) return;
-    trackRef.current.style.transform = "rotateX(12deg) rotateY(-18deg)";
-  }
+  const reduce = useReducedMotion() ?? false;
 
   return (
-    <section className="vision" id="ecosystem">
-      <div className="vision-ambient" aria-hidden="true" />
-      <div className="wrap vision-grid">
-        <div className="vision-copy">
-          <Reveal y={18}>
-            <div className="eyebrow">— Designed to work together</div>
-          </Reveal>
-          <Reveal delay={0.08} y={22}>
-            <h2 className="vision-title">
-              One business.
-              <em>A connected way forward.</em>
-            </h2>
-          </Reveal>
-          <Reveal delay={0.16} y={18}>
-            <p>
-              Your website starts the conversation. Your software carries it through. Your brand and
-              growth strategy bring people back. We design around that whole journey.
-            </p>
-          </Reveal>
-          <Reveal delay={0.22} y={14}>
-            <Link className="vision-link" href="/#approach">
-              How we connect the dots
-              <span aria-hidden="true">↗</span>
-            </Link>
-          </Reveal>
-        </div>
+    <section className="georgia-globe-section section" id="ecosystem" aria-label="The Beyond ecosystem">
+      <nav className="eco-nav-strip" aria-label="Beyond OS services">
+        {navStrip.map((item) => (
+          <Link key={item.href} href={item.href}>
+            <i aria-hidden="true" />
+            {item.label}
+          </Link>
+        ))}
+      </nav>
 
-        <motion.div
-          className="vision-orbit"
-          aria-hidden="true"
-          initial={reduce ? false : { opacity: 0, y: 24, scale: 0.93 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.9, ease }}
-          onPointerMove={tilt}
-          onPointerLeave={untilt}
-        >
-          <div className="vision-orbit-aura" />
-          <div className="vision-orbit-rings">
-            {rings.map((ring) => (
-              <span
-                key={ring.key}
-                className={`vision-ring ${ring.cls}`}
-                style={
-                  {
-                    "--s": ring.s,
-                    "--r": ring.r,
-                    "--spin": ring.spin,
-                    "--breath": ring.breath,
-                    "--d": ring.d,
-                  } as CSSProperties
-                }
-              >
-                <i className="vision-ring-edge" />
-                <i className="vision-ring-glow" />
-                <i className="vision-ring-node" />
-                <i className="vision-ring-node is-second" />
-              </span>
+      <div className="wrap georgia-globe-layout">
+        <motion.div className="georgia-globe-copy" {...fadeUp(0, reduce)}>
+          <div className="mono">The Beyond Ecosystem · Tbilisi</div>
+          <h2>
+            One company.
+            <em>Three ways to serve</em>
+            <em>hospitality.</em>
+          </h2>
+          <p>
+            From a hotel or restaurant owner&apos;s chair: guests should arrive with intent, the house
+            should stay stocked, and the desk should not rebuild every stay from five apps.
+          </p>
+
+          <ul className="ecosystem-list">
+            {practices.map((item, index) => (
+              <motion.li key={item.n} {...fadeCard(0.06 + index * 0.05, reduce)}>
+                <span className="mono">{item.n}</span>
+                <div>
+                  <strong>{item.title}</strong>
+                  <p>{item.body}</p>
+                  {item.external ? (
+                    <a href={item.href} target="_blank" rel="noopener noreferrer">
+                      {item.cta} ↗
+                    </a>
+                  ) : (
+                    <Link href={item.href}>
+                      {item.cta} ↗
+                    </Link>
+                  )}
+                </div>
+              </motion.li>
             ))}
-          </div>
-          <div className="vision-core-track" ref={trackRef}>
-            <div className="vision-core">
-              <span className="vision-core-sheen" />
-              <span className="vision-core-mark">b/os</span>
-            </div>
-          </div>
-          <span className="vision-orbit-label">Operations · Experience · Growth</span>
+          </ul>
+
+          <span className="mono georgia-coords">41.7151° N / 44.8271° E · Tbilisi</span>
         </motion.div>
+
+        <motion.div className="globe-stage" {...fadeGlobe(reduce)}>
+          <EarthGlobe className="earth-globe-wrap" />
+          <span className="mono globe-caption">Gold pin = Georgia · Tbilisi</span>
+        </motion.div>
+      </div>
+
+      <div className="eco-flow-block wrap">
+        <motion.div {...fadeUp(0, reduce)}>
+          <p className="mono">How a booking moves</p>
+          <h3 className="eco-flow-title">Guest in. Stock covered. Desk ready.</h3>
+        </motion.div>
+
+        <ol className="ecosystem-list eco-flow-list">
+          {flow.map((step, index) => (
+            <motion.li key={step.n} {...fadeUp(0.04 + index * 0.05, reduce)}>
+              <span className="mono">{step.n}</span>
+              <div>
+                <strong>{step.title}</strong>
+                <p>{step.body}</p>
+              </div>
+            </motion.li>
+          ))}
+        </ol>
       </div>
     </section>
   );
