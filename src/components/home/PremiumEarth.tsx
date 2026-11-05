@@ -12,7 +12,7 @@ import "./PremiumEarth.css";
 
 const EARTH_RADIUS = 1;
 const DOT_RADIUS = 1.004;
-const DOTS_URL = "/media/earth-dots-lite.bin";
+const DOTS_URL = "/media/earth-dots-lite.bin?v=ant";
 
 const TBILISI = {
   latitude: 41.7151,
@@ -25,7 +25,8 @@ const GEORGIA_BASE_ROT = {
   z: 0.02,
 } as const;
 
-const EARTH_SCALE = 0.66;
+/** Larger in-stage sphere (was 0.66 — felt too small). */
+const EARTH_SCALE = 0.88;
 
 /** Module cache — Strict Mode remount must not re-fetch/parse. */
 let landCache: Float32Array | null = null;
@@ -83,10 +84,11 @@ function createGlowTexture() {
   const context = canvas.getContext("2d");
   if (!context) return new THREE.CanvasTexture(canvas);
   const gradient = context.createRadialGradient(32, 32, 0, 32, 32, 32);
-  gradient.addColorStop(0, "rgba(74, 222, 128, 0.95)");
-  gradient.addColorStop(0.25, "rgba(34, 197, 94, 0.45)");
-  gradient.addColorStop(0.6, "rgba(22, 163, 74, 0.1)");
-  gradient.addColorStop(1, "rgba(22, 163, 74, 0)");
+  // Strong saturated green glow for the Georgia pin
+  gradient.addColorStop(0, "rgba(0, 255, 120, 1)");
+  gradient.addColorStop(0.22, "rgba(0, 220, 90, 0.7)");
+  gradient.addColorStop(0.55, "rgba(0, 180, 70, 0.18)");
+  gradient.addColorStop(1, "rgba(0, 160, 60, 0)");
   context.fillStyle = gradient;
   context.fillRect(0, 0, 64, 64);
   return new THREE.CanvasTexture(canvas);
@@ -219,7 +221,7 @@ export function PremiumEarth({ className }: PremiumEarthProps) {
     const softGpu = /vmware|svga|llvmpipe|swiftshader|softpipe/i.test(rendererName);
     const maxDpr = softGpu ? 1 : Math.min(window.devicePixelRatio || 1, 1.25);
     const sphereSeg = softGpu ? 24 : 48;
-    const maxLandPoints = softGpu ? 14_000 : 24_000;
+    const maxLandPoints = softGpu ? 22_000 : 42_000;
 
     renderer.setPixelRatio(maxDpr);
     renderer.setSize(width, height, false);
@@ -274,12 +276,12 @@ export function PremiumEarth({ className }: PremiumEarthProps) {
     geographicGroup.add(markerGroup);
 
     const markerMat = new THREE.MeshBasicMaterial({
-      color: 0x22c55e,
+      color: 0x00e676, // strong green
       depthTest: false,
       depthWrite: false,
       toneMapped: false,
     });
-    const marker = new THREE.Mesh(new THREE.SphereGeometry(0.032, 12, 12), markerMat);
+    const marker = new THREE.Mesh(new THREE.SphereGeometry(0.04, 14, 14), markerMat);
     marker.renderOrder = 11;
     markerGroup.add(marker);
 
@@ -293,7 +295,7 @@ export function PremiumEarth({ className }: PremiumEarthProps) {
       toneMapped: false,
     });
     const glow = new THREE.Sprite(glowMat);
-    glow.scale.set(0.22, 0.22, 1);
+    glow.scale.set(0.28, 0.28, 1);
     glow.renderOrder = 10;
     markerGroup.add(glow);
 
@@ -328,7 +330,7 @@ export function PremiumEarth({ className }: PremiumEarthProps) {
         ? 1
         : 0.88 + 0.12 * (0.5 + 0.5 * Math.sin((clock.elapsedTime * Math.PI * 2) / 1.3));
       glowMat.opacity = 0.85 * visible * pulse;
-      const glowPulse = 0.2 + 0.06 * pulse;
+      const glowPulse = 0.26 + 0.08 * pulse;
       glow.scale.set(glowPulse, glowPulse, 1);
 
       try {

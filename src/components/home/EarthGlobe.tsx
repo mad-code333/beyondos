@@ -147,7 +147,7 @@ async function buildLandDots(maxPoints: number): Promise<DotData> {
 
   // Prefer prebuilt bin when present, but downsample so soft GPUs don't choke.
   try {
-    const posRes = await fetch("/media/earth-dots.bin");
+    const posRes = await fetch("/media/earth-dots-lite.bin");
     if (posRes.ok) {
       const buf = await posRes.arrayBuffer();
       const all = new Float32Array(buf);
@@ -309,18 +309,18 @@ function TbilisiPin({ reduceMotion }: { reduceMotion: boolean }) {
       <mesh ref={glow} renderOrder={10}>
         <sphereGeometry args={[0.06, 12, 12]} />
         <meshBasicMaterial
-          color="#f0c14a"
+          color="#00e676"
           transparent
-          opacity={0.4}
+          opacity={0.55}
           depthWrite={false}
           depthTest={false}
           toneMapped={false}
         />
       </mesh>
       <mesh renderOrder={11}>
-        <sphereGeometry args={[0.036, 14, 14]} />
+        <sphereGeometry args={[0.042, 14, 14]} />
         <meshBasicMaterial
-          color="#f0c14a"
+          color="#00e676"
           depthTest={false}
           depthWrite={false}
           toneMapped={false}
@@ -459,7 +459,7 @@ export function EarthGlobe({ className }: EarthGlobeProps) {
       vis.disconnect();
       document.removeEventListener("visibilitychange", onVis);
     };
-  }, []);
+  }, []); 
 
   const onPointerDown = useCallback((e: ReactPointerEvent<HTMLDivElement>) => {
     dragging.current = true;
@@ -532,7 +532,7 @@ export function EarthGlobe({ className }: EarthGlobeProps) {
               <EarthGroup
                 reduceMotion={reduce}
                 drag={drag}
-                maxPoints={softGpu ? 22_000 : 48_000}
+                maxPoints={softGpu ? 22_000 : 42_000}
                 active={active}
               />
             </Suspense>
