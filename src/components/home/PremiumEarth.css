@@ -52,16 +52,27 @@
   height: 100%;
   /* Two equirectangular copies side-by-side for a seamless 360° loop */
   width: 200%;
-  background: url("/media/earth-landmask.png") 0 0 / 50% 100% repeat-x;
-  opacity: 0.58;
-  filter: contrast(1.25) brightness(1.4);
-  mix-blend-mode: screen;
+  /* Dotted land — cheaper than filter + mix-blend-mode on every frame */
+  background-image: radial-gradient(
+    circle,
+    rgba(242, 242, 236, 0.9) 0.85px,
+    transparent 1.05px
+  );
+  background-size: 3.4px 3.4px;
+  -webkit-mask-image: url("/media/earth-landmask.png");
+  mask-image: url("/media/earth-landmask.png");
+  -webkit-mask-size: 50% 100%;
+  mask-size: 50% 100%;
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  opacity: 0.85;
   /*
    * Georgia (44.8°E, 41.7°N) → U 62.45% of one map → 31.225% of the 200% track.
    * Start shifted so that point sits on the circular viewport center (25% of track).
    */
   --georgia-shift: -6.225%;
   transform: translateX(var(--georgia-shift));
+  will-change: transform;
 }
 
 .premium-earth-container .earth-globe-fallback--spin .earth-globe-fallback-track {

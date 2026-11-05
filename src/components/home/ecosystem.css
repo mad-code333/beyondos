@@ -232,8 +232,10 @@
     inset 0 -1px 0 rgba(0, 0, 0, 0.7),
     inset 0 0 80px rgba(0, 0, 0, 0.35);
   overflow: hidden;
-  /* Isolate from left-column height / hover reflow */
+  /* Isolate from left-column height / hover reflow; skip offscreen paint work */
   contain: layout paint;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 420px;
 }
 
 .earth-globe-wrap {
@@ -286,13 +288,24 @@
   left: 0;
   height: 100%;
   width: 200%;
-  background: url("/media/earth-landmask.png") 0 0 / 50% 100% repeat-x;
-  opacity: 0.58;
-  filter: contrast(1.25) brightness(1.4);
-  mix-blend-mode: screen;
+  /* Dotted land — avoid filter + mix-blend-mode (expensive while spinning) */
+  background-image: radial-gradient(
+    circle,
+    rgba(242, 242, 236, 0.9) 0.85px,
+    transparent 1.05px
+  );
+  background-size: 3.4px 3.4px;
+  -webkit-mask-image: url("/media/earth-landmask.png");
+  mask-image: url("/media/earth-landmask.png");
+  -webkit-mask-size: 50% 100%;
+  mask-size: 50% 100%;
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  opacity: 0.85;
   /* Georgia centered in the viewport at rest; pin is a child of this track */
   --georgia-shift: -6.225%;
   transform: translateX(var(--georgia-shift));
+  will-change: transform;
 }
 
 .earth-globe-fallback--spin .earth-globe-fallback-track {
