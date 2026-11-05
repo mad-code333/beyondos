@@ -5,8 +5,8 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import "./ecosystem.css";
 
-const EarthGlobe = dynamic(
-  () => import("./EarthGlobe").then((m) => m.EarthGlobe),
+const PremiumEarth = dynamic(
+  () => import("./PremiumEarth").then((m) => m.PremiumEarth),
   {
     ssr: false,
     loading: () => <div className="earth-globe-wrap" aria-hidden="true" />,
@@ -160,7 +160,7 @@ export function Connected() {
         </motion.div>
 
         <motion.div className="globe-stage" {...fadeGlobe(reduce)}>
-          <EarthGlobe className="earth-globe-wrap" />
+          <PremiumEarth className="earth-globe-wrap" />
           <span className="mono globe-caption">Gold pin = Georgia · Tbilisi</span>
         </motion.div>
       </div>

@@ -271,6 +271,27 @@
   overflow: hidden;
 }
 
+/* Used only when WebGL is unavailable (e.g. Cursor Electron sandbox). */
+.earth-globe-fallback--spin::before {
+  animation: earth-fallback-spin 75s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes earth-fallback-spin {
+  from {
+    background-position: 37% 27%;
+  }
+  to {
+    background-position: 137% 27%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .earth-globe-fallback--spin::before {
+    animation: none;
+  }
+}
+
 .earth-globe-fallback::before {
   content: "";
   position: absolute;
