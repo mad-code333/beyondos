@@ -161,7 +161,7 @@ export function Connected() {
 
         <motion.div className="globe-stage" {...fadeGlobe(reduce)}>
           <PremiumEarth className="earth-globe-wrap" />
-          <span className="mono globe-caption">Gold pin = Georgia · Tbilisi</span>
+          <span className="mono globe-caption">Green pin = Georgia · Tbilisi</span>
         </motion.div>
       </div>
 

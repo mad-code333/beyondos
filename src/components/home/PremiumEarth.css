@@ -5,6 +5,9 @@
   min-height: 0;
   touch-action: none;
   cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .premium-earth-container:active {
@@ -19,11 +22,11 @@
   contain: size layout paint;
 }
 
-/* Local copy so fallback works even if ecosystem.css load order changes. */
+/* Local fallback — pin is a child of the sliding track, locked to Georgia. */
 .premium-earth-container .earth-globe-fallback {
   width: 72%;
   aspect-ratio: 1;
-  margin: 14% auto;
+  margin: auto;
   border-radius: 50%;
   background:
     radial-gradient(circle at 38% 32%, rgba(255, 255, 255, 0.14), transparent 40%),
@@ -35,47 +38,89 @@
   overflow: hidden;
 }
 
-.premium-earth-container .earth-globe-fallback::before {
-  content: "";
+.premium-earth-container .earth-globe-fallback-map {
   position: absolute;
   inset: 6%;
   border-radius: 50%;
-  background: url("/media/earth-landmask.png") 37% 27% / 220% auto no-repeat;
+  overflow: hidden;
+}
+
+.premium-earth-container .earth-globe-fallback-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  /* Two equirectangular copies side-by-side for a seamless 360° loop */
+  width: 200%;
+  background: url("/media/earth-landmask.png") 0 0 / 50% 100% repeat-x;
   opacity: 0.58;
   filter: contrast(1.25) brightness(1.4);
   mix-blend-mode: screen;
+  /*
+   * Georgia (44.8°E, 41.7°N) → U 62.45% of one map → 31.225% of the 200% track.
+   * Start shifted so that point sits on the circular viewport center (25% of track).
+   */
+  --georgia-shift: -6.225%;
+  transform: translateX(var(--georgia-shift));
 }
 
-.premium-earth-container .earth-globe-fallback--spin::before {
-  animation: premium-earth-fallback-spin 75s linear infinite;
-  transform-origin: center;
+.premium-earth-container .earth-globe-fallback--spin .earth-globe-fallback-track {
+  animation: premium-earth-fallback-spin 50s linear infinite;
 }
 
 @keyframes premium-earth-fallback-spin {
   from {
-    background-position: 37% 27%;
+    transform: translateX(var(--georgia-shift));
   }
   to {
-    background-position: 137% 27%;
+    transform: translateX(calc(var(--georgia-shift) - 50%));
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .premium-earth-container .earth-globe-fallback--spin::before {
+  .premium-earth-container .earth-globe-fallback--spin .earth-globe-fallback-track {
     animation: none;
   }
 }
 
 .premium-earth-container .earth-globe-fallback-pin {
+  /* One solid vibrant grass-green point only — no ring */
   position: absolute;
-  top: 46%;
-  left: 52%;
-  width: 9px;
-  height: 9px;
+  left: 31.225%;
+  top: 26.85%;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  background: #f0c14a;
+  transform: translate(-50%, -50%);
+  background: #22c55e;
+  border: none;
   box-shadow:
-    0 0 0 4px rgba(240, 193, 74, 0.18),
-    0 0 14px rgba(240, 193, 74, 0.75);
-  z-index: 1;
+    0 0 0 4px rgba(34, 197, 94, 0.4),
+    0 0 18px rgba(34, 197, 94, 0.95);
+  pointer-events: none;
+  animation: earth-pin-blink 1.3s ease-in-out infinite;
+}
+
+@keyframes earth-pin-blink {
+  0%,
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow:
+      0 0 0 5px rgba(34, 197, 94, 0.45),
+      0 0 20px rgba(34, 197, 94, 1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.9);
+    box-shadow:
+      0 0 0 3px rgba(34, 197, 94, 0.28),
+      0 0 12px rgba(34, 197, 94, 0.75);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .premium-earth-container .earth-globe-fallback-pin {
+    animation: none;
+  }
 }

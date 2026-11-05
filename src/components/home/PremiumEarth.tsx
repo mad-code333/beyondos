@@ -20,26 +20,54 @@ const landTopology = landData as unknown as Topology<{
 const EARTH_RADIUS = 1;
 const DOT_RADIUS = 1.004;
 
+/** Tbilisi, Georgia — WGS84 */
 const TBILISI = {
   latitude: 41.7151,
   longitude: 44.8271,
-};
+} as const;
+
+/**
+ * Rest pose: Caucasus / Georgia facing the camera.
+ * Matches EarthGlobe (yaw ≈ −lon rad, slight pitch).
+ */
+const GEORGIA_BASE_ROT = {
+  x: 0.18,
+  y: THREE.MathUtils.degToRad(-TBILISI.longitude),
+  z: 0.02,
+} as const;
 
 /** Cached land / border buffers — Strict Mode remounts must not recompute. */
 let landBuffers: { positions: Float32Array; colors: Float32Array } | null = null;
 let borderPositions: Float32Array | null = null;
 let landBuildPromise: Promise<{ positions: Float32Array; colors: Float32Array }> | null = null;
+/** Bump when lat/lon projection changes so HMR does not reuse stale buffers. */
+const GEO_PROJECTION_VERSION = 3;
+let geoProjectionVersion = 0;
 
-/** +Z front, +Y north, positive lon toward +X */
+/** Visual scale — slightly smaller so the full sphere fits the stage. */
+const EARTH_SCALE = 0.66;
+
+/**
+ * Equirectangular → Three.js sphere (Y-up).
+ * Same mapping as EarthGlobe so Georgia lands on the Caucasus, not Africa.
+ */
 function latLonToVector3(latitude: number, longitude: number, radius = EARTH_RADIUS) {
-  const lat = THREE.MathUtils.degToRad(latitude);
-  const lon = THREE.MathUtils.degToRad(longitude);
+  const phi = THREE.MathUtils.degToRad(90 - latitude);
+  const theta = THREE.MathUtils.degToRad(longitude + 180);
 
   return new THREE.Vector3(
-    radius * Math.cos(lat) * Math.sin(lon),
-    radius * Math.sin(lat),
-    radius * Math.cos(lat) * Math.cos(lon),
+    -radius * Math.sin(phi) * Math.cos(theta),
+    radius * Math.cos(phi),
+    radius * Math.sin(phi) * Math.sin(theta),
   );
+}
+
+function ensureGeoCacheFresh() {
+  if (geoProjectionVersion === GEO_PROJECTION_VERSION) return;
+  landBuffers = null;
+  borderPositions = null;
+  landBuildPromise = null;
+  geoProjectionVersion = GEO_PROJECTION_VERSION;
 }
 
 function brightnessVariation(lat: number, lon: number) {
@@ -60,9 +88,10 @@ function yieldToMain() {
 /**
  * Land dots use land-110m (single landmass) for geoContains so the main thread
  * is not frozen for minutes. Borders still come from countries-50m.
- * Work is chunked so the 75s spin keeps running while dots build.
+ * Work is chunked so the spin keeps running while dots build.
  */
 async function buildLandBuffersAsync() {
+  ensureGeoCacheFresh();
   if (landBuffers) return landBuffers;
   if (landBuildPromise) return landBuildPromise;
 
@@ -123,6 +152,7 @@ function createLandPointsGeometry(buffers: { positions: Float32Array; colors: Fl
 }
 
 function buildBorderPositions() {
+  ensureGeoCacheFresh();
   if (borderPositions) return borderPositions;
 
   const borderMesh = mesh(
@@ -208,10 +238,10 @@ function createGlowTexture() {
   if (!context) return new THREE.CanvasTexture(canvas);
 
   const gradient = context.createRadialGradient(64, 64, 0, 64, 64, 64);
-  gradient.addColorStop(0, "rgba(255, 194, 91, 0.95)");
-  gradient.addColorStop(0.12, "rgba(255, 181, 65, 0.45)");
-  gradient.addColorStop(0.4, "rgba(255, 169, 45, 0.12)");
-  gradient.addColorStop(1, "rgba(255, 169, 45, 0)");
+  gradient.addColorStop(0, "rgba(74, 222, 128, 0.95)");
+  gradient.addColorStop(0.2, "rgba(34, 197, 94, 0.5)");
+  gradient.addColorStop(0.55, "rgba(22, 163, 74, 0.12)");
+  gradient.addColorStop(1, "rgba(22, 163, 74, 0)");
   context.fillStyle = gradient;
   context.fillRect(0, 0, 128, 128);
 
@@ -306,9 +336,14 @@ function createWebGLRenderer(): { renderer: THREE.WebGLRenderer; canvas: HTMLCan
 }
 
 function GlobeFallback() {
+  // Track translates with the pin as a child → pin stays on Georgia forever.
   return (
     <div className="earth-globe-fallback earth-globe-fallback--spin" aria-hidden="true">
-      <span className="earth-globe-fallback-pin" />
+      <div className="earth-globe-fallback-map">
+        <div className="earth-globe-fallback-track">
+          <span className="earth-globe-fallback-pin" />
+        </div>
+      </div>
     </div>
   );
 }
@@ -353,16 +388,20 @@ export function PremiumEarth({ className }: PremiumEarthProps) {
     container.appendChild(canvas);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(35, width / height, 0.1, 100);
-    camera.position.set(0, 0, 3.7);
+    const camera = new THREE.PerspectiveCamera(32, width / height, 0.1, 100);
+    camera.position.set(0, 0.02, 4.2);
+    camera.lookAt(0, 0, 0);
 
     const rotationGroup = new THREE.Group();
+    rotationGroup.scale.setScalar(EARTH_SCALE);
     const geographicGroup = new THREE.Group();
     scene.add(rotationGroup);
     rotationGroup.add(geographicGroup);
 
-    // Bring Georgia toward the front
-    rotationGroup.rotation.y = THREE.MathUtils.degToRad(-TBILISI.longitude);
+    // Face Georgia at rest; infinite spin adds yaw on top of base.
+    geographicGroup.rotation.x = GEORGIA_BASE_ROT.x;
+    geographicGroup.rotation.z = GEORGIA_BASE_ROT.z;
+    rotationGroup.rotation.y = GEORGIA_BASE_ROT.y;
 
     const oceanGeometry = new THREE.SphereGeometry(EARTH_RADIUS, sphereSeg, sphereSeg);
     const oceanMaterial = new THREE.MeshPhongMaterial({
@@ -371,6 +410,13 @@ export function PremiumEarth({ className }: PremiumEarthProps) {
       specular: 0x172b35,
     });
     geographicGroup.add(new THREE.Mesh(oceanGeometry, oceanMaterial));
+
+    // Depth occluder so the Georgia pin never bleeds through the far side.
+    const occluder = new THREE.Mesh(
+      new THREE.SphereGeometry(EARTH_RADIUS * 0.999, softGpu ? 32 : 48, softGpu ? 32 : 48),
+      new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: true }),
+    );
+    geographicGroup.add(occluder);
 
     // Borders first (lighter than land dots)
     let borderGeometry: THREE.BufferGeometry | null = null;
@@ -394,27 +440,37 @@ export function PremiumEarth({ className }: PremiumEarthProps) {
     const atmosphere = createAtmosphere(sphereSeg);
     geographicGroup.add(atmosphere);
 
-    const markerPosition = latLonToVector3(TBILISI.latitude, TBILISI.longitude, 1.012);
+    // Georgia = one solid vibrant grass-green point only (no ring).
+    const pinScale = 1 / EARTH_SCALE;
+    const markerPosition = latLonToVector3(TBILISI.latitude, TBILISI.longitude, DOT_RADIUS + 0.018);
     const markerGroup = new THREE.Group();
     markerGroup.position.copy(markerPosition);
+    markerGroup.scale.setScalar(pinScale);
+    markerGroup.renderOrder = 10;
     geographicGroup.add(markerGroup);
 
-    const marker = new THREE.Mesh(
-      new THREE.SphereGeometry(0.007, 20, 20),
-      new THREE.MeshBasicMaterial({ color: 0xffc56b }),
-    );
+    const markerMat = new THREE.MeshBasicMaterial({
+      color: 0x22c55e,
+      depthTest: false,
+      depthWrite: false,
+      toneMapped: false,
+    });
+    const marker = new THREE.Mesh(new THREE.SphereGeometry(0.032, 20, 20), markerMat);
+    marker.renderOrder = 11;
     markerGroup.add(marker);
 
-    const glow = new THREE.Sprite(
-      new THREE.SpriteMaterial({
-        map: createGlowTexture(),
-        transparent: true,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-        depthTest: true,
-      }),
-    );
-    glow.scale.set(0.13, 0.13, 1);
+    const glowMat = new THREE.SpriteMaterial({
+      map: createGlowTexture(),
+      transparent: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      depthTest: false,
+      opacity: 0.85,
+      toneMapped: false,
+    });
+    const glow = new THREE.Sprite(glowMat);
+    glow.scale.set(0.22, 0.22, 1);
+    glow.renderOrder = 10;
     markerGroup.add(glow);
 
     scene.add(new THREE.AmbientLight(0xffffff, 0.35));
@@ -427,20 +483,39 @@ export function PremiumEarth({ className }: PremiumEarthProps) {
     blueFill.position.set(3, -2, -3);
     scene.add(blueFill);
 
-    // One revolution every 75 seconds — starts immediately.
-    const rotationSpeed = (Math.PI * 2) / 75;
+    // Infinite yaw — one revolution every 50s.
+    const rotationSpeed = (Math.PI * 2) / 50;
     const clock = new THREE.Clock();
     let animationFrame = 0;
     let disposed = false;
+    let spinElapsed = 0;
+    const markerWorld = new THREE.Vector3();
+    const markerNormal = new THREE.Vector3();
+    const camDir = new THREE.Vector3();
 
     function animate() {
       if (disposed) return;
       animationFrame = requestAnimationFrame(animate);
       const delta = Math.min(clock.getDelta(), 0.05);
       if (!reducedMotion) {
-        rotationGroup.rotation.y += rotationSpeed * delta;
+        spinElapsed += delta;
+        rotationGroup.rotation.y = GEORGIA_BASE_ROT.y + spinElapsed * rotationSpeed;
       }
-      // Readable by tests / DevTools to confirm the spin is alive.
+
+      // Hide on the far side; front = solid gold point + soft pulse.
+      markerGroup.getWorldPosition(markerWorld);
+      markerNormal.copy(markerWorld).normalize();
+      camDir.copy(camera.position).sub(markerWorld).normalize();
+      const facing = markerNormal.dot(camDir);
+      const visible = THREE.MathUtils.smoothstep(facing, -0.02, 0.18);
+      markerGroup.visible = visible > 0.05;
+      const pulse = reducedMotion
+        ? 1
+        : 0.88 + 0.12 * (0.5 + 0.5 * Math.sin(clock.elapsedTime * (Math.PI * 2) / 1.3));
+      glowMat.opacity = 0.85 * visible * pulse;
+      const glowPulse = 0.2 + 0.06 * pulse;
+      glow.scale.set(glowPulse, glowPulse, 1);
+
       canvas.dataset.earthYaw = String(rotationGroup.rotation.y);
       try {
         renderer.render(scene, camera);
@@ -454,49 +529,47 @@ export function PremiumEarth({ className }: PremiumEarthProps) {
     let landGeometry: THREE.BufferGeometry | null = null;
     let landMaterial: THREE.ShaderMaterial | null = null;
 
-    // Skip dense point cloud on soft/VM GPUs — borders + ocean stay readable.
-    if (!softGpu) {
-      void buildLandBuffersAsync()
-        .then((buffers) => {
-          if (disposed) return;
-          landGeometry = createLandPointsGeometry(buffers);
-          landMaterial = new THREE.ShaderMaterial({
-            transparent: true,
-            depthWrite: false,
-            vertexColors: true,
-            uniforms: {
-              dotSize: { value: 2.5 },
-            },
-            vertexShader: `
-              attribute vec3 color;
-              varying vec3 vColor;
-              uniform float dotSize;
+    // Land dots build in chunks so the infinite spin never stalls.
+    void buildLandBuffersAsync()
+      .then((buffers) => {
+        if (disposed) return;
+        landGeometry = createLandPointsGeometry(buffers);
+        landMaterial = new THREE.ShaderMaterial({
+          transparent: true,
+          depthWrite: false,
+          vertexColors: true,
+          uniforms: {
+            dotSize: { value: softGpu ? 2 : 2.5 },
+          },
+          vertexShader: `
+            attribute vec3 color;
+            varying vec3 vColor;
+            uniform float dotSize;
 
-              void main() {
-                vColor = color;
-                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                gl_PointSize = clamp(dotSize * (3.7 / -mvPosition.z), 1.0, 5.0);
-                gl_Position = projectionMatrix * mvPosition;
-              }
-            `,
-            fragmentShader: `
-              varying vec3 vColor;
+            void main() {
+              vColor = color;
+              vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+              gl_PointSize = clamp(dotSize * (3.7 / -mvPosition.z), 1.0, 5.0);
+              gl_Position = projectionMatrix * mvPosition;
+            }
+          `,
+          fragmentShader: `
+            varying vec3 vColor;
 
-              void main() {
-                vec2 centered = gl_PointCoord - vec2(0.5);
-                float distanceFromCenter = length(centered);
-                if (distanceFromCenter > 0.5) discard;
-                float softness = 1.0 - smoothstep(0.22, 0.5, distanceFromCenter);
-                gl_FragColor = vec4(vColor, softness * 0.95);
-              }
-            `,
-          });
-          geographicGroup.add(new THREE.Points(landGeometry, landMaterial));
-        })
-        .catch((err) => {
-          console.warn("[PremiumEarth] land build failed", err);
+            void main() {
+              vec2 centered = gl_PointCoord - vec2(0.5);
+              float distanceFromCenter = length(centered);
+              if (distanceFromCenter > 0.5) discard;
+              float softness = 1.0 - smoothstep(0.22, 0.5, distanceFromCenter);
+              gl_FragColor = vec4(vColor, softness * 0.95);
+            }
+          `,
         });
-    }
+        geographicGroup.add(new THREE.Points(landGeometry, landMaterial));
+      })
+      .catch((err) => {
+        console.warn("[PremiumEarth] land build failed", err);
+      });
 
     const onContextLost = (event: Event) => {
       event.preventDefault();
@@ -528,12 +601,14 @@ export function PremiumEarth({ className }: PremiumEarthProps) {
 
       oceanGeometry.dispose();
       oceanMaterial.dispose();
+      occluder.geometry.dispose();
+      (occluder.material as THREE.Material).dispose();
       atmosphere.geometry.dispose();
       (atmosphere.material as THREE.Material).dispose();
       marker.geometry.dispose();
-      (marker.material as THREE.Material).dispose();
-      glow.material.map?.dispose();
-      glow.material.dispose();
+      markerMat.dispose();
+      glowMat.map?.dispose();
+      glowMat.dispose();
 
       // Do not forceContextLoss — on VMware/ANGLE that breaks Strict Mode remount
       // ("BindToCurrentSequence failed") and any later WebGL on the page.

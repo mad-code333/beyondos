@@ -21,8 +21,8 @@ const TBILISI = { lat: 41.7151, lon: 44.8271 } as const;
 const RADIUS = 1.55;
 /** Caucasus facing camera at rest */
 const BASE_ROT = { x: 0.16, y: -0.78, z: 0.03 } as const;
-/** One full revolution every ~75 seconds */
-const PERIOD_SEC = 75;
+/** One full revolution every ~50 seconds */
+const PERIOD_SEC = 50;
 const AUTO_SPEED = (Math.PI * 2) / PERIOD_SEC;
 
 /**
@@ -178,12 +178,13 @@ function CoreSphere() {
   return (
     <mesh scale={RADIUS * 0.992}>
       <sphereGeometry args={[1, 64, 64]} />
-      <meshStandardMaterial color="#030303" roughness={0.97} metalness={0.02} />
+      {/* Slightly lifted from pure black so the globe silhouette reads on dark stages */}
+      <meshStandardMaterial color="#141414" roughness={0.97} metalness={0.02} />
     </mesh>
   );
 }
 
-/** Invisible depth writer so the gold pin occludes on the far side */
+/** Invisible depth writer so the pin occludes on the far side */
 function OcclusionSphere() {
   return (
     <mesh scale={RADIUS * 0.999}>
@@ -196,8 +197,7 @@ function OcclusionSphere() {
 function TbilisiPin({ reduceMotion }: { reduceMotion: boolean }) {
   const group = useRef<THREE.Group>(null);
   const glow = useRef<THREE.Mesh>(null);
-  const core = useRef<THREE.Mesh>(null);
-  const pos = useMemo(() => latLonToVec3(TBILISI.lat, TBILISI.lon, RADIUS * 1.01), []);
+  const pos = useMemo(() => latLonToVec3(TBILISI.lat, TBILISI.lon, RADIUS * 1.02), []);
   const world = useMemo(() => new THREE.Vector3(), []);
   const normal = useMemo(() => new THREE.Vector3(), []);
   const camDir = useMemo(() => new THREE.Vector3(), []);
@@ -208,47 +208,38 @@ function TbilisiPin({ reduceMotion }: { reduceMotion: boolean }) {
     normal.copy(world).normalize();
     camDir.copy(camera.position).sub(world).normalize();
     const facing = normal.dot(camDir);
-    // Soft fade when rotating to the far side
-    const visible = THREE.MathUtils.smoothstep(facing, -0.08, 0.12);
-    group.current.visible = visible > 0.02;
+    const visible = THREE.MathUtils.smoothstep(facing, -0.02, 0.18);
+    group.current.visible = visible > 0.05;
+    const pulse = reduceMotion
+      ? 1
+      : 0.88 + 0.12 * (0.5 + 0.5 * Math.sin(clock.elapsedTime * (Math.PI * 2) / 1.3));
     if (glow.current) {
-      (glow.current.material as THREE.MeshBasicMaterial).opacity = 0.2 * visible;
-    }
-    if (core.current) {
-      (core.current.material as THREE.MeshBasicMaterial).opacity = visible;
-    }
-    if (!reduceMotion && glow.current) {
-      const s = 1 + Math.sin(clock.elapsedTime * 1.4) * 0.05 * visible;
-      glow.current.scale.setScalar(s);
+      (glow.current.material as THREE.MeshBasicMaterial).opacity = 0.35 * visible * pulse;
+      glow.current.scale.setScalar(1 + 0.06 * pulse);
     }
   });
 
+  // One solid vibrant grass-green point only — no ring.
   return (
-    <group ref={group} position={pos}>
-      <mesh ref={glow}>
-        <sphereGeometry args={[0.024, 16, 16]} />
+    <group ref={group} position={pos} renderOrder={10}>
+      <mesh ref={glow} renderOrder={10}>
+        <sphereGeometry args={[0.06, 16, 16]} />
         <meshBasicMaterial
-          color="#f0c14a"
+          color="#22c55e"
           transparent
-          opacity={0.2}
+          opacity={0.4}
           depthWrite={false}
-          depthTest
+          depthTest={false}
           toneMapped={false}
         />
       </mesh>
-      <mesh ref={core}>
-        <sphereGeometry args={[0.011, 16, 16]} />
-        <meshBasicMaterial color="#f5c84a" transparent depthTest toneMapped={false} />
-      </mesh>
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[0.016, 0.026, 28]} />
+      <mesh renderOrder={11}>
+        <sphereGeometry args={[0.036, 20, 20]} />
         <meshBasicMaterial
-          color="#f0c14a"
-          transparent
-          opacity={0.4}
-          side={THREE.DoubleSide}
+          color="#22c55e"
+          depthTest={false}
           depthWrite={false}
-          depthTest
+          toneMapped={false}
         />
       </mesh>
     </group>
