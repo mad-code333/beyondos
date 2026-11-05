@@ -1,0 +1,291 @@
+/* Ways of Working — engagement / pricing cards (UI only) */
+
+.engagement-models {
+  padding: clamp(56px, 9vw, 96px) 0;
+  background: #0a0a0a;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.engagement-models .mono,
+.engage-eyebrow {
+  margin: 0;
+  font-family: var(--font-display), Orbitron, system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #c4c4bc;
+}
+
+.engage-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  margin-bottom: 36px;
+}
+
+.engage-copy {
+  max-width: min(720px, 100%);
+}
+
+.engage-head h2 {
+  margin: 12px 0 10px;
+  font-family: var(--font-display), Orbitron, system-ui, sans-serif;
+  font-size: clamp(28px, 4.2vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  text-transform: uppercase;
+  color: #f4f4f0;
+}
+
+.engage-head h2 em {
+  font-style: italic;
+  font-weight: 700;
+  color: #9a9a94;
+}
+
+.engage-lead {
+  margin: 0;
+  max-width: 42ch;
+  color: #8a8a84;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.currency-toggle {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.currency-opt {
+  cursor: pointer;
+  margin: 0;
+}
+
+.currency-opt input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.currency-opt span {
+  display: block;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: #8a8a84;
+  white-space: nowrap;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.currency-opt input:checked + span {
+  background: #f2f1eb;
+  color: #111;
+}
+
+.currency-opt input:focus-visible + span {
+  outline: 2px solid #c4a574;
+  outline-offset: 2px;
+}
+
+.engage-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
+}
+
+.engage-grid > * {
+  display: flex;
+  min-height: 100%;
+}
+
+.engage-card {
+  width: 100%;
+  padding: 26px 24px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: #101010;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 100%;
+}
+
+.engage-card.is-highlight {
+  border-color: rgba(196, 165, 116, 0.38);
+  background: linear-gradient(160deg, #161410, #101010 62%);
+}
+
+.engage-mode {
+  margin: 0;
+  color: #c4a574;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.engage-card h3 {
+  margin: 0;
+  font-family: var(--font-display), Orbitron, system-ui, sans-serif;
+  font-size: clamp(22px, 2.2vw, 26px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #f4f4f0;
+}
+
+.engage-card > p {
+  margin: 0;
+  color: #a3a3a3;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.engage-card ul {
+  margin: 4px 0 4px;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  flex: 1 1 auto;
+}
+
+.engage-card li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #cfcfc9;
+}
+
+.engage-card li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #c4a574;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.engage-price {
+  margin-top: auto;
+  padding-top: 14px;
+}
+
+.price-label {
+  display: block;
+  color: #cfcfc9;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.engage-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  min-height: 50px;
+  margin-top: 4px;
+  padding: 14px 22px;
+  border: 1px solid #ececea;
+  border-radius: 100px;
+  background: #ececea;
+  color: #0e0e0e;
+  font-family: var(--font-display), Orbitron, system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.engage-cta > span {
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.engage-cta:hover {
+  background: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+
+.engage-cta:focus-visible {
+  outline: 2px solid #c4a574;
+  outline-offset: 3px;
+}
+
+@media (max-width: 960px) {
+  .engage-head {
+    align-items: flex-start;
+  }
+
+  .engage-grid {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+  }
+}
+
+@media (max-width: 640px) {
+  .engagement-models {
+    padding: 64px 0;
+  }
+
+  .engage-head {
+    margin-bottom: 28px;
+    gap: 18px;
+  }
+
+  .engage-head h2 {
+    font-size: clamp(26px, 8vw, 34px);
+  }
+
+  .currency-toggle {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .currency-opt {
+    flex: 1 1 0;
+  }
+
+  .currency-opt span {
+    text-align: center;
+    padding: 9px 8px;
+  }
+
+  .engage-card {
+    padding: 22px 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .engage-cta,
+  .currency-opt span {
+    transition: none;
+  }
+
+  .engage-cta:hover {
+    transform: none;
+  }
+}

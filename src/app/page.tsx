@@ -1,6 +1,7 @@
 import { Capabilities } from "@/components/home/Capabilities";
 import { Connected } from "@/components/home/Connected";
 import { Contact } from "@/components/home/Contact";
+import { EngagementModels } from "@/components/home/EngagementModels";
 import { Faq } from "@/components/home/Faq";
 import { FeaturesBento } from "@/components/home/FeaturesBento";
 import { Hero } from "@/components/home/Hero";
@@ -16,6 +17,7 @@ export default function Home() {
       <Hero />
       <WorkspaceDemo />
       <ServicesList />
+      <EngagementModels />
       <FeaturesBento />
       <Connected />
       <Process />
