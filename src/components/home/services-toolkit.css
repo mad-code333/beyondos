@@ -113,7 +113,10 @@ html[data-motion="paused"] .svc-glow {
 
 .svc-row.is-dim .svc-line {
   color: #5e5e58;
-  opacity: 0.45;
+}
+
+.svc-row.is-dim .svc-num {
+  opacity: 0.35;
 }
 
 .svc-side-nav {
@@ -208,9 +211,6 @@ html[data-motion="paused"] .svc-glow {
   color: #a8a89e;
   text-decoration: none;
   isolation: isolate;
-  transition:
-    color 0.2s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .svc-line.is-live {
@@ -250,6 +250,17 @@ html[data-motion="paused"] .svc-glow {
     0 18px 40px -22px rgba(0, 0, 0, 0.816),
     inset 0 1px 0 #fff;
   will-change: transform;
+  pointer-events: none;
+}
+
+/* Single rail highlight — one element springs between rows */
+.svc-pill-rail {
+  inset: auto 0 auto 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 0;
+  will-change: transform, height, opacity;
 }
 
 .svc-lead {
@@ -277,17 +288,10 @@ html[data-motion="paused"] .svc-glow {
   display: grid;
   gap: 1px;
   overflow: hidden;
-  max-height: 0;
-  opacity: 0;
   pointer-events: none;
-  transition:
-    opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1),
-    max-height 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.svc-meta[data-visible="true"] {
-  max-height: 40px;
-  opacity: 1;
+.svc-meta.is-open {
   pointer-events: auto;
 }
 
@@ -320,7 +324,7 @@ html[data-motion="paused"] .svc-glow {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  color: inherit;
 }
 
 .svc-line.is-live .svc-title {
@@ -336,6 +340,7 @@ html[data-motion="paused"] .svc-glow {
   place-items: center;
   width: 36px;
   height: 36px;
+  margin-top: -18px;
   border-radius: 999px;
   background: var(--svc-accent);
   color: #111;
@@ -344,17 +349,11 @@ html[data-motion="paused"] .svc-glow {
   line-height: 1;
   opacity: 0;
   pointer-events: none;
-  transform: translateY(-50%);
-  transition: opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.svc-line.is-live .svc-go {
-  opacity: 1;
-  pointer-events: auto;
+  transform-origin: center;
 }
 
 .svc-preview-rail {
-  /* Stage-centered — independent of the active service row. */
+  /* Stage-centered pocket — card springs freely from here on pointer move. */
   position: absolute;
   top: 50%;
   right: clamp(52px, 5vw, 78px);
@@ -365,13 +364,14 @@ html[data-motion="paused"] .svc-glow {
   visibility: hidden;
   pointer-events: none;
   transition:
-    opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1),
-    visibility 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .svc-stage.has-active .svc-preview-rail {
   opacity: 1;
   visibility: visible;
+  pointer-events: auto;
 }
 
 .svc-preview {
@@ -380,6 +380,8 @@ html[data-motion="paused"] .svc-glow {
   transform-style: preserve-3d;
   perspective: 1100px;
   pointer-events: none;
+  will-change: transform;
+  transform-origin: center center;
 }
 
 .svc-preview-card,
@@ -580,9 +582,14 @@ html[data-motion="paused"] .svc-glow {
 }
 
 .svc-days,
-.svc-timeline {
+.svc-timeline,
+.svc-timeline-swap {
   display: grid;
   gap: 0;
+}
+
+.svc-timeline-swap {
+  min-height: 176px;
 }
 
 .svc-days {
@@ -629,6 +636,7 @@ html[data-motion="paused"] .svc-glow {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.16);
   transform-origin: left center;
+  will-change: transform, opacity;
 }
 
 .svc-timeline-row.is-accent .svc-track i {
@@ -637,13 +645,16 @@ html[data-motion="paused"] .svc-glow {
 }
 
 .svc-preview-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
   margin-top: auto;
 }
 
-.svc-preview-stats > div {
+.svc-preview-stats-swap {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.svc-preview-stats-swap > div {
   display: grid;
   gap: 6px;
   padding: 12px 8px;
@@ -652,7 +663,7 @@ html[data-motion="paused"] .svc-glow {
   background: rgba(255, 255, 255, 0.05);
 }
 
-.svc-preview-stats .mono {
+.svc-preview-stats-swap .mono {
   display: block;
   font-size: 8px;
   letter-spacing: 0.1em;
@@ -660,15 +671,20 @@ html[data-motion="paused"] .svc-glow {
   color: rgba(170, 170, 164, 0.7);
 }
 
-.svc-preview-stats strong {
+.svc-preview-stats-swap strong {
   font-size: 14px;
   font-weight: 650;
   letter-spacing: -0.02em;
   color: #f4f4f0;
 }
 
-.svc-preview-stats strong.is-accent {
+.svc-preview-stats-swap strong.is-accent {
   color: #f0c35a;
+}
+
+.svc-preview-card h3,
+.svc-preview-kicker {
+  display: block;
 }
 
 .svc-preview-foot {

@@ -4,18 +4,19 @@ import Link from "next/link";
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
 import {
-  LayoutGroup,
+  AnimatePresence,
   motion,
-  useMotionTemplate,
   useMotionValue,
   useReducedMotion,
   useSpring,
   useTransform,
+  type MotionValue,
 } from "framer-motion";
 import { services, type ServiceSlug } from "@/content/services";
 import "./services-toolkit.css";
@@ -128,20 +129,42 @@ const STACK = [
   "next-intl",
 ] as const;
 
-/** Single shared hover motion — ~200ms, no stagger / bounce. */
-const snap = { duration: 0.2, ease: [0.22, 1, 0.36, 1] as const };
+/** Soft spring for the single moving highlight */
+const pillSpring = { type: "spring" as const, stiffness: 380, damping: 34, mass: 0.7 };
+/** Content morph — short, no bounce */
+const morph = { duration: 0.34, ease: [0.22, 1, 0.36, 1] as const };
+const metaEase = { duration: 0.28, ease: [0.22, 1, 0.36, 1] as const };
+const followSpring = { stiffness: 140, damping: 22, mass: 0.55 };
+const tiltSpring = { stiffness: 180, damping: 24, mass: 0.4 };
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
 
 export function ServicesList() {
   const reduceMotion = useReducedMotion();
   const reduce = Boolean(reduceMotion);
   const [active, setActive] = useState(0);
   const [live, setLive] = useState(false);
+  const [pill, setPill] = useState({ y: 0, h: 0, ready: false });
   const armed = useRef(false);
   const leaveTimer = useRef<number | null>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const rowRefs = useRef<Array<HTMLDivElement | null>>([]);
 
-  const current = services[active];
+  const current = services[active]!;
   const preview = previews[current.slug];
   const indexLabel = String(active + 1).padStart(2, "0");
+
+  const followX = useMotionValue(0);
+  const followY = useMotionValue(0);
+  const springX = useSpring(followX, reduce ? { stiffness: 1000, damping: 100 } : followSpring);
+  const springY = useSpring(followY, reduce ? { stiffness: 1000, damping: 100 } : followSpring);
+  const tiltNX = useMotionValue(0);
+  const tiltNY = useMotionValue(0);
+  const springTiltX = useSpring(tiltNX, reduce ? { stiffness: 1000, damping: 100 } : tiltSpring);
+  const springTiltY = useSpring(tiltNY, reduce ? { stiffness: 1000, damping: 100 } : tiltSpring);
 
   const clearLeave = useCallback(() => {
     if (leaveTimer.current) {
@@ -149,6 +172,13 @@ export function ServicesList() {
       leaveTimer.current = null;
     }
   }, []);
+
+  const resetFollow = useCallback(() => {
+    followX.set(0);
+    followY.set(0);
+    tiltNX.set(0);
+    tiltNY.set(0);
+  }, [followX, followY, tiltNX, tiltNY]);
 
   const select = useCallback(
     (index: number) => {
@@ -168,6 +198,62 @@ export function ServicesList() {
     },
     [clearLeave],
   );
+
+  const measurePill = useCallback(() => {
+    const list = listRef.current;
+    const row = rowRefs.current[active];
+    if (!list || !row) return;
+    const listRect = list.getBoundingClientRect();
+    const rowRect = row.getBoundingClientRect();
+    setPill({
+      y: rowRect.top - listRect.top + 6,
+      h: Math.max(0, rowRect.height - 12),
+      ready: true,
+    });
+  }, [active]);
+
+  const trackPointer = useCallback(
+    (event: ReactPointerEvent<HTMLElement>) => {
+      if (reduce || !live) return;
+      if (typeof window !== "undefined" && window.matchMedia("(max-width: 900px)").matches) {
+        resetFollow();
+        return;
+      }
+      const stage = stageRef.current;
+      if (!stage) return;
+
+      const rect = stage.getBoundingClientRect();
+      const localX = event.clientX - rect.left;
+      const localY = event.clientY - rect.top;
+      const nx = clamp(localX / rect.width, 0, 1);
+      const ny = clamp(localY / rect.height, 0, 1);
+
+      // Home sits in the right pocket; pointer pulls the card freely without covering titles.
+      const homeX = rect.width * 0.82;
+      const homeY = rect.height * 0.5;
+      followX.set(clamp((localX - homeX) * 0.55, -56, 48));
+      followY.set(clamp(localY - homeY, -150, 150));
+      tiltNX.set(nx - 0.5);
+      tiltNY.set(ny - 0.5);
+    },
+    [followX, followY, live, reduce, resetFollow, tiltNX, tiltNY],
+  );
+
+  useLayoutEffect(() => {
+    if (!live) {
+      setPill((prev) => ({ ...prev, ready: false }));
+      resetFollow();
+      return;
+    }
+    measurePill();
+  }, [live, active, measurePill, resetFollow]);
+
+  useEffect(() => {
+    if (!live) return;
+    const onResize = () => measurePill();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [live, measurePill]);
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
@@ -202,10 +288,12 @@ export function ServicesList() {
         </header>
 
         <div
+          ref={stageRef}
           className={`svc-stage${live ? " has-active" : " is-idle"}`}
           role="listbox"
           aria-label="Beyond OS services"
           tabIndex={0}
+          onPointerMove={trackPointer}
           onMouseEnter={() => {
             armed.current = true;
             clearLeave();
@@ -213,7 +301,10 @@ export function ServicesList() {
           onMouseLeave={() => {
             armed.current = false;
             clearLeave();
-            leaveTimer.current = window.setTimeout(() => setLive(false), 60);
+            leaveTimer.current = window.setTimeout(() => {
+              setLive(false);
+              resetFollow();
+            }, 80);
           }}
           onFocus={() => {
             armed.current = true;
@@ -223,67 +314,116 @@ export function ServicesList() {
             if (!event.currentTarget.contains(event.relatedTarget)) {
               armed.current = false;
               setLive(false);
+              resetFollow();
             }
           }}
         >
-          <LayoutGroup id="svc-pill-group">
-            <div className="svc-list">
-              {services.map((service, index) => {
-                const selected = live && index === active;
-                const item = previews[service.slug];
-                return (
-                  <div
-                    key={service.slug}
-                    className={`svc-row${selected ? " is-live" : live ? " is-dim" : ""}`}
+          <div className="svc-list" ref={listRef}>
+            <AnimatePresence>
+              {live && pill.ready ? (
+                <motion.span
+                  key="svc-pill"
+                  className="svc-pill svc-pill-rail"
+                  aria-hidden="true"
+                  initial={reduce ? false : { opacity: 0, y: pill.y + 8, height: pill.h }}
+                  animate={{ opacity: 1, y: pill.y, height: pill.h }}
+                  exit={reduce ? undefined : { opacity: 0, transition: { duration: 0.15 } }}
+                  transition={reduce ? { duration: 0 } : pillSpring}
+                />
+              ) : null}
+            </AnimatePresence>
+
+            {services.map((service, index) => {
+              const selected = live && index === active;
+              const item = previews[service.slug];
+              return (
+                <div
+                  key={service.slug}
+                  ref={(node) => {
+                    rowRefs.current[index] = node;
+                  }}
+                  className={`svc-row${selected ? " is-live" : live ? " is-dim" : ""}`}
+                >
+                  <Link
+                    id={`svc-opt-${service.slug}`}
+                    href={`/services/${service.slug}`}
+                    role="option"
+                    aria-selected={selected}
+                    tabIndex={selected || (!live && index === 0) ? 0 : -1}
+                    className={`svc-line${selected ? " is-live" : ""}`}
+                    onPointerEnter={(event) => {
+                      select(index);
+                      trackPointer(event);
+                    }}
+                    onPointerMove={trackPointer}
+                    onFocus={() => select(index)}
+                    onClick={(event) => {
+                      select(index);
+                      const target = event.target as HTMLElement | null;
+                      if (!target?.closest("[data-svc-go]")) {
+                        event.preventDefault();
+                      }
+                    }}
                   >
-                    <Link
-                      id={`svc-opt-${service.slug}`}
-                      href={`/services/${service.slug}`}
-                      role="option"
-                      aria-selected={selected}
-                      tabIndex={selected || (!live && index === 0) ? 0 : -1}
-                      className={`svc-line${selected ? " is-live" : ""}`}
-                      onPointerEnter={() => select(index)}
-                      onFocus={() => select(index)}
-                      onClick={(event) => {
-                        select(index);
-                        const target = event.target as HTMLElement | null;
-                        if (!target?.closest("[data-svc-go]")) {
-                          event.preventDefault();
-                        }
-                      }}
+                    <span className="svc-lead">
+                      <span className="svc-num">({service.number})</span>
+                      <AnimatePresence initial={false} mode="popLayout">
+                        {selected ? (
+                          <motion.span
+                            key={`${service.slug}-meta`}
+                            className="svc-meta is-open"
+                            initial={reduce ? false : { opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={reduce ? undefined : { opacity: 0, y: -4 }}
+                            transition={reduce ? { duration: 0 } : metaEase}
+                          >
+                            <span className="svc-pace">{item.pace}</span>
+                            <span className="svc-stack">{item.stack}</span>
+                          </motion.span>
+                        ) : null}
+                      </AnimatePresence>
+                    </span>
+
+                    <motion.span
+                      className="svc-title"
+                      animate={
+                        reduce
+                          ? undefined
+                          : {
+                              color: selected ? "#111111" : live ? "#5e5e58" : "#b4b4aa",
+                              opacity: selected ? 1 : live ? 0.55 : 1,
+                            }
+                      }
+                      transition={reduce ? { duration: 0 } : morph}
                     >
-                      {selected ? (
-                        <motion.span
-                          layoutId="svc-pill"
-                          className="svc-pill"
-                          aria-hidden="true"
-                          transition={reduce ? { duration: 0 } : snap}
-                        />
-                      ) : null}
+                      {service.name}
+                    </motion.span>
 
-                      <span className="svc-lead">
-                        <span className="svc-num">({service.number})</span>
-                        <span
-                          className="svc-meta"
-                          data-visible={selected ? "true" : "false"}
-                          aria-hidden={!selected}
-                        >
-                          <span className="svc-pace">{item.pace}</span>
-                          <span className="svc-stack">{item.stack}</span>
-                        </span>
-                      </span>
-
-                      <span className="svc-title">{service.name}</span>
-                      <span className="svc-go" data-svc-go aria-hidden="true">
-                        →
-                      </span>
-                    </Link>
-                  </div>
-                );
-              })}
-            </div>
-          </LayoutGroup>
+                    <motion.span
+                      className="svc-go"
+                      data-svc-go
+                      aria-hidden="true"
+                      initial={false}
+                      animate={
+                        reduce
+                          ? undefined
+                          : {
+                              opacity: selected ? 1 : 0,
+                              scale: selected ? 1 : 0.86,
+                            }
+                      }
+                      transition={
+                        reduce ? { duration: 0 } : { ...pillSpring, delay: selected ? 0.02 : 0 }
+                      }
+                      style={{ pointerEvents: selected ? "auto" : "none" }}
+                    >
+                      →
+                    </motion.span>
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
 
           <aside
             className="svc-preview-rail"
@@ -292,15 +432,21 @@ export function ServicesList() {
             aria-label={`${current.name} preview`}
             aria-hidden={!live}
           >
-            {/* Mount once while live — content swaps in place; enter anim runs only on first appear. */}
-            {live ? (
-              <PreviewPanel
-                slug={current.slug}
-                name={current.name}
-                preview={preview}
-                reduce={reduce}
-              />
-            ) : null}
+            <AnimatePresence>
+              {live ? (
+                <PreviewPanel
+                  key="svc-preview-shell"
+                  slug={current.slug}
+                  name={current.name}
+                  preview={preview}
+                  reduce={reduce}
+                  x={springX}
+                  y={springY}
+                  tiltX={springTiltX}
+                  tiltY={springTiltY}
+                />
+              ) : null}
+            </AnimatePresence>
           </aside>
 
           <div className="svc-side-nav" aria-label="Browse services">
@@ -370,71 +516,75 @@ function PreviewPanel({
   name,
   preview,
   reduce,
+  x,
+  y,
+  tiltX,
+  tiltY,
 }: {
   slug: ServiceSlug;
   name: string;
   preview: PreviewSpec;
   reduce: boolean;
+  x: MotionValue<number>;
+  y: MotionValue<number>;
+  tiltX: MotionValue<number>;
+  tiltY: MotionValue<number>;
 }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const rawX = useMotionValue(0);
-  const rawY = useMotionValue(0);
-  const springX = useSpring(rawX, { stiffness: 240, damping: 24, mass: 0.5 });
-  const springY = useSpring(rawY, { stiffness: 240, damping: 24, mass: 0.5 });
-  const rotateX = useTransform(springY, [-0.5, 0.5], [6, -6]);
-  const rotateY = useTransform(springX, [-0.5, 0.5], [-8, 8]);
-  const lift = useSpring(0, { stiffness: 280, damping: 24, mass: 0.45 });
-  const scale = useSpring(1, { stiffness: 280, damping: 24, mass: 0.45 });
-  const transform = useMotionTemplate`perspective(1100px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) rotateZ(-2deg) translateZ(${lift}px) scale(${scale})`;
-
-  function onMove(event: ReactPointerEvent<HTMLDivElement>) {
-    if (reduce) return;
-    const node = cardRef.current;
-    if (!node) return;
-    const rect = node.getBoundingClientRect();
-    rawX.set((event.clientX - rect.left) / rect.width - 0.5);
-    rawY.set((event.clientY - rect.top) / rect.height - 0.5);
-  }
-
-  function onEnter() {
-    if (reduce) return;
-    lift.set(14);
-    scale.set(1.025);
-  }
-
-  function onLeave() {
-    rawX.set(0);
-    rawY.set(0);
-    lift.set(0);
-    scale.set(1);
-  }
+  const rotateX = useTransform(tiltY, [-0.5, 0.5], [5.5, -5.5]);
+  const rotateY = useTransform(tiltX, [-0.5, 0.5], [-7, 7]);
 
   return (
     <motion.div
       className={`svc-preview is-${slug}`}
-      initial={reduce ? false : { opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={reduce ? { duration: 0 } : snap}
+      initial={reduce ? false : { opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={reduce ? undefined : { opacity: 0, scale: 0.985 }}
+      transition={reduce ? { duration: 0 } : morph}
+      style={
+        reduce
+          ? undefined
+          : {
+              x,
+              y,
+              rotateX,
+              rotateY,
+              transformPerspective: 1200,
+            }
+      }
     >
-      <motion.div
-        ref={cardRef}
-        className={`svc-preview-card is-${slug}`}
-        style={reduce ? undefined : { transform }}
-        onPointerMove={onMove}
-        onPointerEnter={onEnter}
-        onPointerLeave={onLeave}
-      >
-        <LightBand reduce={reduce} />
-        <ScanBand key={preview.scan} variant={preview.scan} reduce={reduce} />
+      <div className={`svc-preview-card is-${slug}`}>
+        <LightBand key={`light-${slug}`} reduce={reduce} />
+        <ScanBand key={`scan-${slug}-${preview.scan}`} variant={preview.scan} reduce={reduce} />
 
         <div className="svc-preview-head">
-          <span className="mono svc-preview-kicker">{preview.kicker}</span>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.span
+              key={`${slug}-kicker`}
+              className="mono svc-preview-kicker"
+              initial={reduce ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduce ? undefined : { opacity: 0, y: -6 }}
+              transition={reduce ? { duration: 0 } : { ...morph, duration: 0.28 }}
+            >
+              {preview.kicker}
+            </motion.span>
+          </AnimatePresence>
           <span className="svc-preview-open" aria-hidden="true">
             →
           </span>
         </div>
 
-        <h3>{preview.title}</h3>
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.h3
+            key={`${slug}-title`}
+            initial={reduce ? false : { opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduce ? undefined : { opacity: 0, y: -10 }}
+            transition={reduce ? { duration: 0 } : { ...morph, duration: 0.36, delay: 0.03 }}
+          >
+            {preview.title}
+          </motion.h3>
+        </AnimatePresence>
 
         <div className="svc-board">
           <div className="svc-days" aria-hidden="true">
@@ -443,35 +593,80 @@ function PreviewPanel({
             ))}
           </div>
           <div className="svc-timeline">
-            {preview.lanes.map((lane, index) => {
-              const bar = preview.bars[index];
-              const accent = index === preview.lanes.length - 1;
-              return (
-                <div
-                  key={lane}
-                  className={`svc-timeline-row${accent ? " is-accent" : ""}`}
-                >
-                  <span>{lane}</span>
-                  <div className="svc-track">
-                    <i style={{ left: bar.left, width: bar.width }} />
-                  </div>
-                </div>
-              );
-            })}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={`${slug}-lanes`}
+                className="svc-timeline-swap"
+                initial={reduce ? false : { opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduce ? undefined : { opacity: 0, y: -8 }}
+                transition={reduce ? { duration: 0 } : { ...morph, delay: 0.06 }}
+              >
+                {preview.lanes.map((lane, index) => {
+                  const bar = preview.bars[index]!;
+                  const accent = index === preview.lanes.length - 1;
+                  return (
+                    <motion.div
+                      key={lane}
+                      className={`svc-timeline-row${accent ? " is-accent" : ""}`}
+                      initial={reduce ? false : { opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={
+                        reduce
+                          ? { duration: 0 }
+                          : { ...morph, delay: 0.08 + index * 0.045 }
+                      }
+                    >
+                      <span>{lane}</span>
+                      <div className="svc-track">
+                        <motion.i
+                          initial={reduce ? false : { scaleX: 0.35, opacity: 0.4 }}
+                          animate={{ scaleX: 1, opacity: 1 }}
+                          transition={
+                            reduce
+                              ? { duration: 0 }
+                              : { ...morph, delay: 0.12 + index * 0.05 }
+                          }
+                          style={{ left: bar.left, width: bar.width }}
+                        />
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
 
         <div className="svc-preview-stats">
-          {preview.stats.map((stat) => (
-            <div key={stat.label}>
-              <span className="mono">{stat.label}</span>
-              <strong className={stat.accent ? "is-accent" : undefined}>
-                {stat.value}
-              </strong>
-            </div>
-          ))}
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={`${slug}-stats`}
+              className="svc-preview-stats-swap"
+              initial={reduce ? false : { opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduce ? undefined : { opacity: 0, y: -6 }}
+              transition={reduce ? { duration: 0 } : { ...morph, delay: 0.1 }}
+            >
+              {preview.stats.map((stat, index) => (
+                <motion.div
+                  key={stat.label}
+                  initial={reduce ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={
+                    reduce ? { duration: 0 } : { ...morph, delay: 0.14 + index * 0.04 }
+                  }
+                >
+                  <span className="mono">{stat.label}</span>
+                  <strong className={stat.accent ? "is-accent" : undefined}>
+                    {stat.value}
+                  </strong>
+                </motion.div>
+              ))}
+            </motion.div>
+          </AnimatePresence>
         </div>
-      </motion.div>
+      </div>
 
       <p className="mono svc-preview-foot">
         Live preview · {name} · 5 services · 3 ways to engage
@@ -489,9 +684,9 @@ function LightBand({ reduce }: { reduce: boolean }) {
     <motion.span
       className="svc-light-band"
       aria-hidden="true"
-      initial={{ x: "-35%", opacity: 0 }}
-      animate={{ x: ["-35%", "165%"], opacity: [0, 1, 1, 0] }}
-      transition={{ duration: 1.35, repeat: Infinity, ease: "linear", repeatDelay: 0.1 }}
+      initial={{ x: "-40%", opacity: 0 }}
+      animate={{ x: "170%", opacity: [0, 1, 1, 0] }}
+      transition={{ duration: 1.15, ease: [0.22, 1, 0.36, 1] }}
     />
   );
 }
@@ -517,8 +712,8 @@ function ScanBand({
       <motion.span
         {...common}
         initial={{ top: "-18%", opacity: 0 }}
-        animate={{ top: ["-18%", "108%"], opacity: [0, 1, 1, 0] }}
-        transition={{ duration: 1.7, repeat: Infinity, ease: "linear" }}
+        animate={{ top: "108%", opacity: [0, 1, 1, 0] }}
+        transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
       />
     );
   }
@@ -528,8 +723,8 @@ function ScanBand({
       <motion.span
         {...common}
         initial={{ top: "108%", opacity: 0 }}
-        animate={{ top: ["108%", "-18%"], opacity: [0, 1, 1, 0] }}
-        transition={{ duration: 1.7, repeat: Infinity, ease: "linear" }}
+        animate={{ top: "-18%", opacity: [0, 1, 1, 0] }}
+        transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
       />
     );
   }
@@ -539,8 +734,8 @@ function ScanBand({
       <motion.span
         {...common}
         initial={{ left: "-20%", opacity: 0 }}
-        animate={{ left: ["-20%", "108%"], opacity: [0, 1, 1, 0] }}
-        transition={{ duration: 1.45, repeat: Infinity, ease: "linear" }}
+        animate={{ left: "108%", opacity: [0, 1, 1, 0] }}
+        transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
       />
     );
   }
@@ -550,8 +745,8 @@ function ScanBand({
       <motion.span
         {...common}
         initial={{ opacity: 0, x: "-30%" }}
-        animate={{ opacity: [0, 0.95, 0.95, 0], x: ["-30%", "35%"] }}
-        transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+        animate={{ opacity: [0, 0.95, 0.95, 0], x: "40%" }}
+        transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
       />
     );
   }
@@ -559,9 +754,9 @@ function ScanBand({
   return (
     <motion.span
       {...common}
-      initial={{ opacity: 0.18, scale: 0.88 }}
-      animate={{ opacity: [0.18, 0.6, 0.18], scale: [0.88, 1.08, 0.88] }}
-      transition={{ duration: 1.55, repeat: Infinity, ease: "easeInOut" }}
+      initial={{ opacity: 0.1, scale: 0.86 }}
+      animate={{ opacity: [0.1, 0.55, 0], scale: [0.86, 1.08, 1.12] }}
+      transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
     />
   );
 }
