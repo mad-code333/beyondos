@@ -33,7 +33,7 @@ const slides: Slide[] = [
     title: "Every relationship.",
     titleEm: "Made personal.",
     lead: "Know the guest behind every enquiry. Bring conversations, preferences and follow-ups into one thoughtful workspace.",
-    orbitLabel: "Guest relationships & sales",
+    orbitLabel: "Guest relationships & messaging",
     thumb: "/media/desk.jpg",
     alt: "A hotel reception desk in stone and warm lamplight.",
     icon: "◎",
@@ -157,75 +157,6 @@ function CopyBody({ slide, href }: { slide: Slide; href: string }) {
   );
 }
 
-function WorkspacePreview({ slide }: { slide: Slide }) {
-  return (
-    <div className="hero-workspace" aria-hidden="true">
-      <div className="hero-workspace-chrome">
-        <div className="hero-workspace-head">
-          <span className="hero-workspace-mark" aria-hidden="true">
-            ▦
-          </span>
-          <div className="hero-workspace-title">
-            <strong>The Mountain House</strong>
-            <small>Illustrative property / Beyond OS</small>
-          </div>
-          <span className="hero-workspace-badge">Interactive concept</span>
-        </div>
-
-        <div className="hero-workspace-tabs">
-          {slide.previewTabs.map((tab, index) => (
-            <span
-              key={tab}
-              className="hero-workspace-tab"
-              data-active={index === slide.previewActive ? "true" : undefined}
-            >
-              {tab}
-            </span>
-          ))}
-        </div>
-
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={slide.slug}
-            className="hero-workspace-body"
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.28, ease }}
-          >
-            <div className="hero-workspace-panel">
-              <div className="hero-workspace-panel-head">
-                <span>{slide.name}</span>
-                <span>{slide.orbitLabel}</span>
-              </div>
-              <ul className="hero-workspace-rows">
-                {slide.previewRows.map((row) => (
-                  <li key={row.label} data-tone={row.tone}>
-                    <span>{row.label}</span>
-                    <em>{row.meta}</em>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="hero-workspace-side">
-              <div className="hero-workspace-side-card">
-                <span className="mono">Today</span>
-                <strong>12</strong>
-                <small>Arrivals &amp; notes</small>
-              </div>
-              <div className="hero-workspace-side-card">
-                <span className="mono">Connected</span>
-                <strong>{slide.number}</strong>
-                <small>{slide.name} live view</small>
-              </div>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </div>
-  );
-}
-
 export function Hero() {
   const reduce = useReducedMotion();
   const router = useRouter();
@@ -295,51 +226,91 @@ export function Hero() {
             className="hero-atmosphere-glow"
             style={{ transform: `translate3d(0, ${parallax * 4}%, 0)` }}
           />
-          <div
-            className="hero-grid"
-            style={{ transform: `translate3d(0, ${parallax * 6}%, 0)` }}
-          />
+          <div className="hero-atmosphere-glow-side" />
+          <div className="hero-grid">
+            <div className="hero-grid-dots" />
+            <div className="hero-grid-squares" />
+            <div className="hero-grid-veil" />
+          </div>
           <div className="hero-horizon">
-            <svg viewBox="0 0 1440 520" preserveAspectRatio="none" className="hero-horizon-svg">
+            <svg
+              viewBox="0 -80 1440 640"
+              preserveAspectRatio="xMidYMid slice"
+              className="hero-horizon-svg"
+            >
               <defs>
+                {/* Ends dark → center bright lilac, smooth like Holdout */}
                 <linearGradient id="heroHorizonStroke" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="rgba(168,150,255,0)" />
-                  <stop offset="18%" stopColor="rgba(176,158,255,0.35)" />
-                  <stop offset="50%" stopColor="rgba(198,178,255,0.95)" />
-                  <stop offset="82%" stopColor="rgba(176,158,255,0.35)" />
-                  <stop offset="100%" stopColor="rgba(168,150,255,0)" />
+                  <stop offset="0%" stopColor="rgba(70,45,130,0)" />
+                  <stop offset="8%" stopColor="rgba(90,60,160,0.15)" />
+                  <stop offset="22%" stopColor="rgba(130,95,210,0.4)" />
+                  <stop offset="38%" stopColor="rgba(195,170,255,0.85)" />
+                  <stop offset="50%" stopColor="rgba(236,228,255,1)" />
+                  <stop offset="62%" stopColor="rgba(195,170,255,0.85)" />
+                  <stop offset="78%" stopColor="rgba(130,95,210,0.4)" />
+                  <stop offset="92%" stopColor="rgba(90,60,160,0.15)" />
+                  <stop offset="100%" stopColor="rgba(70,45,130,0)" />
                 </linearGradient>
-                <linearGradient id="heroHorizonAura" x1="0%" y1="100%" x2="0%" y2="0%">
-                  <stop offset="0%" stopColor="rgba(98,72,180,0.28)" />
-                  <stop offset="42%" stopColor="rgba(72,56,140,0.12)" />
-                  <stop offset="100%" stopColor="rgba(40,30,80,0)" />
+                <linearGradient id="heroHorizonBloomGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="rgba(100,70,180,0)" />
+                  <stop offset="12%" stopColor="rgba(110,80,200,0.08)" />
+                  <stop offset="32%" stopColor="rgba(150,115,235,0.28)" />
+                  <stop offset="50%" stopColor="rgba(200,175,255,0.5)" />
+                  <stop offset="68%" stopColor="rgba(150,115,235,0.28)" />
+                  <stop offset="88%" stopColor="rgba(110,80,200,0.08)" />
+                  <stop offset="100%" stopColor="rgba(100,70,180,0)" />
                 </linearGradient>
-                <radialGradient id="heroHorizonCore" cx="50%" cy="78%" r="48%">
-                  <stop offset="0%" stopColor="rgba(140,110,230,0.34)" />
-                  <stop offset="55%" stopColor="rgba(70,50,140,0.12)" />
-                  <stop offset="100%" stopColor="rgba(10,8,20,0)" />
+                <radialGradient id="heroHorizonHaze" cx="50%" cy="55%" r="52%">
+                  <stop offset="0%" stopColor="rgba(200,170,255,0.42)" />
+                  <stop offset="28%" stopColor="rgba(140,105,220,0.22)" />
+                  <stop offset="60%" stopColor="rgba(80,55,150,0.08)" />
+                  <stop offset="100%" stopColor="rgba(0,0,0,0)" />
                 </radialGradient>
+                <linearGradient id="heroBelowFade" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="rgba(2,2,6,0)" />
+                  <stop offset="12%" stopColor="rgba(2,2,6,0.45)" />
+                  <stop offset="40%" stopColor="rgba(2,2,6,0.88)" />
+                  <stop offset="100%" stopColor="rgba(2,2,6,1)" />
+                </linearGradient>
+                <filter id="heroSoftBloom" x="-18%" y="-420%" width="136%" height="940%">
+                  <feGaussianBlur stdDeviation="11" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                  </feMerge>
+                </filter>
+                <filter id="heroLineSoft" x="-8%" y="-260%" width="116%" height="620%">
+                  <feGaussianBlur stdDeviation="1.8" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
               </defs>
-              <ellipse cx="720" cy="540" rx="1020" ry="340" fill="#030308" />
-              <ellipse cx="720" cy="540" rx="1020" ry="340" fill="url(#heroHorizonAura)" />
-              <rect x="0" y="0" width="1440" height="520" fill="url(#heroHorizonCore)" />
+
+              <ellipse cx="720" cy="110" rx="820" ry="280" fill="url(#heroHorizonHaze)" />
+
               <path
-                d="M-80 268 C 200 142, 500 92, 720 92 S 1240 142, 1520 268 L 1520 520 L -80 520 Z"
-                fill="rgba(4,4,8,0.78)"
+                d="M-200 360 C 100 100, 360 40, 720 40 S 1340 100, 1640 360 L 1640 640 L -200 640 Z"
+                fill="url(#heroBelowFade)"
               />
+
               <path
-                d="M-80 274 C 200 152, 500 104, 720 104 S 1240 152, 1520 274"
+                className="hero-horizon-bloom"
+                d="M-200 360 C 100 100, 360 40, 720 40 S 1340 100, 1640 360"
                 fill="none"
-                stroke="rgba(196,176,255,0.22)"
-                strokeWidth="10"
+                stroke="url(#heroHorizonBloomGrad)"
+                strokeWidth="56"
                 vectorEffect="non-scaling-stroke"
+                filter="url(#heroSoftBloom)"
               />
               <path
-                d="M-80 268 C 200 142, 500 92, 720 92 S 1240 142, 1520 268"
+                className="hero-horizon-line"
+                d="M-200 360 C 100 100, 360 40, 720 40 S 1340 100, 1640 360"
                 fill="none"
                 stroke="url(#heroHorizonStroke)"
                 strokeWidth="1.55"
                 vectorEffect="non-scaling-stroke"
+                filter="url(#heroLineSoft)"
               />
             </svg>
             <span className="hero-geo mono">
@@ -369,10 +340,10 @@ export function Hero() {
               <motion.div
                 key={slide.slug}
                 className="hero-copy-stack"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.28, ease }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.24, ease }}
               >
                 <CopyBody slide={slide} href={href} />
               </motion.div>
@@ -393,7 +364,10 @@ export function Hero() {
           >
             <div className="hero-orbit-ring" aria-hidden="true">
               <svg viewBox="0 0 420 640" preserveAspectRatio="xMidYMid meet">
-                <path d="M268 28 C 96 120, 78 300, 168 400 S 320 560, 286 618" />
+                <path
+                  className="hero-orbit-path"
+                  d="M310 18 C 70 130, 28 310, 110 430 S 290 560, 318 628"
+                />
               </svg>
             </div>
 
@@ -433,11 +407,16 @@ export function Hero() {
                 </button>
               );
             })}
-          </div>
-        </div>
 
-        <div className="wrap hero-workspace-wrap">
-          <WorkspacePreview slide={slide} />
+            <Link href="/#workspace" className="hero-orbit-callout">
+              <span className="hero-orbit-callout-kicker">
+                One booking. A connected journey.
+              </span>
+              <strong>
+                See how it could work <span aria-hidden="true">↗</span>
+              </strong>
+            </Link>
+          </div>
         </div>
 
         <div className="hero-bottom wrap">
