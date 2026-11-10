@@ -168,10 +168,189 @@
   aspect-ratio: 120 / 86;
 }
 
+.eco-story-node--photo {
+  padding: 0;
+  gap: 0;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.eco-story-node--photo.is-active,
+.eco-story-node--photo.is-done {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+
+.eco-story-node--photo .eco-story-node-visual {
+  aspect-ratio: 337 / 353;
+}
+
+.eco-story-node--photo .eco-story-wire {
+  top: 50%;
+}
+
 .eco-node-svg {
   width: 100%;
   height: 100%;
   display: block;
+}
+
+/* Discover Georgia photo card — matches reference mock */
+.eco-discover-card {
+  --discover-gold: #d4af37;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 40px;
+  overflow: hidden;
+  isolation: isolate;
+  background: #050505;
+  border: 5px solid #0a0a0a;
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.22),
+    0 16px 34px rgba(0, 0, 0, 0.55),
+    inset -1px 0 24px rgba(212, 175, 55, 0.12);
+  transition:
+    opacity 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.eco-discover-card.is-active {
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.42),
+    0 18px 40px rgba(0, 0, 0, 0.62),
+    inset -1px 0 28px rgba(212, 175, 55, 0.18),
+    0 0 24px rgba(212, 175, 55, 0.12);
+}
+
+.eco-discover-media {
+  position: absolute;
+  inset: 0;
+  background: url("/media/georgia-discover.jpg") 62% 38% / cover no-repeat;
+  transform: scale(1.06);
+  transform-origin: center;
+}
+
+.eco-discover-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.16) 0%, transparent 24%),
+    linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, 0.42) 58%, rgba(0, 0, 0, 0.88) 100%);
+  pointer-events: none;
+}
+
+.eco-discover-arc {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  top: 48%;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(212, 175, 55, 0.08) 12%,
+    rgba(255, 230, 150, 0.95) 48%,
+    rgba(255, 220, 130, 1) 52%,
+    rgba(212, 175, 55, 0.08) 88%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 16px rgba(212, 175, 55, 0.7),
+    0 0 4px rgba(255, 220, 140, 0.95),
+    0 0 28px rgba(212, 175, 55, 0.35);
+  transform: translateY(-50%) rotate(-1.4deg);
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+.eco-discover-rim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset -2px 0 20px rgba(212, 175, 55, 0.16);
+  pointer-events: none;
+}
+
+.eco-discover-index {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  z-index: 3;
+  padding: 2px 0;
+  font-family: var(--font-manrope), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #e8c96a;
+  text-shadow:
+    0 0 1px rgba(0, 0, 0, 0.9),
+    0 1px 8px rgba(0, 0, 0, 0.75),
+    0 0 14px rgba(212, 175, 55, 0.4);
+}
+
+.eco-discover-search {
+  position: absolute;
+  left: 22px;
+  bottom: 92px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+.eco-discover-copy {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 20px;
+  z-index: 2;
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+}
+
+.eco-discover-copy strong {
+  font-family: var(--font-manrope), system-ui, sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.12;
+  color: #ffffff;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.5);
+}
+
+.eco-discover-copy span {
+  font-family: var(--font-manrope), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.35;
+  color: rgba(230, 230, 225, 0.82);
+}
+
+.eco-discover-copy em {
+  margin-top: 8px;
+  font-family: var(--font-manrope), system-ui, sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--discover-gold);
 }
 
 .eco-story-node strong {
@@ -478,8 +657,41 @@
     padding: 10px;
   }
 
+  .eco-story-node--photo {
+    padding: 0;
+  }
+
   .eco-story-wire {
     display: none;
+  }
+
+  .eco-discover-card {
+    border-radius: 30px;
+    border-width: 4px;
+  }
+
+  .eco-discover-index {
+    top: 14px;
+    left: 16px;
+    font-size: 11px;
+  }
+
+  .eco-discover-search {
+    left: 16px;
+    bottom: 80px;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+  }
+
+  .eco-discover-copy {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+  }
+
+  .eco-discover-copy strong {
+    font-size: 15px;
   }
 }
 
@@ -505,6 +717,10 @@
 
   .eco-story-node-visual {
     max-width: 180px;
+  }
+
+  .eco-story-node--photo .eco-story-node-visual {
+    max-width: 240px;
   }
 
   .eco-story-footer {

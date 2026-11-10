@@ -28,22 +28,24 @@ function CheckRow({
 export function GeorgiaDiscoverNode({ active, done }: NodeProps) {
   const lit = active || done;
   return (
-    <svg className="eco-node-svg" viewBox="0 0 120 86" aria-hidden="true">
-      <rect className="eco-svg-base" x="8" y="8" width="104" height="70" rx="12" />
-      <path
-        className={`eco-svg-land${lit ? " is-on" : ""}`}
-        d="M26 50c4-16 13-24 24-26 9-2 15 2 22 1 8-1 15-9 24-4 6 3 11 13 8 21-3 13-15 19-28 21-11 2-19-1-27 2-9 3-17-2-23-15Z"
-      />
-      <circle className={`eco-svg-pin${lit ? " is-on" : ""}`} cx="44" cy="46" r="2.5" />
-      <circle className={`eco-svg-pin${active ? " is-live" : done ? " is-on" : ""}`} cx="68" cy="36" r="4.5" />
-      <circle className={`eco-svg-pulse${active ? " is-live" : ""}`} cx="68" cy="36" r="11" />
-      <path className={`eco-svg-route${lit ? " is-on" : ""}`} d="M44 46c8-4 16-8 24-10" />
-      <path
-        className={`eco-svg-fill${lit ? " is-on" : ""}`}
-        d="M86 52h10v14H86Zm2-4 5-5 5 5"
-        style={{ opacity: lit ? 1 : 0.35 }}
-      />
-    </svg>
+    <div className={`eco-discover-card${lit ? " is-lit" : ""}${active ? " is-active" : ""}`} aria-hidden="true">
+      <div className="eco-discover-media" />
+      <span className="eco-discover-scrim" />
+      <span className="eco-discover-arc" />
+      <span className="eco-discover-rim" />
+      <span className="eco-discover-index">01 —</span>
+      <span className="eco-discover-search">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true">
+          <circle cx="10.75" cy="10.75" r="6.1" stroke="currentColor" strokeWidth="1.65" />
+          <path d="M15.6 15.6 19.5 19.5" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" />
+        </svg>
+      </span>
+      <div className="eco-discover-copy">
+        <strong>Discover Georgia</strong>
+        <span>Explore a stay across the country</span>
+        <em>Learn more →</em>
+      </div>
+    </div>
   );
 }
 

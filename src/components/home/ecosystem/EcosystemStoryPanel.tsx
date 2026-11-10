@@ -115,11 +115,12 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
               const done = playback.stage > index || (reduce && index === 0);
               const Node = nodes[index];
               const wireScale = done ? 1 : active ? Math.min(1, stageProgress(index)) : 0;
+              const photoCard = activeId === "georgia" && index === 0;
               return (
                 <button
                   key={stage.id}
                   type="button"
-                  className={`eco-story-node${active ? " is-active" : ""}${done ? " is-done" : ""}`}
+                  className={`eco-story-node${active ? " is-active" : ""}${done ? " is-done" : ""}${photoCard ? " eco-story-node--photo" : ""}`}
                   onClick={() => playback.setStage(index)}
                   aria-current={active ? "step" : undefined}
                   aria-label={`${stage.title}. ${stage.caption}`}
@@ -127,8 +128,12 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
                   <div className="eco-story-node-visual">
                     <Node active={active} done={done} />
                   </div>
-                  <strong>{stage.title}</strong>
-                  <span>{stage.caption}</span>
+                  {photoCard ? null : (
+                    <>
+                      <strong>{stage.title}</strong>
+                      <span>{stage.caption}</span>
+                    </>
+                  )}
                   {index < story.stages.length - 1 ? (
                     <i className="eco-story-wire" aria-hidden="true">
                       <span style={{ transform: `scaleX(${wireScale})` }} />
