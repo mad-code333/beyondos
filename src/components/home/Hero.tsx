@@ -287,16 +287,16 @@ export function Hero() {
                 </filter>
               </defs>
 
-              <ellipse cx="720" cy="110" rx="820" ry="280" fill="url(#heroHorizonHaze)" />
+              <ellipse cx="720" cy="130" rx="880" ry="250" fill="url(#heroHorizonHaze)" />
 
               <path
-                d="M-200 360 C 100 100, 360 40, 720 40 S 1340 100, 1640 360 L 1640 640 L -200 640 Z"
+                d="M-200 490 C 100 155, 360 58, 720 58 S 1340 155, 1640 490 L 1640 700 L -200 700 Z"
                 fill="url(#heroBelowFade)"
               />
 
               <path
                 className="hero-horizon-bloom"
-                d="M-200 360 C 100 100, 360 40, 720 40 S 1340 100, 1640 360"
+                d="M-200 490 C 100 155, 360 58, 720 58 S 1340 155, 1640 490"
                 fill="none"
                 stroke="url(#heroHorizonBloomGrad)"
                 strokeWidth="56"
@@ -305,7 +305,7 @@ export function Hero() {
               />
               <path
                 className="hero-horizon-line"
-                d="M-200 360 C 100 100, 360 40, 720 40 S 1340 100, 1640 360"
+                d="M-200 490 C 100 155, 360 58, 720 58 S 1340 155, 1640 490"
                 fill="none"
                 stroke="url(#heroHorizonStroke)"
                 strokeWidth="1.55"

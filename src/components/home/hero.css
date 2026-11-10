@@ -130,9 +130,10 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: clamp(4%, 8vh, 12%);
+  /* Arc meets the bottom of Web Development (Holdout-like concavity) */
+  bottom: clamp(-95px, -8.5vh, -70px);
   width: 100%;
-  height: clamp(340px, 52vh, 620px);
+  height: clamp(400px, 58vh, 680px);
   z-index: 1;
   /* Let soft bloom breathe past the box — no hard clip edge */
   overflow: visible;
