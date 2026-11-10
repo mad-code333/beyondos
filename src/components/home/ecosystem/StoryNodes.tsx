@@ -1,9 +1,29 @@
 "use client";
 
+import type { MouseEvent } from "react";
+
 type NodeProps = {
   active: boolean;
   done: boolean;
+  href?: string;
 };
+
+function LearnMoreLink({ href }: { href?: string }) {
+  if (!href) {
+    return <span className="eco-photo-learn">Learn more →</span>;
+  }
+  return (
+    <a
+      className="eco-photo-learn"
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={(event: MouseEvent<HTMLAnchorElement>) => event.stopPropagation()}
+    >
+      Learn more →
+    </a>
+  );
+}
 
 function CheckRow({
   y,
@@ -25,63 +45,84 @@ function CheckRow({
   );
 }
 
-export function GeorgiaDiscoverNode({ active, done }: NodeProps) {
+export function GeorgiaDiscoverNode({ active, done, href }: NodeProps) {
   const lit = active || done;
   return (
-    <div className={`eco-discover-card${lit ? " is-lit" : ""}${active ? " is-active" : ""}`} aria-hidden="true">
-      <div className="eco-discover-media" />
-      <span className="eco-discover-scrim" />
-      <span className="eco-discover-arc" />
-      <span className="eco-discover-rim" />
-      <span className="eco-discover-index">01 —</span>
-      <span className="eco-discover-search">
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true">
-          <circle cx="10.75" cy="10.75" r="6.1" stroke="currentColor" strokeWidth="1.65" />
-          <path d="M15.6 15.6 19.5 19.5" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" />
-        </svg>
-      </span>
-      <div className="eco-discover-copy">
+    <div className={`eco-discover-card${lit ? " is-lit" : ""}${active ? " is-active" : ""}`}>
+      <div className="eco-discover-media" aria-hidden="true" />
+      <span className="eco-discover-scrim" aria-hidden="true" />
+      <span className="eco-discover-arc" aria-hidden="true" />
+      <span className="eco-discover-rim" aria-hidden="true" />
+      <div className="eco-photo-copy">
         <strong>Discover Georgia</strong>
         <span>Explore a stay across the country</span>
-        <em>Learn more →</em>
       </div>
+      <LearnMoreLink href={href} />
     </div>
   );
 }
 
-export function GeorgiaEnquireNode({ active, done }: NodeProps) {
+export function GeorgiaEnquireNode({ active, done, href }: NodeProps) {
   const lit = active || done;
   return (
-    <svg className="eco-node-svg" viewBox="0 0 120 86" aria-hidden="true">
-      <rect className="eco-svg-base" x="18" y="8" width="84" height="70" rx="12" />
-      <text className="eco-svg-label" x="28" y="24">
-        STAY INQUIRY
-      </text>
-      <rect className={`eco-svg-field${lit ? " is-on" : ""}`} x="28" y="32" width="64" height="9" rx="3" />
-      <text className="eco-svg-micro" x="32" y="39">
-        DATES + GUESTS
-      </text>
-      <rect className={`eco-svg-field${lit ? " is-on" : ""}`} x="28" y="45" width="30" height="8" rx="2" />
-      <rect className={`eco-svg-field${lit ? " is-on" : ""}`} x="62" y="45" width="30" height="8" rx="2" />
-      <rect className={`eco-svg-cta${active ? " is-live" : done ? " is-on" : ""}`} x="28" y="58" width="64" height="12" rx="6" />
-      <text className="eco-svg-cta-text" x="40" y="66.5">
-        SEND · WA
-      </text>
-    </svg>
+    <div className={`eco-enquire-card${lit ? " is-lit" : ""}${active ? " is-active" : ""}`}>
+      <span className="eco-enquire-glow" aria-hidden="true" />
+      <span className="eco-enquire-orbit" aria-hidden="true" />
+
+      <div className="eco-enquire-widget" aria-hidden="true">
+        <div className="eco-enquire-field eco-enquire-field--search">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none">
+            <circle cx="10.5" cy="10.5" r="5.5" stroke="currentColor" strokeWidth="1.5" />
+            <path d="m15.2 15.2 3.4 3.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+          <span>Stay in Tbilisi</span>
+          <svg className="eco-enquire-chevron" viewBox="0 0 24 24" width="12" height="12" fill="none">
+            <path d="m7 10 5 5 5-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
+        <div className="eco-enquire-dates">
+          <div className="eco-enquire-field">
+            <svg viewBox="0 0 24 24" width="11" height="11" fill="none">
+              <rect x="4" y="5.5" width="16" height="14" rx="2.5" stroke="currentColor" strokeWidth="1.4" />
+              <path d="M8 3.8v3.2M16 3.8v3.2M4 10h16" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+            </svg>
+            <span>Check in</span>
+          </div>
+          <div className="eco-enquire-field">
+            <svg viewBox="0 0 24 24" width="11" height="11" fill="none">
+              <rect x="4" y="5.5" width="16" height="14" rx="2.5" stroke="currentColor" strokeWidth="1.4" />
+              <path d="M8 3.8v3.2M16 3.8v3.2M4 10h16" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+            </svg>
+            <span>Check out</span>
+          </div>
+        </div>
+        <div className="eco-enquire-send">
+          Send inquiry <span aria-hidden="true">→</span>
+        </div>
+      </div>
+
+      <div className="eco-photo-copy">
+        <strong>Send an inquiry</strong>
+        <span>WhatsApp, dates &amp; guests</span>
+      </div>
+      <LearnMoreLink href={href} />
+    </div>
   );
 }
 
-export function GeorgiaReachNode({ active, done }: NodeProps) {
+export function GeorgiaReachNode({ active, done, href }: NodeProps) {
   const lit = active || done;
   return (
-    <svg className="eco-node-svg" viewBox="0 0 120 86" aria-hidden="true">
-      <rect className="eco-svg-base" x="14" y="10" width="92" height="66" rx="12" />
-      <path className={`eco-svg-fill${lit ? " is-on" : ""}`} d="M34 42 60 20l26 22v28H34Z" />
-      <path className="eco-svg-ink" d="M34 42 60 20l26 22M40 40v30h40V40" />
-      <path className="eco-svg-ink" d="M52 70V50h16v20M42 50h10v10H42Zm26 0h10v10H68Z" />
-      <circle className={`eco-svg-pin${active ? " is-live" : done ? " is-on" : ""}`} cx="88" cy="24" r="8" />
-      <path className={`eco-svg-check${lit ? " is-on" : ""}`} d="m84.5 24 2.8 2.8 5.5-5.5" />
-    </svg>
+    <div className={`eco-reach-card${lit ? " is-lit" : ""}${active ? " is-active" : ""}`}>
+      <div className="eco-reach-media" aria-hidden="true" />
+      <span className="eco-reach-scrim" aria-hidden="true" />
+      <span className="eco-reach-rim" aria-hidden="true" />
+      <div className="eco-photo-copy">
+        <strong>Reach the property</strong>
+        <span>Intent received</span>
+      </div>
+      <LearnMoreLink href={href} />
+    </div>
   );
 }
 

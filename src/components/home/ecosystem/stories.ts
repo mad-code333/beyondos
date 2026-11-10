@@ -40,7 +40,7 @@ export const ECOSYSTEM_STORIES: readonly EcosystemStory[] = [
     result: "Your team receives a stay enquiry with dates and guest details.",
     stages: [
       { id: "discover", title: "Discover Georgia", caption: "Explore a stay across the country." },
-      { id: "enquire", title: "Send an enquiry", caption: "WhatsApp · dates and guests." },
+      { id: "enquire", title: "Send an inquiry", caption: "WhatsApp, dates & guests." },
       { id: "reach", title: "Reach the property", caption: "Intent received." },
     ],
     accent: "#d4b87a",

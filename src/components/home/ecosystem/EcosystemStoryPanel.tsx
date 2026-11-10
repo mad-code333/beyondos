@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties, KeyboardEvent, ReactNode } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { getStory, type EcosystemStoryId } from "./stories";
 import { useStoryPlayback } from "./useStoryPlayback";
@@ -21,12 +21,15 @@ type EcosystemStoryPanelProps = {
   activeId: EcosystemStoryId;
 };
 
+type StoryNodeProps = {
+  active: boolean;
+  done: boolean;
+  href?: string;
+};
+
 const ease = [0.22, 1, 0.36, 1] as const;
 
-const NODE_MAP: Record<
-  EcosystemStoryId,
-  Array<(props: { active: boolean; done: boolean }) => ReactNode>
-> = {
+const NODE_MAP: Record<EcosystemStoryId, Array<(props: StoryNodeProps) => ReactNode>> = {
   georgia: [GeorgiaDiscoverNode, GeorgiaEnquireNode, GeorgiaReachNode],
   supply: [SupplyListNode, SupplyOrderNode, SupplyReceiveNode],
   os: [OpsGatherNode, OpsConnectNode, OpsReadyNode],
@@ -115,34 +118,62 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
               const done = playback.stage > index || (reduce && index === 0);
               const Node = nodes[index];
               const wireScale = done ? 1 : active ? Math.min(1, stageProgress(index)) : 0;
-              const photoCard = activeId === "georgia" && index === 0;
+              const photoCard = activeId === "georgia";
+              const selectStage = () => playback.setStage(index);
+              const onNodeKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  selectStage();
+                }
+              };
+              const className = `eco-story-node${active ? " is-active" : ""}${done ? " is-done" : ""}${photoCard ? " eco-story-node--photo" : ""}`;
+              const visual = (
+                <div className="eco-story-node-visual">
+                  <Node active={active} done={done} href={photoCard ? story.href : undefined} />
+                </div>
+              );
+              const wire =
+                index < story.stages.length - 1 ? (
+                  <i className="eco-story-wire" aria-hidden="true">
+                    <span style={{ transform: `scaleX(${wireScale})` }} />
+                    <b
+                      className={`eco-story-traveler${wireScale > 0.02 ? " is-on" : ""}`}
+                      style={{ left: `${wireScale * 100}%` }}
+                    />
+                  </i>
+                ) : null;
+
+              if (photoCard) {
+                return (
+                  <div
+                    key={stage.id}
+                    role="button"
+                    tabIndex={0}
+                    className={className}
+                    onClick={selectStage}
+                    onKeyDown={onNodeKeyDown}
+                    aria-current={active ? "step" : undefined}
+                    aria-label={`${stage.title}. ${stage.caption}`}
+                  >
+                    {visual}
+                    {wire}
+                  </div>
+                );
+              }
+
               return (
                 <button
                   key={stage.id}
                   type="button"
-                  className={`eco-story-node${active ? " is-active" : ""}${done ? " is-done" : ""}${photoCard ? " eco-story-node--photo" : ""}`}
-                  onClick={() => playback.setStage(index)}
+                  className={className}
+                  onClick={selectStage}
                   aria-current={active ? "step" : undefined}
                   aria-label={`${stage.title}. ${stage.caption}`}
                 >
-                  <div className="eco-story-node-visual">
-                    <Node active={active} done={done} />
-                  </div>
-                  {photoCard ? null : (
-                    <>
-                      <strong>{stage.title}</strong>
-                      <span>{stage.caption}</span>
-                    </>
-                  )}
-                  {index < story.stages.length - 1 ? (
-                    <i className="eco-story-wire" aria-hidden="true">
-                      <span style={{ transform: `scaleX(${wireScale})` }} />
-                      <b
-                        className={`eco-story-traveler${wireScale > 0.02 ? " is-on" : ""}`}
-                        style={{ left: `${wireScale * 100}%` }}
-                      />
-                    </i>
-                  ) : null}
+                  {visual}
+                  <strong>{stage.title}</strong>
+                  <span>{stage.caption}</span>
+                  {wire}
                 </button>
               );
             })}

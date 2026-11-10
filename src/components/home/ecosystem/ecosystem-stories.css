@@ -204,11 +204,11 @@
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: 40px;
+  border-radius: 36px;
   overflow: hidden;
   isolation: isolate;
   background: #050505;
-  border: 5px solid #0a0a0a;
+  border: 4px solid #0a0a0a;
   box-shadow:
     0 0 0 1px rgba(212, 175, 55, 0.22),
     0 16px 34px rgba(0, 0, 0, 0.55),
@@ -279,79 +279,280 @@
   pointer-events: none;
 }
 
-.eco-discover-index {
+/* Shared footer copy — title/caption sit above a shared Learn more baseline */
+.eco-photo-copy {
   position: absolute;
-  top: 18px;
-  left: 20px;
+  left: 16px;
+  right: 16px;
+  bottom: 34px;
   z-index: 3;
-  padding: 2px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 4px;
+  min-height: 40px;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.eco-photo-copy strong {
   font-family: var(--font-manrope), system-ui, sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  color: #e8c96a;
-  text-shadow:
-    0 0 1px rgba(0, 0, 0, 0.9),
-    0 1px 8px rgba(0, 0, 0, 0.75),
-    0 0 14px rgba(212, 175, 55, 0.4);
-}
-
-.eco-discover-search {
-  position: absolute;
-  left: 22px;
-  bottom: 92px;
-  z-index: 2;
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  color: #fff;
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.34);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-}
-
-.eco-discover-copy {
-  position: absolute;
-  left: 22px;
-  right: 22px;
-  bottom: 20px;
-  z-index: 2;
-  display: grid;
-  gap: 6px;
-  justify-items: start;
-}
-
-.eco-discover-copy strong {
-  font-family: var(--font-manrope), system-ui, sans-serif;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: -0.015em;
-  line-height: 1.12;
+  line-height: 1.15;
   color: #ffffff;
   text-shadow: 0 1px 12px rgba(0, 0, 0, 0.5);
 }
 
-.eco-discover-copy span {
+.eco-photo-copy > span {
   font-family: var(--font-manrope), system-ui, sans-serif;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 400;
-  line-height: 1.35;
+  line-height: 1.3;
   color: rgba(230, 230, 225, 0.82);
 }
 
-.eco-discover-copy em {
-  margin-top: 8px;
+/* Same baseline on every Georgia photo card */
+.eco-photo-learn {
+  position: absolute;
+  left: 16px;
+  bottom: 14px;
+  z-index: 4;
+  margin: 0;
   font-family: var(--font-manrope), system-ui, sans-serif;
   font-size: 12px;
   font-style: normal;
   font-weight: 500;
   letter-spacing: 0.01em;
-  color: var(--discover-gold);
+  line-height: 1;
+  color: var(--discover-gold, #d4af37);
+  text-decoration: none;
+  pointer-events: auto;
+  transition: color 180ms ease, opacity 180ms ease;
 }
+
+a.eco-photo-learn:hover {
+  color: #f0d57a;
+}
+
+a.eco-photo-learn:focus-visible {
+  outline: 2px solid #d4af37;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Send an inquiry card — glass widget reference */
+.eco-enquire-card {
+  --discover-gold: #d4af37;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 36px;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse 70% 55% at 55% 38%, rgba(212, 175, 55, 0.14), transparent 62%),
+    linear-gradient(165deg, #141414 0%, #070707 48%, #050505 100%);
+  border: 4px solid #0a0a0a;
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.28),
+    0 16px 34px rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03),
+    inset -8px -10px 28px rgba(212, 175, 55, 0.08);
+  transition:
+    opacity 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.eco-enquire-card.is-active {
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.42),
+    0 18px 40px rgba(0, 0, 0, 0.62),
+    inset -8px -10px 32px rgba(212, 175, 55, 0.12),
+    0 0 28px rgba(212, 175, 55, 0.14);
+}
+
+.eco-enquire-glow {
+  position: absolute;
+  inset: 6% 2% 48% 4%;
+  background:
+    radial-gradient(ellipse at 50% 45%, rgba(212, 175, 55, 0.3), transparent 68%);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+.eco-enquire-orbit {
+  position: absolute;
+  left: 6%;
+  right: 4%;
+  top: 12%;
+  height: 42%;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 200deg,
+    transparent 0deg,
+    rgba(255, 220, 130, 0.65) 36deg,
+    transparent 78deg,
+    transparent 170deg,
+    rgba(212, 175, 55, 0.4) 210deg,
+    transparent 270deg
+  );
+  mask-image: radial-gradient(closest-side, transparent 56%, #000 62%, #000 70%, transparent 76%);
+  -webkit-mask-image: radial-gradient(closest-side, transparent 56%, #000 62%, #000 70%, transparent 76%);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.eco-enquire-widget {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  top: 18px;
+  z-index: 2;
+  display: grid;
+  gap: 4px;
+  padding: 7px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transform: perspective(700px) rotateX(6deg) rotateY(-5deg) rotateZ(-1.2deg) scale(0.68);
+  transform-origin: 50% 0%;
+}
+
+.eco-enquire-field {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 20px;
+  padding: 0 7px;
+  border-radius: 7px;
+  background: rgba(8, 8, 8, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(236, 236, 230, 0.88);
+  font-family: var(--font-manrope), system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 500;
+}
+
+.eco-enquire-field svg {
+  flex: none;
+  opacity: 0.85;
+  width: 9px;
+  height: 9px;
+}
+
+.eco-enquire-field--search {
+  justify-content: flex-start;
+}
+
+.eco-enquire-field--search span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.eco-enquire-chevron {
+  margin-left: auto;
+  opacity: 0.65;
+}
+
+.eco-enquire-dates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+.eco-enquire-send {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 22px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #c79a2f 0%, #e8c45a 48%, #f0d57a 100%);
+  color: #16120a;
+  font-family: var(--font-manrope), system-ui, sans-serif;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow:
+    0 6px 14px rgba(212, 175, 55, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.eco-enquire-card .eco-photo-copy {
+  background: linear-gradient(180deg, transparent 0%, rgba(5, 5, 5, 0.92) 32%, #050505 100%);
+}
+
+.eco-enquire-card .eco-photo-copy > span {
+  color: rgba(180, 180, 174, 0.9);
+}
+
+/* Reach the property photo card */
+.eco-reach-card {
+  --discover-gold: #d4af37;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 36px;
+  overflow: hidden;
+  isolation: isolate;
+  background: #050505;
+  border: 4px solid #0a0a0a;
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.22),
+    0 16px 34px rgba(0, 0, 0, 0.55),
+    inset -1px 0 22px rgba(212, 175, 55, 0.12);
+  transition:
+    opacity 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.eco-reach-card.is-active {
+  box-shadow:
+    0 0 0 1px rgba(212, 175, 55, 0.42),
+    0 18px 40px rgba(0, 0, 0, 0.62),
+    inset -1px 0 26px rgba(212, 175, 55, 0.16),
+    0 0 24px rgba(212, 175, 55, 0.12);
+}
+
+.eco-reach-media {
+  position: absolute;
+  inset: 0;
+  background: url("/media/georgia-reach.jpg") 48% 42% / cover no-repeat;
+  transform: scale(1.05);
+  transform-origin: center;
+}
+
+.eco-reach-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, transparent 28%),
+    linear-gradient(180deg, transparent 36%, rgba(0, 0, 0, 0.5) 62%, rgba(0, 0, 0, 0.9) 100%);
+  pointer-events: none;
+}
+
+.eco-reach-rim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset -2px 0 18px rgba(212, 175, 55, 0.14);
+  pointer-events: none;
+}
+
 
 .eco-story-node strong {
   font-size: 12.5px;
@@ -670,28 +871,33 @@
     border-width: 4px;
   }
 
-  .eco-discover-index {
+  .eco-photo-copy {
+    left: 14px;
+    right: 14px;
+    bottom: 32px;
+  }
+
+  .eco-photo-copy strong {
+    font-size: 14px;
+  }
+
+  .eco-enquire-card,
+  .eco-reach-card {
+    border-radius: 26px;
+  }
+
+  .eco-enquire-widget {
     top: 14px;
-    left: 16px;
+    left: 10px;
+    right: 10px;
+    padding: 8px;
+    gap: 5px;
+  }
+
+  .eco-photo-learn {
+    left: 14px;
+    bottom: 12px;
     font-size: 11px;
-  }
-
-  .eco-discover-search {
-    left: 16px;
-    bottom: 80px;
-    width: 32px;
-    height: 32px;
-    border-radius: 10px;
-  }
-
-  .eco-discover-copy {
-    left: 16px;
-    right: 16px;
-    bottom: 16px;
-  }
-
-  .eco-discover-copy strong {
-    font-size: 15px;
   }
 }
 
