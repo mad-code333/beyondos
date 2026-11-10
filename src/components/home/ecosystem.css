@@ -43,7 +43,7 @@
   display: grid;
   grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
   gap: clamp(28px, 3.6vw, 44px);
-  align-items: center;
+  align-items: start;
 }
 
 .georgia-globe-copy {
@@ -107,7 +107,8 @@
     inset 0 -1px 0 rgba(0, 0, 0, 0.65);
 }
 
-.ecosystem-list li {
+.ecosystem-list li,
+.ecosystem-item {
   display: grid;
   grid-template-columns: 32px minmax(0, 1fr);
   gap: 12px;
@@ -119,34 +120,109 @@
   will-change: background;
 }
 
-.georgia-globe-copy .ecosystem-list li {
+.georgia-globe-copy .ecosystem-list > * {
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-  transition: background 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.georgia-globe-copy .ecosystem-list li:last-child {
+.georgia-globe-copy .ecosystem-list > *:last-child {
   border-bottom: none;
 }
 
-.georgia-globe-copy .ecosystem-list li:hover {
-  background: #0c0c0c;
+.ecosystem-item {
+  width: 100%;
+  margin: 0;
   color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ecosystem-item:hover {
+  background: #0c0c0c;
+}
+
+.ecosystem-item:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.35);
+  outline-offset: -2px;
+}
+
+.ecosystem-item[data-story="georgia"] .mono {
+  color: #b8a06a;
+}
+
+.ecosystem-item[data-story="supply"] .mono {
+  color: #9b84d8;
+}
+
+.ecosystem-item[data-story="os"] .mono {
+  color: #a8b4c0;
+}
+
+.ecosystem-item.is-active {
+  position: relative;
   z-index: 1;
+  background: #0d0d0d;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 3px 0 0 var(--eco-item-accent, #d4b87a),
+    0 0 0 1px color-mix(in srgb, var(--eco-item-accent, #d4b87a) 42%, transparent);
 }
 
-.georgia-globe-copy .ecosystem-list li:hover .mono {
-  color: #b0b0aa;
+.ecosystem-item[data-story="georgia"].is-active {
+  --eco-item-accent: #d4b87a;
 }
 
-.georgia-globe-copy .ecosystem-list li:hover strong {
+.ecosystem-item[data-story="supply"].is-active {
+  --eco-item-accent: #a78bfa;
+}
+
+.ecosystem-item[data-story="os"].is-active {
+  --eco-item-accent: #c4d0dc;
+}
+
+.ecosystem-item.is-active .mono {
+  color: var(--eco-item-accent, #d4b87a);
+}
+
+.ecosystem-item.is-active strong {
   color: #ffffff;
 }
 
-.georgia-globe-copy .ecosystem-list li:hover p {
+.ecosystem-item.is-active p {
+  color: #b8b8b2;
+}
+
+.ecosystem-item strong em {
+  display: inline-block;
+  margin-left: 8px;
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7e7e78;
+  vertical-align: 1px;
+}
+
+.ecosystem-item.is-active strong em {
+  color: color-mix(in srgb, var(--eco-item-accent, #d4b87a) 80%, white);
+}
+
+.ecosystem-item:hover .mono {
+  color: inherit;
+}
+
+.ecosystem-item:hover strong {
+  color: #ffffff;
+}
+
+.ecosystem-item:hover p {
   color: #b0b0aa;
 }
 
-.georgia-globe-copy .ecosystem-list li:hover a {
+.ecosystem-item:hover a {
   color: #ffffff;
   transform: translateX(4px);
 }
@@ -236,6 +312,19 @@
   contain: layout paint;
   content-visibility: auto;
   contain-intrinsic-size: auto 420px;
+}
+
+.globe-stage.eco-story-host {
+  aspect-ratio: auto;
+  min-height: 560px;
+  place-items: stretch;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+  contain: none;
+  content-visibility: visible;
 }
 
 .earth-globe-wrap {
@@ -510,6 +599,13 @@
     margin-inline: auto;
   }
 
+  .globe-stage.eco-story-host {
+    order: 0;
+    aspect-ratio: auto;
+    min-height: 0;
+    max-width: none;
+  }
+
   .georgia-globe-copy .ecosystem-list {
     max-width: none;
   }
@@ -547,6 +643,15 @@
     aspect-ratio: 4 / 3;
     border-radius: 20px;
   }
+
+  .globe-stage.eco-story-host {
+    aspect-ratio: auto;
+    border-radius: 0;
+  }
+
+  .ecosystem-item {
+    padding: 14px 14px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -554,11 +659,17 @@
   .georgia-globe-copy .ecosystem-list li strong,
   .georgia-globe-copy .ecosystem-list li .mono,
   .georgia-globe-copy .ecosystem-list li p,
-  .georgia-globe-copy .ecosystem-list li a {
+  .georgia-globe-copy .ecosystem-list li a,
+  .ecosystem-item,
+  .ecosystem-item strong,
+  .ecosystem-item .mono,
+  .ecosystem-item p,
+  .ecosystem-item a {
     transition: none;
   }
 
-  .georgia-globe-copy .ecosystem-list li:hover a {
+  .georgia-globe-copy .ecosystem-list li:hover a,
+  .ecosystem-item:hover a {
     transform: none;
   }
 }

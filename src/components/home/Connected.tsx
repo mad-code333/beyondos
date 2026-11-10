@@ -1,17 +1,11 @@
 "use client";
 
-import dynamic from "next/dynamic";
+import { useCallback, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
+import { EcosystemStoryPanel } from "./ecosystem/EcosystemStoryPanel";
+import { ECOSYSTEM_STORIES, type EcosystemStoryId } from "./ecosystem/stories";
 import "./ecosystem.css";
-
-const PremiumEarth = dynamic(
-  () => import("./PremiumEarth").then((m) => m.PremiumEarth),
-  {
-    ssr: false,
-    loading: () => <div className="earth-globe-wrap" aria-hidden="true" />,
-  },
-);
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -21,33 +15,6 @@ const navStrip = [
   { href: "/services/hms", label: "Hotel HMS" },
   { href: "/services/web", label: "Web Development" },
   { href: "/services/growth", label: "Digital Growth" },
-] as const;
-
-const practices = [
-  {
-    n: "01",
-    title: "Beyond Georgia",
-    body: "Demand. A Georgia-only travel platform — stays, tours, transfers, dining, WhatsApp booking — so the right guests find your property with clear intent.",
-    href: "https://www.beyondgeorgia.com/",
-    cta: "Visit Beyond Georgia",
-    external: true,
-  },
-  {
-    n: "02",
-    title: "Beyond Supply",
-    body: "Cost. B2B ecommerce for hotels and restaurants — food, linen, amenities, equipment — so procurement is calmer than five vendor chats.",
-    href: "/beyondsupply",
-    cta: "Explore Beyond Supply",
-    external: false,
-  },
-  {
-    n: "03",
-    title: "Beyond OS",
-    body: "Operations. HMS, OMS, CRM, websites and digital growth — the systems that run the desk, the pass and the direct booking path.",
-    href: "/#services",
-    cta: "Explore Beyond OS",
-    external: false,
-  },
 ] as const;
 
 const flow = [
@@ -98,7 +65,7 @@ const fadeCard = (delay = 0, reduce: boolean) =>
         transition: { duration: 0.45, ease, delay },
       };
 
-const fadeGlobe = (reduce: boolean) =>
+const fadeStage = (reduce: boolean) =>
   reduce
     ? {}
     : {
@@ -110,6 +77,28 @@ const fadeGlobe = (reduce: boolean) =>
 
 export function Connected() {
   const reduce = useReducedMotion() ?? false;
+  const [activeId, setActiveId] = useState<EcosystemStoryId>("georgia");
+
+  const onServiceKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
+      const ids = ECOSYSTEM_STORIES.map((story) => story.id);
+      const index = ids.indexOf(activeId);
+      if (event.key === "ArrowDown" || event.key === "ArrowRight") {
+        event.preventDefault();
+        setActiveId(ids[(index + 1) % ids.length]);
+      } else if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+        event.preventDefault();
+        setActiveId(ids[(index - 1 + ids.length) % ids.length]);
+      } else if (event.key === "Home") {
+        event.preventDefault();
+        setActiveId(ids[0]);
+      } else if (event.key === "End") {
+        event.preventDefault();
+        setActiveId(ids[ids.length - 1]);
+      }
+    },
+    [activeId],
+  );
 
   return (
     <section className="georgia-globe-section section" id="ecosystem" aria-label="The Beyond ecosystem">
@@ -135,33 +124,66 @@ export function Connected() {
             should stay stocked, and the desk should not rebuild every stay from five apps.
           </p>
 
-          <ul className="ecosystem-list">
-            {practices.map((item, index) => (
-              <motion.li key={item.n} {...fadeCard(0.06 + index * 0.05, reduce)}>
-                <span className="mono">{item.n}</span>
-                <div>
-                  <strong>{item.title}</strong>
-                  <p>{item.body}</p>
-                  {item.external ? (
-                    <a href={item.href} target="_blank" rel="noopener noreferrer">
-                      {item.cta} ↗
-                    </a>
-                  ) : (
-                    <Link href={item.href}>
-                      {item.cta} ↗
-                    </Link>
-                  )}
-                </div>
-              </motion.li>
-            ))}
-          </ul>
+          <div
+            className="ecosystem-list"
+            role="listbox"
+            aria-label="Beyond ecosystem businesses"
+            aria-activedescendant={`eco-service-${activeId}`}
+            onKeyDown={onServiceKeyDown}
+          >
+            {ECOSYSTEM_STORIES.map((item, index) => {
+              const active = activeId === item.id;
+              return (
+                <motion.div key={item.id} role="none" {...fadeCard(0.06 + index * 0.05, reduce)}>
+                  <button
+                    id={`eco-service-${item.id}`}
+                    type="button"
+                    role="option"
+                    className={`ecosystem-item${active ? " is-active" : ""}`}
+                    data-story={item.id}
+                    aria-selected={active}
+                    tabIndex={active ? 0 : -1}
+                    onClick={() => setActiveId(item.id)}
+                    onFocus={() => setActiveId(item.id)}
+                  >
+                    <span className="mono">{item.index}</span>
+                    <div>
+                      <strong>
+                        {item.title}
+                        <em>{item.category}</em>
+                      </strong>
+                      <p>{item.body}</p>
+                      {item.external ? (
+                        <a
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(event) => event.stopPropagation()}
+                          tabIndex={active ? 0 : -1}
+                        >
+                          {item.cta} ↗
+                        </a>
+                      ) : (
+                        <Link
+                          href={item.href}
+                          onClick={(event) => event.stopPropagation()}
+                          tabIndex={active ? 0 : -1}
+                        >
+                          {item.cta} ↗
+                        </Link>
+                      )}
+                    </div>
+                  </button>
+                </motion.div>
+              );
+            })}
+          </div>
 
           <span className="mono georgia-coords">41.7151° N / 44.8271° E · Tbilisi</span>
         </motion.div>
 
-        <motion.div className="globe-stage" {...fadeGlobe(reduce)}>
-          <PremiumEarth className="earth-globe-wrap" />
-          <span className="mono globe-caption">Green pin = Georgia · Tbilisi</span>
+        <motion.div className="globe-stage eco-story-host" {...fadeStage(reduce)}>
+          <EcosystemStoryPanel key={activeId} activeId={activeId} />
         </motion.div>
       </div>
 
