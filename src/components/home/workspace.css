@@ -318,7 +318,7 @@
 .workspace-demo .app-layout {
   display: grid;
   grid-template-columns: 168px 1fr;
-  min-height: 420px;
+  min-height: 560px;
 }
 
 .workspace-demo .app-sidebar {
@@ -396,6 +396,8 @@
 
 .workspace-demo .app-content {
   padding: 26px 30px;
+  overflow: auto;
+  max-height: min(78vh, 820px);
 }
 
 .workspace-demo .app-topline {
