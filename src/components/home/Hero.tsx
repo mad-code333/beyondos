@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { EclipseHorizon } from "./EclipseHorizon";
 import "./hero.css";
 
 type Slide = {
@@ -227,9 +228,8 @@ export function Hero() {
             style={{ transform: `translate3d(0, ${parallax * 4}%, 0)` }}
           />
           <div className="hero-atmosphere-glow-side" />
-          <div className="hero-grid">
-            <div className="hero-grid-dots" />
-            <div className="hero-grid-squares" />
+          <div className="hero-grid" aria-hidden="true">
+            <EclipseHorizon />
             <div className="hero-grid-veil" />
           </div>
           <div className="hero-horizon">
