@@ -36,6 +36,7 @@ const serviceItems = [
 
 const links = [
   { href: "/", label: "Home" },
+  { href: "/pricing", label: "Pricing" },
   { href: "/#work", label: "Selected work" },
   { href: "/#approach", label: "Our approach" },
   { href: "/#insights", label: "Insights" },
@@ -121,7 +122,12 @@ export function Header() {
         </div>
 
         {links.slice(1).map((link) => (
-          <Link key={link.href} href={link.href} onClick={closeAll}>
+          <Link
+            key={link.href}
+            href={link.href}
+            onClick={closeAll}
+            className={cn(pathname === link.href && "active")}
+          >
             {link.label}
           </Link>
         ))}
