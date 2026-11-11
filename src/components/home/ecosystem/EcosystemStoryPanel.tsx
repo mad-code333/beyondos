@@ -99,6 +99,15 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
         <span className="eco-story-phase">{story.phase}</span>
       </header>
 
+      {activeId === "os" ? (
+        <div className="eco-ops-atmosphere" aria-hidden="true">
+          <span className="eco-ops-atmosphere-ribbon" />
+          <span className="eco-ops-atmosphere-orbit eco-ops-atmosphere-orbit--a" />
+          <span className="eco-ops-atmosphere-orbit eco-ops-atmosphere-orbit--b" />
+          <span className="eco-ops-atmosphere-glow" />
+        </div>
+      ) : null}
+
       <AnimatePresence mode="wait">
         <motion.div
           key={story.id}
@@ -108,9 +117,20 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
           exit={reduce ? undefined : { opacity: 0, y: -8 }}
           transition={{ duration: 0.45, ease }}
         >
-          <p className="eco-story-kicker">{story.title}</p>
-          <h3>{story.headline}</h3>
-          <p className="eco-story-desc">{story.description}</p>
+          <p className={`eco-story-kicker${activeId === "os" ? " eco-story-kicker--os" : ""}`}>
+            {activeId === "os" ? <i aria-hidden="true" /> : null}
+            {story.title}
+          </p>
+          <h3>
+            {activeId === "os" ? (
+              <>
+                The desk sees the <em className="eco-ops-whole">whole</em> stay.
+              </>
+            ) : (
+              story.headline
+            )}
+          </h3>
+          <p className={`eco-story-desc${activeId === "os" ? " eco-story-desc--os" : ""}`}>{story.description}</p>
 
           <div className="eco-story-flow" role="group" aria-label={`${story.title} stages`}>
             {story.stages.map((stage, index) => {
@@ -118,8 +138,8 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
               const done = playback.stage > index || (reduce && index === 0);
               const Node = nodes[index];
               const wireScale = done ? 1 : active ? Math.min(1, stageProgress(index)) : 0;
-              const photoCard = activeId === "georgia" || activeId === "supply";
-              const supplyCard = activeId === "supply";
+              const photoCard = activeId === "georgia" || activeId === "supply" || activeId === "os";
+              const arrowCard = activeId === "supply" || activeId === "os";
               const selectStage = () => playback.setStage(index);
               const onNodeKeyDown = (event: KeyboardEvent<HTMLElement>) => {
                 if (event.key === "Enter" || event.key === " ") {
@@ -127,7 +147,7 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
                   selectStage();
                 }
               };
-              const className = `eco-story-node${active ? " is-active" : ""}${done ? " is-done" : ""}${photoCard ? " eco-story-node--photo" : ""}${supplyCard ? " eco-story-node--supply" : ""}`;
+              const className = `eco-story-node${active ? " is-active" : ""}${done ? " is-done" : ""}${photoCard ? " eco-story-node--photo" : ""}${activeId === "supply" ? " eco-story-node--supply" : ""}${activeId === "os" ? " eco-story-node--ops" : ""}`;
               const visual = (
                 <div className="eco-story-node-visual">
                   <Node active={active} done={done} href={photoCard ? story.href : undefined} />
@@ -135,18 +155,29 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
               );
               const wire =
                 index < story.stages.length - 1 ? (
-                  supplyCard ? (
-                    <i className={`eco-story-arrow${wireScale > 0.55 ? " is-on" : ""}`} aria-hidden="true">
-                      <svg viewBox="0 0 24 24" width="12" height="12" fill="none">
-                        <path
-                          d="M8 12h8m0 0-3.2-3.2M16 12l-3.2 3.2"
-                          stroke="currentColor"
-                          strokeWidth="1.7"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </i>
+                  arrowCard ? (
+                    <>
+                      {activeId === "os" ? (
+                        <i className="eco-story-wire eco-story-wire--ops" aria-hidden="true">
+                          <span style={{ transform: `scaleX(${wireScale})` }} />
+                          <b
+                            className={`eco-story-traveler${wireScale > 0.02 ? " is-on" : ""}`}
+                            style={{ left: `${wireScale * 100}%` }}
+                          />
+                        </i>
+                      ) : null}
+                      <i className={`eco-story-arrow${wireScale > 0.55 ? " is-on" : ""}`} aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none">
+                          <path
+                            d="M8 12h8m0 0-3.2-3.2M16 12l-3.2 3.2"
+                            stroke="currentColor"
+                            strokeWidth="1.7"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </i>
+                    </>
                   ) : (
                     <i className="eco-story-wire" aria-hidden="true">
                       <span style={{ transform: `scaleX(${wireScale})` }} />
@@ -160,7 +191,7 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
 
               if (photoCard) {
                 return (
-                  <div
+                  <motion.div
                     key={stage.id}
                     role="button"
                     tabIndex={0}
@@ -169,10 +200,13 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
                     onKeyDown={onNodeKeyDown}
                     aria-current={active ? "step" : undefined}
                     aria-label={`${stage.title}. ${stage.caption}`}
+                    initial={reduce || activeId !== "os" ? false : { opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: activeId === "os" ? index * 0.08 : 0, ease }}
                   >
                     {visual}
                     {wire}
-                  </div>
+                  </motion.div>
                 );
               }
 
@@ -232,7 +266,7 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
             {playback.playing ? "Pause" : "Play"}
           </button>
           <button type="button" className="eco-story-btn eco-story-btn--ghost" onClick={playback.replay}>
-            <ReplayIcon /> Replay story
+            <ReplayIcon /> Replay story <span aria-hidden="true">→</span>
           </button>
         </div>
       </footer>

@@ -157,7 +157,7 @@
 }
 
 .ecosystem-item[data-story="os"] .mono {
-  color: #a8b4c0;
+  color: #b8a4f0;
 }
 
 .ecosystem-item.is-active {
@@ -179,7 +179,7 @@
 }
 
 .ecosystem-item[data-story="os"].is-active {
-  --eco-item-accent: #c4d0dc;
+  --eco-item-accent: #c4b5fd;
 }
 
 .ecosystem-item.is-active .mono {

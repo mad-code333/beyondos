@@ -55,26 +55,6 @@ function SupplyStatus({ lit }: { lit: boolean }) {
   );
 }
 
-function CheckRow({
-  y,
-  label,
-  on,
-}: {
-  y: number;
-  label: string;
-  on: boolean;
-}) {
-  return (
-    <g>
-      <rect className={`eco-svg-check-box${on ? " is-on" : ""}`} x="18" y={y - 7} width="11" height="11" rx="2" />
-      <path className={`eco-svg-check${on ? " is-on" : ""}`} d={`M20.2 ${y - 1.5}l2.6 2.6 4.8-4.8`} />
-      <text className="eco-svg-label" x="36" y={y + 2}>
-        {label}
-      </text>
-    </g>
-  );
-}
-
 export function GeorgiaDiscoverNode({ active, done, href }: NodeProps) {
   const lit = active || done;
   return (
@@ -235,45 +215,126 @@ export function SupplyReceiveNode(props: NodeProps) {
   );
 }
 
-export function OpsGatherNode({ active, done }: NodeProps) {
+function OpsArrowChip() {
   return (
-    <svg className="eco-node-svg" viewBox="0 0 120 86" aria-hidden="true">
-      <rect className="eco-svg-base" x="8" y="8" width="104" height="70" rx="12" />
-      <CheckRow y={26} label="RESERVATION" on={active || done} />
-      <CheckRow y={44} label="GUEST MESSAGE" on={active || done} />
-      <CheckRow y={62} label="TEAM TASK" on={active || done} />
-    </svg>
+    <span className="eco-ops-go" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="12" height="12" fill="none">
+        <path
+          d="M8 12h8m0 0-3.2-3.2M16 12l-3.2 3.2"
+          stroke="currentColor"
+          strokeWidth="1.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    </span>
+  );
+}
+
+export function OpsGatherNode({ active, done }: NodeProps) {
+  const lit = active || done;
+  return (
+    <div className={`eco-ops-card eco-ops-card--gather${lit ? " is-lit" : ""}${active ? " is-active" : ""}`}>
+      <span className="eco-ops-orbit eco-ops-orbit--a" aria-hidden="true" />
+      <span className="eco-ops-orbit eco-ops-orbit--b" aria-hidden="true" />
+      <span className="eco-ops-index" aria-hidden="true">
+        01
+      </span>
+      <div className="eco-ops-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+          <rect x="3.5" y="5" width="17" height="15" rx="3" stroke="currentColor" strokeWidth="1.5" />
+          <path d="M8 3.5v3.5M16 3.5v3.5M3.5 10h17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <rect x="7.2" y="13" width="3.2" height="3.2" rx="0.7" fill="currentColor" opacity="0.85" />
+        </svg>
+      </div>
+      <div className="eco-ops-media eco-ops-media--calendar" aria-hidden="true" />
+      <div className="eco-ops-copy">
+        <strong>Gather stay details</strong>
+        <span>Bookings, messages, tasks.</span>
+      </div>
+      <div className="eco-ops-foot">
+        <div className="eco-ops-avatars" aria-hidden="true">
+          {/* eslint-disable-next-line @next/next/no-img-element -- static showcase avatars */}
+          <img src="/media/avatars/guest-01.jpg" alt="" draggable={false} />
+          {/* eslint-disable-next-line @next/next/no-img-element -- static showcase avatars */}
+          <img src="/media/avatars/guest-02.jpg" alt="" draggable={false} />
+          {/* eslint-disable-next-line @next/next/no-img-element -- static showcase avatars */}
+          <img src="/media/avatars/guest-03.jpg" alt="" draggable={false} />
+          <em>+3</em>
+        </div>
+        <OpsArrowChip />
+      </div>
+    </div>
   );
 }
 
 export function OpsConnectNode({ active, done }: NodeProps) {
   const lit = active || done;
   return (
-    <svg className="eco-node-svg" viewBox="0 0 120 86" aria-hidden="true">
-      <rect className="eco-svg-base" x="12" y="8" width="96" height="70" rx="12" />
-      <circle className={`eco-svg-pin${lit ? " is-on" : ""}`} cx="34" cy="30" r="9" />
-      <path className="eco-svg-ink" d="M30 28h8M34 24v8" opacity="0.45" />
-      <path className={`eco-svg-field${lit ? " is-on" : ""}`} d="M50 24h46M50 34h34" />
-      <rect className={`eco-svg-cta${active ? " is-live" : done ? " is-on" : ""}`} x="24" y="48" width="72" height="20" rx="6" />
-      <text className="eco-svg-cta-text" x="36" y="60">
-        GUEST RECORD
-      </text>
-    </svg>
+    <div className={`eco-ops-card eco-ops-card--connect${lit ? " is-lit" : ""}${active ? " is-active" : ""}`}>
+      <span className="eco-ops-spark" aria-hidden="true" />
+      <span className="eco-ops-index" aria-hidden="true">
+        02
+      </span>
+      <div className="eco-ops-icon eco-ops-icon--disc" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+          <circle cx="12" cy="12" r="8.2" stroke="currentColor" strokeWidth="1.5" />
+          <circle cx="12" cy="12" r="3.2" stroke="currentColor" strokeWidth="1.5" />
+          <circle cx="12" cy="12" r="1.1" fill="currentColor" />
+        </svg>
+      </div>
+      <div className="eco-ops-media eco-ops-media--profile" aria-hidden="true" />
+      <div className="eco-ops-copy">
+        <strong>Connect the record</strong>
+        <span>HMS, OMS and CRM.</span>
+      </div>
+      <div className="eco-ops-foot">
+        <span className={`eco-ops-sync${active ? " is-live" : lit ? " is-on" : ""}`}>
+          <i aria-hidden="true">
+            <b />
+            <b />
+            <b />
+            <b />
+          </i>
+          Syncing data...
+        </span>
+      </div>
+    </div>
   );
 }
 
 export function OpsReadyNode({ active, done }: NodeProps) {
   const lit = active || done;
   return (
-    <svg className="eco-node-svg" viewBox="0 0 120 86" aria-hidden="true">
-      <rect className="eco-svg-base" x="14" y="8" width="92" height="70" rx="12" />
-      <circle className={`eco-svg-pin${lit ? " is-on" : ""}`} cx="42" cy="34" r="12" />
-      <path className="eco-svg-ink" d="M42 28c2.8 0 5 2.4 5 5.4 0 4-5 7.6-5 7.6s-5-3.6-5-7.6c0-3 2.2-5.4 5-5.4Z" opacity="0.55" />
-      <path className={`eco-svg-check${lit ? " is-on" : ""}`} d="m76 24 5 5 10-10" />
-      <rect className={`eco-svg-cta${active ? " is-live" : done ? " is-on" : ""}`} x="28" y="56" width="64" height="12" rx="6" />
-      <text className="eco-svg-cta-text" x="46" y="64.5">
-        CHECK-IN
-      </text>
-    </svg>
+    <div className={`eco-ops-card eco-ops-card--ready${lit ? " is-lit" : ""}${active ? " is-active" : ""}`}>
+      <div className="eco-ops-room" aria-hidden="true" />
+      <span className="eco-ops-room-scrim" aria-hidden="true" />
+      <span className="eco-ops-index" aria-hidden="true">
+        03
+      </span>
+      <div className="eco-ops-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none">
+          <rect x="3.5" y="3.5" width="17" height="17" rx="5" stroke="currentColor" strokeWidth="1.5" />
+          <path
+            d="m8 12.2 2.6 2.6 5.4-5.4"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+      <div className="eco-ops-copy">
+        <strong>Prepare check-in</strong>
+        <span>Guest context ready.</span>
+      </div>
+      <div className="eco-ops-foot">
+        <span className={`eco-ops-ready${lit ? " is-on" : ""}`}>
+          <i aria-hidden="true" />
+          Ready.
+        </span>
+        <OpsArrowChip />
+      </div>
+    </div>
   );
 }

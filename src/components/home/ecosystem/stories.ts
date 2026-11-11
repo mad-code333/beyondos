@@ -85,8 +85,8 @@ export const ECOSYSTEM_STORIES: readonly EcosystemStory[] = [
       { id: "connect", title: "Connect the record", caption: "HMS, OMS and CRM." },
       { id: "ready", title: "Prepare check-in", caption: "Guest context ready." },
     ],
-    accent: "#c4d0dc",
-    accentSoft: "rgba(196, 208, 220, 0.22)",
+    accent: "#c4b5fd",
+    accentSoft: "rgba(167, 139, 250, 0.28)",
   },
 ] as const;
 
