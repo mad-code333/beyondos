@@ -8,20 +8,50 @@ type NodeProps = {
   href?: string;
 };
 
-function LearnMoreLink({ href }: { href?: string }) {
+function CardLink({
+  href,
+  label,
+  className = "eco-photo-learn",
+  external = true,
+}: {
+  href?: string;
+  label: string;
+  className?: string;
+  external?: boolean;
+}) {
   if (!href) {
-    return <span className="eco-photo-learn">Learn more →</span>;
+    return <span className={className}>{label}</span>;
   }
   return (
     <a
-      className="eco-photo-learn"
+      className={className}
       href={href}
-      target="_blank"
-      rel="noopener noreferrer"
+      {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
       onClick={(event: MouseEvent<HTMLAnchorElement>) => event.stopPropagation()}
     >
-      Learn more →
+      {label}
     </a>
+  );
+}
+
+function LearnMoreLink({ href }: { href?: string }) {
+  return <CardLink href={href} label="Learn more →" />;
+}
+
+function SupplyStatus({ lit }: { lit: boolean }) {
+  return (
+    <span className={`eco-supply-status${lit ? " is-on" : ""}`} aria-hidden="true">
+      {lit ? (
+        <svg viewBox="0 0 20 20" width="14" height="14" fill="none">
+          <circle cx="10" cy="10" r="9" fill="currentColor" />
+          <path d="m6.2 10.2 2.4 2.4 5.2-5.2" stroke="#120816" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      ) : (
+        <svg viewBox="0 0 20 20" width="14" height="14" fill="none">
+          <circle cx="10" cy="10" r="8.2" stroke="currentColor" strokeWidth="1.4" />
+        </svg>
+      )}
+    </span>
   );
 }
 
@@ -126,58 +156,42 @@ export function GeorgiaReachNode({ active, done, href }: NodeProps) {
   );
 }
 
-export function SupplyListNode({ active, done }: NodeProps) {
-  const rows = [
-    { y: 26, label: "FOOD", threshold: 0 },
-    { y: 42, label: "LINEN", threshold: 1 },
-    { y: 58, label: "AMENITIES", threshold: 2 },
-  ];
+function SupplyShotCard({
+  active,
+  done,
+  href,
+  shot,
+  label,
+}: NodeProps & { shot: string; label: string }) {
+  const lit = active || done;
   return (
-    <svg className="eco-node-svg" viewBox="0 0 120 86" aria-hidden="true">
-      <rect className="eco-svg-base" x="10" y="8" width="100" height="70" rx="12" />
-      {rows.map((row) => (
-        <CheckRow
-          key={row.label}
-          y={row.y}
-          label={row.label}
-          on={done || active || row.threshold === 0}
-        />
-      ))}
-      <text className="eco-svg-micro" x="36" y="74">
-        + EQUIPMENT
-      </text>
-    </svg>
+    <div
+      className={`eco-supply-card${lit ? " is-lit" : ""}${active ? " is-active" : ""}`}
+      data-shot={label}
+    >
+      <div className="eco-supply-media" aria-hidden="true">
+        {/* eslint-disable-next-line @next/next/no-img-element -- static showcase asset */}
+        <img className="eco-supply-shot" src={shot} alt="" draggable={false} />
+        <span className="eco-supply-orbit-pulse" />
+      </div>
+      <span className="eco-supply-status-pad" aria-hidden="true" />
+      <SupplyStatus lit={lit} />
+      <span className="eco-supply-foot" aria-hidden="true" />
+      <CardLink className="eco-supply-cta" href={href} label="Explore categories →" external={false} />
+    </div>
   );
 }
 
-export function SupplyOrderNode({ active, done }: NodeProps) {
-  const lit = active || done;
-  return (
-    <svg className="eco-node-svg" viewBox="0 0 120 86" aria-hidden="true">
-      <rect className="eco-svg-base" x="16" y="8" width="88" height="70" rx="12" />
-      <text className="eco-svg-label" x="28" y="26">
-        ORDER #4821
-      </text>
-      <path className={`eco-svg-ink${lit ? " is-on" : ""}`} d="M28 36h64M28 46h44M28 56h54" />
-      <rect className={`eco-svg-cta${active ? " is-live" : done ? " is-on" : ""}`} x="28" y="64" width="64" height="6" rx="3" />
-    </svg>
-  );
+export function SupplyListNode(props: NodeProps) {
+  return <SupplyShotCard {...props} shot="/media/supply-01.png" label="list" />;
 }
 
-export function SupplyReceiveNode({ active, done }: NodeProps) {
-  const lit = active || done;
-  return (
-    <svg className="eco-node-svg" viewBox="0 0 120 86" aria-hidden="true">
-      <rect className="eco-svg-base" x="12" y="10" width="96" height="66" rx="12" />
-      <path
-        className={`eco-svg-fill${lit ? " is-on" : ""}`}
-        d="M30 50 46 34l16 16v18H30Zm36-4 14-14 14 14v22H66Z"
-      />
-      <path className="eco-svg-ink" d="M30 50 46 34l16 16M46 34v34M66 46l14-14 14 14M80 32v36" />
-      <path className={`eco-svg-check${lit ? " is-on" : ""}`} d="m88 22 5 5 9-9" />
-      <circle className={`eco-svg-pin${active ? " is-live" : ""}`} cx="34" cy="24" r="3" />
-    </svg>
-  );
+export function SupplyOrderNode(props: NodeProps) {
+  return <SupplyShotCard {...props} shot="/media/supply-02.png" label="order" />;
+}
+
+export function SupplyReceiveNode(props: NodeProps) {
+  return <SupplyShotCard {...props} shot="/media/supply-03.png" label="receive" />;
 }
 
 export function OpsGatherNode({ active, done }: NodeProps) {

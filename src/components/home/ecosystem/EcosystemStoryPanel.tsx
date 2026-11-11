@@ -118,7 +118,8 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
               const done = playback.stage > index || (reduce && index === 0);
               const Node = nodes[index];
               const wireScale = done ? 1 : active ? Math.min(1, stageProgress(index)) : 0;
-              const photoCard = activeId === "georgia";
+              const photoCard = activeId === "georgia" || activeId === "supply";
+              const supplyCard = activeId === "supply";
               const selectStage = () => playback.setStage(index);
               const onNodeKeyDown = (event: KeyboardEvent<HTMLElement>) => {
                 if (event.key === "Enter" || event.key === " ") {
@@ -126,7 +127,7 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
                   selectStage();
                 }
               };
-              const className = `eco-story-node${active ? " is-active" : ""}${done ? " is-done" : ""}${photoCard ? " eco-story-node--photo" : ""}`;
+              const className = `eco-story-node${active ? " is-active" : ""}${done ? " is-done" : ""}${photoCard ? " eco-story-node--photo" : ""}${supplyCard ? " eco-story-node--supply" : ""}`;
               const visual = (
                 <div className="eco-story-node-visual">
                   <Node active={active} done={done} href={photoCard ? story.href : undefined} />
@@ -134,13 +135,27 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
               );
               const wire =
                 index < story.stages.length - 1 ? (
-                  <i className="eco-story-wire" aria-hidden="true">
-                    <span style={{ transform: `scaleX(${wireScale})` }} />
-                    <b
-                      className={`eco-story-traveler${wireScale > 0.02 ? " is-on" : ""}`}
-                      style={{ left: `${wireScale * 100}%` }}
-                    />
-                  </i>
+                  supplyCard ? (
+                    <i className={`eco-story-arrow${wireScale > 0.55 ? " is-on" : ""}`} aria-hidden="true">
+                      <svg viewBox="0 0 24 24" width="12" height="12" fill="none">
+                        <path
+                          d="M8 12h8m0 0-3.2-3.2M16 12l-3.2 3.2"
+                          stroke="currentColor"
+                          strokeWidth="1.7"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </i>
+                  ) : (
+                    <i className="eco-story-wire" aria-hidden="true">
+                      <span style={{ transform: `scaleX(${wireScale})` }} />
+                      <b
+                        className={`eco-story-traveler${wireScale > 0.02 ? " is-on" : ""}`}
+                        style={{ left: `${wireScale * 100}%` }}
+                      />
+                    </i>
+                  )
                 ) : null;
 
               if (photoCard) {
