@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { FooterParticles } from "./FooterParticles";
 import { MotionToggle } from "./MotionToggle";
 import "./footer.css";
 
@@ -60,13 +60,11 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="footer-banner">
-        <Image
-          src="/footer-reach.jpg"
-          alt="A mechanical hand and a human hand, almost meeting."
-          fill
-          sizes="100vw"
-        />
+      <div className="footer-stage">
+        <div className="footer-particles" aria-hidden="true">
+          <span className="footer-particles-fallback">beyond</span>
+          <FooterParticles text="beyond" />
+        </div>
       </div>
     </footer>
   );
