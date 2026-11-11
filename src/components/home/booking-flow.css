@@ -1,0 +1,852 @@
+/* How a booking moves — alternating vertical timeline */
+
+.bf-block {
+  margin: 72px auto 24px;
+  width: min(1120px, calc(100% - 100px));
+  display: flex;
+  flex-direction: column;
+  gap: 42px;
+}
+
+.bf-head {
+  text-align: center;
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+.bf-head .mono {
+  margin: 0 0 10px;
+  font-family: var(--font-display), Orbitron, system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #9a9a94;
+}
+
+.bf-head h3 {
+  margin: 0;
+  font-family: var(--font-display), Orbitron, system-ui, sans-serif;
+  font-size: clamp(22px, 2.6vw, 30px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.18;
+  color: #f1f1ee;
+}
+
+.bf-track {
+  position: relative;
+}
+
+.bf-spine {
+  position: absolute;
+  left: 50%;
+  top: 28px;
+  bottom: 28px;
+  width: 1px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bf-spine-base {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.bf-spine-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 0;
+  background: linear-gradient(180deg, #d4b87a 0%, #c4b5fd 48%, #a78bfa 100%);
+  box-shadow: 0 0 16px rgba(167, 139, 250, 0.35);
+}
+
+.bf-spine-fill.is-static {
+  height: 100%;
+  opacity: 0.55;
+}
+
+.bf-steps {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+.bf-step {
+  --bf-accent: #c4b5fd;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 48px minmax(0, 1fr);
+  align-items: center;
+  gap: 28px 18px;
+}
+
+.bf-step.is-reversed .bf-step-copy {
+  order: 3;
+  text-align: left;
+}
+
+.bf-step.is-reversed .bf-step-stage {
+  order: 1;
+}
+
+.bf-step.is-reversed .bf-step-rail {
+  order: 2;
+}
+
+.bf-step-copy {
+  max-width: 34ch;
+  justify-self: end;
+  text-align: right;
+}
+
+.bf-step.is-reversed .bf-step-copy {
+  justify-self: start;
+  max-width: 36ch;
+}
+
+.bf-step-index {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-family: var(--font-display), Orbitron, system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: color-mix(in srgb, var(--bf-accent) 85%, white);
+}
+
+.bf-step-index::after {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--bf-accent), transparent);
+}
+
+.bf-step.is-reversed .bf-step-index::after {
+  background: linear-gradient(90deg, transparent, var(--bf-accent));
+  order: -1;
+}
+
+.bf-step-copy h4 {
+  margin: 0 0 10px;
+  font-family: var(--font-manrope), system-ui, sans-serif;
+  font-size: clamp(18px, 1.8vw, 22px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: #f4f4f0;
+}
+
+.bf-step-copy p {
+  margin: 0;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: #9a9a94;
+}
+
+.bf-step-rail {
+  display: grid;
+  place-items: center;
+  align-self: stretch;
+  position: relative;
+}
+
+.bf-step-node {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  background: #0a0a0a;
+  border: 1px solid color-mix(in srgb, var(--bf-accent) 55%, transparent);
+  box-shadow:
+    0 0 0 4px rgba(0, 0, 0, 0.85),
+    0 0 18px color-mix(in srgb, var(--bf-accent) 28%, transparent);
+  transform: rotate(45deg);
+  transition:
+    border-color 400ms ease,
+    box-shadow 400ms ease,
+    background 400ms ease;
+}
+
+.bf-step.is-inview .bf-step-node {
+  background: color-mix(in srgb, var(--bf-accent) 55%, #0a0a0a);
+  border-color: var(--bf-accent);
+  box-shadow:
+    0 0 0 4px rgba(0, 0, 0, 0.85),
+    0 0 22px color-mix(in srgb, var(--bf-accent) 45%, transparent);
+}
+
+.bf-step-stage {
+  min-width: 0;
+}
+
+.bf-visual {
+  position: relative;
+  width: 100%;
+  min-height: 240px;
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.05), transparent 42%),
+    #0a0a0c;
+  box-shadow:
+    0 18px 36px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+/* ——— Step 01 booking ——— */
+.bf-visual--book {
+  display: grid;
+  gap: 12px;
+}
+
+.bf-chrome {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #8a8a84;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+.bf-chrome span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.bf-chrome span:nth-child(1) {
+  background: #f87171;
+}
+.bf-chrome span:nth-child(2) {
+  background: #fbbf24;
+}
+.bf-chrome span:nth-child(3) {
+  background: #4ade80;
+}
+
+.bf-chrome em {
+  margin-left: 8px;
+  font-style: normal;
+  color: #cfcfc8;
+}
+
+.bf-book-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(212, 184, 122, 0.28);
+  background: rgba(212, 184, 122, 0.08);
+  color: #e8d7a8;
+  font-size: 13px;
+}
+
+.bf-book-dates {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.bf-book-dates > div {
+  padding: 10px 11px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.bf-book-dates small {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a8a84;
+}
+
+.bf-book-dates strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f1f1ee;
+}
+
+.bf-book-card {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(212, 184, 122, 0.22);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.bf-book-thumb {
+  width: 52px;
+  height: 42px;
+  border-radius: 10px;
+  background:
+    linear-gradient(135deg, rgba(212, 184, 122, 0.35), transparent 60%),
+    url("/media/georgia-discover.jpg") center / cover no-repeat;
+}
+
+.bf-book-card strong {
+  display: block;
+  font-size: 13px;
+  color: #f4f4f0;
+}
+
+.bf-book-card span {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: #8a8a84;
+}
+
+.bf-book-card em {
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #0b0908;
+  background: #d4b87a;
+  border-radius: 999px;
+  padding: 5px 9px;
+}
+
+.bf-wa-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  min-height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(74, 222, 128, 0.28);
+  background: rgba(22, 101, 52, 0.22);
+  color: #bbf7d0;
+  font-size: 12px;
+}
+
+.bf-wa-pill i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.7);
+}
+
+.bf-step.is-inview .bf-book-card,
+.bf-step.is-inview .bf-wa-pill {
+  animation: bf-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.bf-step.is-inview .bf-wa-pill {
+  animation-delay: 0.18s;
+}
+
+/* ——— Step 02 desk ——— */
+.bf-visual--desk {
+  display: grid;
+  gap: 14px;
+}
+
+.bf-desk-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.bf-desk-panel {
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.bf-desk-panel header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #b0b0aa;
+}
+
+.bf-desk-panel header em {
+  font-style: normal;
+  color: #c4b5fd;
+}
+
+.bf-desk-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 10px;
+}
+
+.bf-desk-row strong {
+  font-size: 13px;
+  color: #f1f1ee;
+}
+
+.bf-desk-row span {
+  font-size: 11.5px;
+  color: #8a8a84;
+}
+
+.bf-desk-row.is-dim {
+  opacity: 0.62;
+}
+
+.bf-desk-bar {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.bf-desk-bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #a78bfa, #c4b5fd);
+}
+
+.bf-desk-guest {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.bf-desk-guest img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(196, 181, 253, 0.35);
+}
+
+.bf-desk-guest strong {
+  display: block;
+  font-size: 13px;
+  color: #f1f1ee;
+}
+
+.bf-desk-guest span {
+  font-size: 11px;
+  color: #8a8a84;
+}
+
+.bf-desk-panel ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+
+.bf-desk-panel li {
+  position: relative;
+  padding-left: 12px;
+  font-size: 11.5px;
+  color: #b8b8b2;
+}
+
+.bf-desk-panel li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #c4b5fd;
+}
+
+.bf-desk-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.bf-desk-link span {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(196, 181, 253, 0.45), transparent);
+}
+
+.bf-desk-link b {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c4b5fd;
+  box-shadow: 0 0 12px rgba(196, 181, 253, 0.65);
+}
+
+.bf-step.is-inview .bf-desk-panel--hms {
+  animation: bf-rise 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.bf-step.is-inview .bf-desk-panel--crm {
+  animation: bf-rise 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+}
+
+.bf-step.is-inview .bf-desk-bar i {
+  animation: bf-grow-x 1s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+/* ——— Step 03 WhatsApp ——— */
+.bf-visual--wa {
+  display: grid;
+  place-items: center;
+  min-height: 280px;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 20%, rgba(34, 197, 94, 0.12), transparent 60%),
+    #0a0a0c;
+}
+
+.bf-wa-phone {
+  width: min(100%, 250px);
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #0f1411;
+  padding: 10px 10px 14px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.45);
+}
+
+.bf-wa-notch {
+  width: 72px;
+  height: 8px;
+  margin: 4px auto 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.bf-wa-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 6px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bf-wa-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background:
+    linear-gradient(145deg, #86efac, #166534),
+    #166534;
+}
+
+.bf-wa-head strong {
+  display: block;
+  font-size: 12.5px;
+  color: #f1f1ee;
+}
+
+.bf-wa-head small {
+  color: #4ade80;
+  font-size: 10.5px;
+}
+
+.bf-wa-thread {
+  display: grid;
+  gap: 8px;
+  padding: 14px 6px 4px;
+}
+
+.bf-wa-bubble {
+  max-width: 92%;
+  padding: 10px 12px;
+  border-radius: 14px 14px 14px 5px;
+  background: #1a2a1f;
+  color: #e7efe9;
+  font-size: 12px;
+  line-height: 1.4;
+  border: 1px solid rgba(74, 222, 128, 0.12);
+}
+
+.bf-wa-bubble--out {
+  justify-self: start;
+}
+
+.bf-wa-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 4px;
+  font-size: 11px;
+  color: #86efac;
+}
+
+.bf-wa-meta i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.7);
+}
+
+.bf-step.is-inview .bf-wa-bubble {
+  animation: bf-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.bf-step.is-inview .bf-wa-bubble--late {
+  animation-delay: 0.16s;
+}
+
+.bf-step.is-inview .bf-wa-meta {
+  animation: bf-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both;
+}
+
+/* ——— Step 04 supply ——— */
+.bf-visual--supply {
+  display: grid;
+  gap: 12px;
+}
+
+.bf-supply-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(251, 191, 36, 0.28);
+  background: rgba(120, 53, 15, 0.28);
+}
+
+.bf-supply-alert i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fbbf24;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.7);
+  flex: none;
+}
+
+.bf-supply-alert strong {
+  display: block;
+  font-size: 13px;
+  color: #fde68a;
+}
+
+.bf-supply-alert span {
+  font-size: 11.5px;
+  color: #d6b981;
+}
+
+.bf-supply-order {
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(167, 139, 250, 0.28);
+  background:
+    radial-gradient(ellipse 70% 50% at 80% 0%, rgba(167, 139, 250, 0.16), transparent 55%),
+    rgba(255, 255, 255, 0.03);
+}
+
+.bf-supply-order header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #b8a4f0;
+}
+
+.bf-supply-order header em {
+  font-style: normal;
+  color: #ddd6fe;
+}
+
+.bf-supply-line {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.bf-supply-line b {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background:
+    linear-gradient(145deg, rgba(216, 180, 254, 0.35), transparent 55%),
+    url("/media/supply-01-art.png") center / cover no-repeat;
+}
+
+.bf-supply-line b.is-alt {
+  background:
+    linear-gradient(145deg, rgba(167, 139, 250, 0.35), transparent 55%),
+    url("/media/supply-02-art.png") center / cover no-repeat;
+}
+
+.bf-supply-line strong {
+  display: block;
+  font-size: 13px;
+  color: #f1f1ee;
+}
+
+.bf-supply-line span {
+  font-size: 11.5px;
+  color: #9a9a94;
+}
+
+.bf-supply-cta {
+  margin-top: 6px;
+  display: grid;
+  place-items: center;
+  min-height: 34px;
+  border-radius: 999px;
+  background: linear-gradient(105deg, #5b21b6 0%, #7c3aed 45%, #a855f7 100%);
+  color: #f5e9ff;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(216, 180, 254, 0.3);
+  box-shadow: 0 8px 18px rgba(124, 58, 237, 0.3);
+}
+
+.bf-step.is-inview .bf-supply-alert {
+  animation: bf-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.bf-step.is-inview .bf-supply-order {
+  animation: bf-rise 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+}
+
+@keyframes bf-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bf-grow-x {
+  from {
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+  to {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+}
+
+@media (max-width: 960px) {
+  .bf-block {
+    width: min(1120px, calc(100% - 40px));
+    margin-top: 56px;
+    gap: 32px;
+  }
+
+  .bf-steps {
+    gap: 40px;
+  }
+
+  .bf-step {
+    grid-template-columns: minmax(0, 1fr) 36px minmax(0, 1fr);
+    gap: 16px 10px;
+  }
+
+  .bf-visual {
+    min-height: 220px;
+    padding: 14px;
+  }
+
+  .bf-desk-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .bf-block {
+    width: min(100% - 32px, 1120px);
+    margin-top: 40px;
+  }
+
+  .bf-spine {
+    left: 18px;
+    transform: none;
+  }
+
+  .bf-step,
+  .bf-step.is-reversed {
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 10px 14px;
+  }
+
+  .bf-step-rail {
+    grid-row: 1 / span 2;
+    grid-column: 1;
+  }
+
+  .bf-step-copy,
+  .bf-step.is-reversed .bf-step-copy {
+    order: 1;
+    grid-column: 2;
+    justify-self: start;
+    text-align: left;
+    max-width: none;
+  }
+
+  .bf-step-stage,
+  .bf-step.is-reversed .bf-step-stage {
+    order: 2;
+    grid-column: 2;
+  }
+
+  .bf-step.is-reversed .bf-step-index::after {
+    order: 0;
+    background: linear-gradient(90deg, var(--bf-accent), transparent);
+  }
+
+  .bf-book-dates {
+    grid-template-columns: 1fr;
+  }
+
+  .bf-wa-phone {
+    width: min(100%, 280px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bf-step.is-inview .bf-book-card,
+  .bf-step.is-inview .bf-wa-pill,
+  .bf-step.is-inview .bf-desk-panel--hms,
+  .bf-step.is-inview .bf-desk-panel--crm,
+  .bf-step.is-inview .bf-desk-bar i,
+  .bf-step.is-inview .bf-wa-bubble,
+  .bf-step.is-inview .bf-wa-meta,
+  .bf-step.is-inview .bf-supply-alert,
+  .bf-step.is-inview .bf-supply-order {
+    animation: none;
+  }
+}

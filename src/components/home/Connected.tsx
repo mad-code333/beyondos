@@ -3,6 +3,7 @@
 import { useCallback, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
+import { BookingFlow } from "./BookingFlow";
 import { EcosystemStoryPanel } from "./ecosystem/EcosystemStoryPanel";
 import { ECOSYSTEM_STORIES, type EcosystemStoryId } from "./ecosystem/stories";
 import "./ecosystem.css";
@@ -15,34 +16,6 @@ const navStrip = [
   { href: "/services/hms", label: "Hotel HMS" },
   { href: "/services/web", label: "Web Development" },
   { href: "/services/growth", label: "Digital Growth" },
-] as const;
-
-const flow = [
-  {
-    n: "01",
-    title: "Guest books on Beyond Georgia",
-    body: "Stay or experience booked — often via WhatsApp — with clear intent.",
-  },
-  {
-    n: "02",
-    title: "Reservation lands in HMS",
-    body: "Dates and notes show up where the front desk already works.",
-  },
-  {
-    n: "03",
-    title: "Guest profile opens in CRM",
-    body: "Preferences and conversation history sit on one card.",
-  },
-  {
-    n: "04",
-    title: "Pre-arrival WhatsApp goes out",
-    body: "Directions and timing before check-in — less inbox chaos.",
-  },
-  {
-    n: "05",
-    title: "Low stock can trigger Beyond Supply",
-    body: "Linen, amenities or kitchen staples reorder without a scattered chase.",
-  },
 ] as const;
 
 const fadeUp = (delay = 0, reduce: boolean) =>
@@ -187,24 +160,7 @@ export function Connected() {
         </motion.div>
       </div>
 
-      <div className="eco-flow-block wrap">
-        <motion.div {...fadeUp(0, reduce)}>
-          <p className="mono">How a booking moves</p>
-          <h3 className="eco-flow-title">Guest in. Stock covered. Desk ready.</h3>
-        </motion.div>
-
-        <ol className="ecosystem-list eco-flow-list">
-          {flow.map((step, index) => (
-            <motion.li key={step.n} {...fadeUp(0.04 + index * 0.05, reduce)}>
-              <span className="mono">{step.n}</span>
-              <div>
-                <strong>{step.title}</strong>
-                <p>{step.body}</p>
-              </div>
-            </motion.li>
-          ))}
-        </ol>
-      </div>
+      <BookingFlow />
     </section>
   );
 }
