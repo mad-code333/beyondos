@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   AnimatePresence,
@@ -15,12 +14,6 @@ import { HotelCrmPanel } from "./showcase/HotelCrmPanel";
 import { HotelHmsPanel } from "./showcase/HotelHmsPanel";
 import { RestaurantOmsPanel } from "./showcase/RestaurantOmsPanel";
 import "./workspace.css";
-
-const introTiles = [
-  { key: "desk", src: "/media/desk.jpg", caption: "Desk" },
-  { key: "floor", src: "/media/dining.jpg", caption: "Floor" },
-  { key: "stay", src: "/media/suite.jpg", caption: "Stay" },
-] as const;
 
 type TabId = "crm" | "oms" | "hms" | "web" | "growth";
 
@@ -133,77 +126,6 @@ export function WorkspaceDemo({
 
   return (
     <div className={`workspace-demo${lockedTab ? " is-locked" : ""}`}>
-      {!lockedTab ? (
-        <section className="intro" aria-label="Built for the everyday">
-          <div className="wrap">
-            <div className="intro-grid">
-            <div className="intro-copy">
-              <Reveal y={22}>
-                <div className="mono">01 / Built for the everyday</div>
-              </Reveal>
-              <Reveal delay={0.08} y={22}>
-                <h2>
-                  Your business
-                  <br />
-                  has enough
-                  <br />
-                  moving parts.
-                  <span>
-                    Your technology
-                    <br />
-                    should bring
-                    <br />
-                    them together.
-                  </span>
-                </h2>
-              </Reveal>
-              <Reveal delay={0.16} y={18}>
-                <p className="intro-note">
-                  One partner for the systems that run the property and the experiences that welcome
-                  the guest — designed to feel considered, not complicated.
-                </p>
-              </Reveal>
-            </div>
-
-            <motion.div
-              className="intro-visual"
-              aria-hidden="true"
-              style={{ width: "100%" }}
-              initial={reduce ? false : { opacity: 0, y: 24, scale: 0.97 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.85, ease }}
-            >
-              <div className="intro-visual-glow" />
-              {introTiles.map((tile, index) => (
-                <motion.figure
-                  key={tile.key}
-                  className={`intro-tile intro-tile-${["a", "b", "c"][index]}`}
-                  initial={reduce ? false : { opacity: 0, y: 22 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-60px" }}
-                  transition={{ duration: 0.7, ease, delay: reduce ? 0 : 0.1 + index * 0.08 }}
-                >
-                  <span className="intro-tile-media">
-                    <Image
-                      src={tile.src}
-                      alt=""
-                      fill
-                      sizes="(max-width: 900px) 70vw, 360px"
-                      className="intro-tile-img"
-                    />
-                  </span>
-                  <span className="intro-tile-veil" />
-                  <figcaption className="mono">{tile.caption}</figcaption>
-                </motion.figure>
-              ))}
-              <div className="intro-visual-caption mono">Operations · Experience · Growth</div>
-            </motion.div>
-            </div>
-          </div>
-        </section>
-      ) : null}
-
       <section className={`${lockedTab ? "" : "wrap "}demo-section`} id={lockedTab ? undefined : "workspace"}>
         <Reveal>
           <div className="demo-top">
