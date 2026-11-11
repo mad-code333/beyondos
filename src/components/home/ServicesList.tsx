@@ -114,21 +114,6 @@ const previews: Record<ServiceSlug, PreviewSpec> = {
   },
 };
 
-const STACK = [
-  "Next.js",
-  "TypeScript",
-  "Framer Motion",
-  "PostgreSQL",
-  "WhatsApp Business API",
-  "Channel managers",
-  "Payment gateways",
-  "Google Business Profile",
-  "Resend",
-  "Vercel",
-  "Zod",
-  "next-intl",
-] as const;
-
 /** Soft spring for the single moving highlight */
 const pillSpring = { type: "spring" as const, stiffness: 380, damping: 34, mass: 0.7 };
 /** Content morph — short, no bounce */
@@ -485,27 +470,6 @@ export function ServicesList() {
           </div>
         </div>
 
-        <p className="mono svc-engage-note">
-          Not ready for all five services? Start with one.
-        </p>
-
-        <div
-          className={`svc-marquee${reduce ? " is-still" : ""}`}
-          aria-label="Technology stack"
-        >
-          <div className="svc-marquee-track">
-            {[0, 1].map((copy) => (
-              <span key={copy} className="mono">
-                {STACK.map((item, index) => (
-                  <span key={`${copy}-${item}`}>
-                    {item}
-                    {index < STACK.length - 1 ? <i aria-hidden="true"> · </i> : null}
-                  </span>
-                ))}
-              </span>
-            ))}
-          </div>
-        </div>
       </div>
     </section>
   );

@@ -6,13 +6,8 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.logo-showcase-inner {
-  display: grid;
-  gap: 18px;
-}
-
 .logo-showcase-kicker {
-  margin: 0;
+  margin: 0 0 18px;
   font-family: var(--font-display), Orbitron, sans-serif;
   font-size: 10px;
   font-weight: 600;
@@ -23,8 +18,9 @@
 
 .logo-showcase-marquee {
   position: relative;
+  width: 100%;
   overflow: hidden;
-  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
 }
 
 .logo-showcase-track {

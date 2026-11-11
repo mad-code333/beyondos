@@ -172,20 +172,20 @@ function LogoTrack({ copy }: { copy: number }) {
 export function LogoShowcase() {
   return (
     <section className="logo-showcase" aria-label="Platforms and integrations">
-      <div className="wrap logo-showcase-inner">
+      <div className="wrap">
         <p className="logo-showcase-kicker mono">
           Built with the platforms hospitality already trusts
         </p>
+      </div>
 
-        <div
-          className="logo-showcase-marquee"
-          role="list"
-          aria-label="Company and platform logos"
-        >
-          <div className="logo-showcase-track">
-            <LogoTrack copy={0} />
-            <LogoTrack copy={1} />
-          </div>
+      <div
+        className="logo-showcase-marquee"
+        role="list"
+        aria-label="Company and platform logos"
+      >
+        <div className="logo-showcase-track">
+          <LogoTrack copy={0} />
+          <LogoTrack copy={1} />
         </div>
       </div>
     </section>
