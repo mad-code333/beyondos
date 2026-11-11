@@ -319,12 +319,12 @@
 
 .eco-supply-media {
   position: absolute;
-  left: -6%;
+  left: -4%;
   top: 18%;
-  width: 62%;
+  width: 54%;
   height: 62%;
   z-index: 0;
-  overflow: visible;
+  overflow: hidden;
   pointer-events: none;
   transition: filter 320ms ease;
 }
@@ -436,9 +436,9 @@
 
 .eco-supply-copy {
   position: absolute;
-  right: 14px;
+  right: 12px;
   top: 44%;
-  left: 56%;
+  left: 58%;
   z-index: 3;
   display: grid;
   gap: 5px;
