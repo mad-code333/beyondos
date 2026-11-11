@@ -162,7 +162,16 @@ function SupplyShotCard({
   href,
   shot,
   label,
-}: NodeProps & { shot: string; label: string }) {
+  title,
+  caption,
+  index,
+}: NodeProps & {
+  shot: string;
+  label: string;
+  title: string;
+  caption: string;
+  index: string;
+}) {
   const lit = active || done;
   return (
     <div
@@ -174,24 +183,56 @@ function SupplyShotCard({
         <img className="eco-supply-shot" src={shot} alt="" draggable={false} />
         <span className="eco-supply-orbit-pulse" />
       </div>
-      <span className="eco-supply-status-pad" aria-hidden="true" />
+      <span className="eco-supply-index" aria-hidden="true">
+        {index}
+      </span>
       <SupplyStatus lit={lit} />
-      <span className="eco-supply-foot" aria-hidden="true" />
+      <div className="eco-supply-copy">
+        <strong>{title}</strong>
+        <span>{caption}</span>
+      </div>
       <CardLink className="eco-supply-cta" href={href} label="Explore categories →" external={false} />
     </div>
   );
 }
 
 export function SupplyListNode(props: NodeProps) {
-  return <SupplyShotCard {...props} shot="/media/supply-01.png" label="list" />;
+  return (
+    <SupplyShotCard
+      {...props}
+      shot="/media/supply-01-art.png"
+      label="list"
+      index="01"
+      title="List what's needed"
+      caption="Food · linen · amenities."
+    />
+  );
 }
 
 export function SupplyOrderNode(props: NodeProps) {
-  return <SupplyShotCard {...props} shot="/media/supply-02.png" label="order" />;
+  return (
+    <SupplyShotCard
+      {...props}
+      shot="/media/supply-02-art.png"
+      label="order"
+      index="02"
+      title="Place one order"
+      caption="Unified procurement."
+    />
+  );
 }
 
 export function SupplyReceiveNode(props: NodeProps) {
-  return <SupplyShotCard {...props} shot="/media/supply-03.png" label="receive" />;
+  return (
+    <SupplyShotCard
+      {...props}
+      shot="/media/supply-03-art.png"
+      label="receive"
+      index="03"
+      title="Receive supplies"
+      caption="Stock ready."
+    />
+  );
 }
 
 export function OpsGatherNode({ active, done }: NodeProps) {
