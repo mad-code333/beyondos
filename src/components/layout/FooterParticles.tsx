@@ -28,8 +28,9 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const node = canvasRef.current;
+    if (!node) return;
+    const canvas: HTMLCanvasElement = node;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const ctx = canvas.getContext("2d", { alpha: true });
@@ -62,7 +63,7 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
     }
 
     function rebuild() {
-      if (!canvas || !ctx || !sampleCtx) return;
+      if (!ctx || !sampleCtx) return;
       const parent = canvas.parentElement;
       if (!parent) return;
 
