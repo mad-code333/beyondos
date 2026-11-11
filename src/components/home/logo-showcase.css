@@ -1,0 +1,245 @@
+.logo-showcase {
+  position: relative;
+  padding: 28px 0 36px;
+  background: #080808;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.logo-showcase-inner {
+  display: grid;
+  gap: 18px;
+}
+
+.logo-showcase-kicker {
+  margin: 0;
+  font-family: var(--font-display), Orbitron, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #7a7a74;
+}
+
+.logo-showcase-marquee {
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.logo-showcase-track {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: max-content;
+  animation: logo-showcase-marquee 42s linear infinite;
+}
+
+.logo-showcase-marquee:hover .logo-showcase-track {
+  animation-play-state: paused;
+}
+
+.logo-showcase-item {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  padding: 0 22px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.035),
+    rgba(255, 255, 255, 0.015)
+  );
+  transition:
+    border-color 0.3s,
+    background 0.3s,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.logo-showcase-item:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.055),
+    rgba(255, 255, 255, 0.02)
+  );
+  transform: translateY(-1px);
+}
+
+.logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #d8d8d2;
+  opacity: 0.78;
+  transition: opacity 0.3s;
+}
+
+.logo-showcase-item:hover .logo-mark {
+  opacity: 1;
+}
+
+.logo-mark-img {
+  display: block;
+  width: auto;
+  height: 18px;
+  object-fit: contain;
+}
+
+.logo-mark--symbol .logo-mark-img {
+  height: 34px;
+}
+
+.logo-mark--icon .logo-mark-img {
+  height: 22px;
+}
+
+.logo-mark--framer .logo-mark-img {
+  height: 20px;
+}
+
+.logo-mark--invert .logo-mark-img {
+  filter: invert(1);
+}
+
+.logo-mark--next .logo-mark-img {
+  height: 16px;
+}
+
+.logo-mark--word {
+  font-family: var(--font-display), Orbitron, sans-serif;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #cfcfc8;
+  white-space: nowrap;
+}
+
+.logo-mark--beyond {
+  gap: 10px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.logo-mark-beyond-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 25px;
+  border: 1.4px solid rgba(221, 221, 221, 0.85);
+  border-radius: 6px;
+  color: #f4f4f0;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+  transform: rotate(-12deg);
+}
+
+.logo-mark-beyond-text {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+  color: #f1f1ee;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  text-transform: none;
+}
+
+.logo-mark-beyond-text em {
+  margin-left: 1px;
+  padding: 1px 5px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 4px;
+  color: #d8d8d2;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+}
+
+@keyframes logo-showcase-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-showcase-track {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px 12px;
+    width: 100%;
+    max-width: 100%;
+    animation: none !important;
+  }
+
+  .logo-showcase-track [aria-hidden="true"] {
+    display: none;
+  }
+
+  .logo-showcase-item:hover {
+    transform: none;
+  }
+}
+
+html[data-motion="paused"] .logo-showcase-track {
+  animation-play-state: paused !important;
+}
+
+@media (max-width: 900px) {
+  .logo-showcase {
+    padding: 24px 0 30px;
+  }
+
+  .logo-showcase-item {
+    min-height: 50px;
+    padding: 0 18px;
+    border-radius: 12px;
+  }
+
+  .logo-mark--symbol .logo-mark-img {
+    max-width: 30px;
+    max-height: 32px;
+  }
+}
+
+@media (max-width: 760px) {
+  .logo-showcase {
+    padding: 20px 0 26px;
+  }
+
+  .logo-showcase-kicker {
+    font-size: 9px;
+    letter-spacing: 0.16em;
+  }
+
+  .logo-showcase-track {
+    gap: 10px;
+    animation-duration: 34s;
+  }
+
+  .logo-showcase-item {
+    min-height: 46px;
+    padding: 0 14px;
+  }
+
+  .logo-mark--word {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+  }
+
+  .logo-mark-beyond-text {
+    font-size: 14px;
+  }
+}
