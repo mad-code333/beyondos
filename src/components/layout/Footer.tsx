@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FooterParticles } from "./FooterParticles";
+import { FooterCanvas } from "./FooterCanvas";
 import { MotionToggle } from "./MotionToggle";
 import "./footer.css";
 
@@ -63,7 +63,7 @@ export function Footer() {
       <div className="footer-stage">
         <div className="footer-particles" aria-hidden="true">
           <span className="footer-particles-fallback">beyond</span>
-          <FooterParticles text="beyond" />
+          <FooterCanvas text="beyond" />
         </div>
       </div>
     </footer>

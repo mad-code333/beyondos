@@ -21,24 +21,27 @@ type FooterParticlesProps = {
 
 /**
  * Oversized footer wordmark built from thousands of warm amber particles.
- * Samples letterforms via an offscreen canvas, then animates with soft
- * drift, shimmer, and gentle mouse disturbance.
+ * Client-only Canvas 2D work runs entirely in useEffect after mount.
  */
 export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     const node = canvasRef.current;
     if (!node) return;
-    const canvas: HTMLCanvasElement = node;
+
+    // Capture definite locals so nested closures stay type-safe under strict TS.
+    const surface: HTMLCanvasElement = node;
+    const context = surface.getContext("2d", { alpha: true });
+    if (!context) return;
+    const ctx: CanvasRenderingContext2D = context;
+
+    const sample: HTMLCanvasElement = document.createElement("canvas");
+    const offscreen = sample.getContext("2d", { willReadFrequently: true });
+    if (!offscreen) return;
+    const sampleCtx: CanvasRenderingContext2D = offscreen;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const ctx = canvas.getContext("2d", { alpha: true });
-    if (!ctx) return;
-
-    const sample = document.createElement("canvas");
-    const sampleCtx = sample.getContext("2d", { willReadFrequently: true });
-    if (!sampleCtx) return;
 
     let width = 0;
     let height = 0;
@@ -50,6 +53,7 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
     let pointerY = -9999;
     let pointerActive = false;
     let lastTs = performance.now();
+    let cancelled = false;
 
     const fontFamily =
       getComputedStyle(document.documentElement).getPropertyValue("--font-display").trim() ||
@@ -63,21 +67,19 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
     }
 
     function rebuild() {
-      if (!ctx || !sampleCtx) return;
-      const parent = canvas.parentElement;
+      const parent = surface.parentElement;
       if (!parent) return;
 
       width = Math.max(1, parent.clientWidth);
       height = Math.max(1, parent.clientHeight);
       dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-      canvas.width = Math.floor(width * dpr);
-      canvas.height = Math.floor(height * dpr);
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
+      surface.width = Math.floor(width * dpr);
+      surface.height = Math.floor(height * dpr);
+      surface.style.width = `${width}px`;
+      surface.style.height = `${height}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      // Oversized wordmark with a soft bottom crop — most of each glyph stays readable.
       const fontSize = Math.min(width * 0.22, height * 0.78);
       sample.width = Math.max(1, Math.floor(width));
       sample.height = Math.max(1, Math.floor(height));
@@ -87,31 +89,25 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
       sampleCtx.textAlign = "center";
       sampleCtx.textBaseline = "middle";
       sampleCtx.font = `800 ${fontSize}px ${fontFamily}, Manrope, sans-serif`;
-
-      const midY = height * 0.58;
-      sampleCtx.fillText(text, width * 0.5, midY);
+      sampleCtx.fillText(text, width * 0.5, height * 0.58);
 
       const { data } = sampleCtx.getImageData(0, 0, sample.width, sample.height);
       const want = targetCount(width, height);
       const step = Math.max(2, Math.floor(Math.sqrt((width * height) / (want * 2.4))));
       const candidates: Array<{ x: number; y: number; shade: number }> = [];
 
-      // Prefer a soft vertical lattice so particles read as digital filaments.
       for (let y = 0; y < sample.height; y += step) {
         const xOffset = (y / step) % 2 === 0 ? 0 : step * 0.5;
         for (let x = xOffset; x < sample.width; x += step) {
           const i = (Math.floor(y) * sample.width + Math.floor(x)) * 4;
           if (data[i] < 48) continue;
-          const nx = x / width;
           const ny = y / height;
-          // Stronger at bottom (warm gold), quieter toward the top.
           const shade = Math.pow(Math.min(1, Math.max(0, (ny - 0.18) / 0.78)), 1.15);
           if (shade < 0.04 && Math.random() > 0.35) continue;
           candidates.push({ x, y, shade });
         }
       }
 
-      // Thin if oversampled; densify with jittered duplicates if sparse.
       while (candidates.length > want) {
         candidates.splice((Math.random() * candidates.length) | 0, 1);
       }
@@ -144,7 +140,6 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
     }
 
     function paint(now: number, dt: number) {
-      if (!ctx) return;
       ctx.clearRect(0, 0, width, height);
 
       const paused =
@@ -162,11 +157,8 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
         if (!paused) {
           const ox = Math.sin(t * 0.55 * p.speed + p.phase) * 0.55;
           const oy = Math.cos(t * 0.42 * p.speed + p.phase * 1.3) * 0.7;
-          const targetX = p.homeX + ox;
-          const targetY = p.homeY + oy;
-
-          p.vx += (targetX - p.x) * 0.085;
-          p.vy += (targetY - p.y) * 0.085;
+          p.vx += (p.homeX + ox - p.x) * 0.085;
+          p.vy += (p.homeY + oy - p.y) * 0.085;
 
           if (pointerActive) {
             const dx = p.x - pointerX;
@@ -197,7 +189,6 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
         const alpha = Math.min(0.95, (0.18 + p.shade * 0.82) * twinkle);
         if (alpha < 0.05) continue;
 
-        // Warm metallic amber → bronze; brighter near the baseline, quieter at the top.
         const r = Math.round(95 + p.shade * 155);
         const g = Math.round(55 + p.shade * 110);
         const b = Math.round(18 + p.shade * 22);
@@ -218,7 +209,7 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
     }
 
     function onPointerMove(e: PointerEvent) {
-      const rect = canvas.getBoundingClientRect();
+      const rect = surface.getBoundingClientRect();
       pointerX = e.clientX - rect.left;
       pointerY = e.clientY - rect.top;
       pointerActive = true;
@@ -230,36 +221,38 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
       pointerY = -9999;
     }
 
-    const start = async () => {
-      try {
-        if (document.fonts?.ready) await document.fonts.ready;
-      } catch {
-        /* ignore font readiness failures */
-      }
-      if (!running) return;
+    function start() {
+      if (cancelled || !running) return;
       rebuild();
       paint(performance.now(), 0.016);
       if (!reduceMotion) raf = window.requestAnimationFrame(frame);
-    };
-    void start();
+    }
+
+    const fontsReady = document.fonts?.ready;
+    if (fontsReady) {
+      void fontsReady.then(start).catch(start);
+    } else {
+      start();
+    }
 
     const ro = new ResizeObserver(() => {
       rebuild();
       paint(performance.now(), 0.016);
     });
-    if (canvas.parentElement) ro.observe(canvas.parentElement);
+    if (surface.parentElement) ro.observe(surface.parentElement);
 
-    canvas.addEventListener("pointermove", onPointerMove, { passive: true });
-    canvas.addEventListener("pointerleave", onPointerLeave);
-    canvas.addEventListener("pointercancel", onPointerLeave);
+    surface.addEventListener("pointermove", onPointerMove, { passive: true });
+    surface.addEventListener("pointerleave", onPointerLeave);
+    surface.addEventListener("pointercancel", onPointerLeave);
 
     return () => {
+      cancelled = true;
       running = false;
       window.cancelAnimationFrame(raf);
       ro.disconnect();
-      canvas.removeEventListener("pointermove", onPointerMove);
-      canvas.removeEventListener("pointerleave", onPointerLeave);
-      canvas.removeEventListener("pointercancel", onPointerLeave);
+      surface.removeEventListener("pointermove", onPointerMove);
+      surface.removeEventListener("pointerleave", onPointerLeave);
+      surface.removeEventListener("pointercancel", onPointerLeave);
     };
   }, [text]);
 

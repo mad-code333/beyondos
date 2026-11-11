@@ -139,6 +139,10 @@
   -webkit-background-clip: text;
   pointer-events: none;
   user-select: none;
+  opacity: 0.35;
+}
+
+.site-footer .footer-particles:has(canvas) .footer-particles-fallback {
   opacity: 0;
 }
 
