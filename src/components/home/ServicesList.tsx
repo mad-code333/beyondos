@@ -224,6 +224,7 @@ export function ServicesList() {
         <div
           ref={stageRef}
           className={`svc-stage${live ? " has-active" : " is-idle"}`}
+          data-active={live ? active : undefined}
           role="listbox"
           aria-label="Beyond OS services"
           tabIndex={0}

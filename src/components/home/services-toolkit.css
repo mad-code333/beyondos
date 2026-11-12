@@ -1014,10 +1014,38 @@ html[data-motion="paused"] .svc-glow {
   vector-effect: non-scaling-stroke;
 }
 
-/* Pill arrow sits just left of the floating card so it stays visible. */
+/* Desktop: the pill arrow sits at the pill's far right end, in the same
+   column as the ↑ ↓ controls. ↑ and ↓ sit exactly half a row above/below
+   centre, so any row's arrow lands in a gap between them. When the middle
+   row is active its arrow takes the counter's spot, so the counter steps aside. */
 @media (min-width: 901px) {
   .svc-go {
-    right: calc(var(--svc-card-w) + var(--svc-card-right) + 44px);
+    right: calc(clamp(6px, 1.2vw, 16px) - 2px); /* centred on the .svc-side-nav column */
+    width: 40px;
+    height: 40px;
+    margin-top: -20px;
+    font-size: 15px;
+    box-shadow: 0 6px 16px -6px rgba(120, 84, 30, 0.6);
+  }
+
+  .svc-side-nav {
+    gap: 0;
+    grid-template-rows: 36px calc(var(--svc-row) - 36px) 36px;
+    align-items: center;
+  }
+
+  .svc-side-arrow {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .svc-side-index {
+    transition: opacity 0.2s ease;
+  }
+
+  .svc-stage[data-active="2"] .svc-side-index {
+    opacity: 0;
   }
 }
 
