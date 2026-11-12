@@ -25,13 +25,8 @@ export const faqItems: FaqItem[] = [
       "Yes. Discovery maps what you already run: channel managers, payments, WhatsApp, the current site. We connect or replace only what needs to change. Nothing is assumed before that conversation.",
   },
   {
-    question: "Where do you work from?",
+    question: "Where does your work happen?",
     answer:
       "Tbilisi. We work with properties across Georgia, and with hospitality brands that want a partner who understands the guest, the kitchen and the front desk.",
-  },
-  {
-    question: "How do we get a proposal?",
-    answer:
-      "Tell us the property, what runs today, and what should feel better. We reply with a scope: what we will build, how it connects, and how we will work together.",
   },
 ];

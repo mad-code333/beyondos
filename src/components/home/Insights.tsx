@@ -1,99 +1,67 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { insights } from "@/content/insights";
+import { Reveal } from "@/components/ui/Reveal";
 import "./insights.css";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 28 },
-  show: (delay = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, ease, delay },
-  }),
-};
-
-const barHeights = [40, 70, 55, 90, 65, 78];
-
-function JournalArt({ art }: { art: (typeof insights)[number]["art"] }) {
-  if (art === "sheets") {
-    return <div className="shape" aria-hidden />;
-  }
-
-  if (art === "ring") {
-    return <div className="disc" aria-hidden />;
-  }
-
-  return (
-    <div className="graph-lines" aria-hidden>
-      {barHeights.map((height, index) => (
-        <i key={index} style={{ height: `${height}%` }} />
-      ))}
-    </div>
-  );
-}
-
 export function Insights() {
-  const reduceMotion = useReducedMotion();
-  const reduce = Boolean(reduceMotion);
+  const reduce = Boolean(useReducedMotion());
 
   return (
-    <section className="section insights-section" id="insights">
-      <div className="wrap">
-        <motion.div
-          className="eyebrow"
-          initial={reduce ? false : { opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.55, ease }}
-        >
-          06 / Notes from the work
-        </motion.div>
+    <section className="insights-editorial" id="insights" aria-labelledby="insights-heading">
+      <div className="insights-editorial-grain" aria-hidden="true" />
+      <div className="wrap insights-editorial-inner">
+        <div className="insights-editorial-head">
+          <div className="insights-editorial-title-block">
+            <Reveal y={14}>
+              <p className="eyebrow insights-editorial-eyebrow">03 / Notes from Beyond</p>
+            </Reveal>
+            <Reveal delay={0.08} y={22}>
+              <h2 id="insights-heading" className="insights-editorial-heading">
+                <span>A little</span>
+                <span>perspective.</span>
+                <span>A better next</span>
+                <span>step.</span>
+              </h2>
+            </Reveal>
+          </div>
+          <Reveal delay={0.16} y={18} className="insights-editorial-lede-wrap">
+            <p className="insights-editorial-lede">
+              Practical notes from hotels, restaurants and brands we work with — so the next step
+              feels clearer before you commit to a build.
+            </p>
+          </Reveal>
+        </div>
 
-        <motion.div
-          className="section-head"
-          initial={reduce ? false : { opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.7, ease, delay: reduce ? 0 : 0.06 }}
-        >
-          <h2>
-            On the guest,
-            <br />
-            <em>the kitchen, the booking.</em>
-          </h2>
-        </motion.div>
-
-        <div className="journal-grid">
+        <div className="insights-editorial-list" role="list">
           {insights.map((item, index) => (
             <motion.div
               key={item.id}
-              custom={reduce ? 0 : 0.08 + index * 0.1}
-              variants={fadeUp}
-              initial={reduce ? false : "hidden"}
-              whileInView="show"
-              viewport={{ once: true, margin: "-40px" }}
+              role="listitem"
+              className="insights-editorial-row"
+              initial={reduce ? false : { opacity: 0, y: 18 }}
+              whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.55, ease, delay: reduce ? 0 : 0.05 * index }}
             >
-              <Link className="journal-card" href={item.href}>
-                <motion.div
-                  className="journal-art"
-                  initial={reduce ? false : { opacity: 0.7, scale: 0.96 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true, amount: 0.5 }}
-                  transition={{ duration: 0.75, ease, delay: reduce ? 0 : 0.12 + index * 0.08 }}
-                >
-                  <JournalArt art={item.art} />
-                </motion.div>
-                <div className="journal-meta">
-                  {item.category} / {item.readTime}
+              <Link className="insights-editorial-link" href={item.href}>
+                <span className="insights-editorial-num" aria-hidden="true">
+                  {item.number}
+                </span>
+                <div className="insights-editorial-body">
+                  <span className="insights-editorial-meta">
+                    {item.category} · {item.readTime}
+                  </span>
+                  <h3 className="insights-editorial-item-title">{item.title}</h3>
+                  <p className="insights-editorial-excerpt">{item.excerpt}</p>
                 </div>
-                <h3>{item.title}</h3>
-                <p className="journal-dek">{item.excerpt}</p>
-                <span className="journal-link">
-                  Read the perspective <i aria-hidden>↗</i>
+                <span className="insights-editorial-cta">
+                  Read the perspective
+                  <i aria-hidden="true">→</i>
                 </span>
               </Link>
             </motion.div>

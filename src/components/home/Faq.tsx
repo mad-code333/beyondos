@@ -3,80 +3,65 @@
 import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { faqItems } from "@/content/faq";
+import { Reveal } from "@/components/ui/Reveal";
 import "./faq.css";
 
 const ease = [0.22, 1, 0.36, 1] as const;
-
-const copyReveal = {
-  hidden: { opacity: 0, y: 22 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.7, ease, when: "beforeChildren" },
-  },
-} as const;
-
-const lineReveal = {
-  hidden: { y: "110%" },
-  show: (delay: number) => ({
-    y: 0,
-    transition: { duration: 0.7, ease, delay },
-  }),
-} as const;
 
 export function Faq() {
   const reduce = Boolean(useReducedMotion());
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section className="faq-section" id="faq">
-      <div className="faq-section-glow" aria-hidden="true" />
+    <section className="faq-section" id="faq" aria-labelledby="faq-heading">
+      <div className="faq-section-grain" aria-hidden="true" />
       <div className="wrap faq-layout">
-        <motion.div
-          className="faq-copy"
-          initial={reduce ? false : "hidden"}
-          whileInView="show"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={copyReveal}
-        >
-          <div className="eyebrow">Good questions</div>
-          <h2 className="faq-heading">
-            <span className="faq-heading-line">
-              <motion.span custom={reduce ? 0 : 0.08} variants={lineReveal}>
-                A few things
-              </motion.span>
-            </span>
-            <span className="faq-heading-line">
-              <motion.span custom={reduce ? 0 : 0.16} variants={lineReveal}>
-                you might be
-              </motion.span>
-            </span>
-            <span className="faq-heading-line">
-              <motion.em custom={reduce ? 0 : 0.24} variants={lineReveal}>
-                wondering.
-              </motion.em>
-            </span>
-          </h2>
-        </motion.div>
+        <div className="faq-copy">
+          <Reveal y={14}>
+            <p className="eyebrow faq-eyebrow">04 / Good questions</p>
+          </Reveal>
+          <Reveal delay={0.08} y={22}>
+            <h2 id="faq-heading" className="faq-heading">
+              <span>A few things</span>
+              <span>you might be</span>
+              <span>wondering.</span>
+            </h2>
+          </Reveal>
+        </div>
 
-        <div className="faq-stack">
+        <div className="faq-stack" role="list">
           {faqItems.map((item, index) => {
             const isOpen = open === index;
+            const panelId = `faq-panel-${index}`;
+            const triggerId = `faq-trigger-${index}`;
 
             return (
               <motion.div
                 key={item.question}
                 className={`faq-row${isOpen ? " is-open" : ""}`}
-                initial={reduce ? false : { opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                role="listitem"
+                initial={reduce ? false : { opacity: 0, y: 16 }}
+                whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.55, ease, delay: reduce ? 0 : 0.08 + index * 0.07 }}
+                transition={{ duration: 0.5, ease, delay: reduce ? 0 : 0.05 * index }}
               >
                 <button
                   type="button"
                   className="faq-trigger"
+                  id={triggerId}
                   aria-expanded={isOpen}
+                  aria-controls={panelId}
                   onClick={() => setOpen(isOpen ? null : index)}
+                  onKeyDown={(event) => {
+                    if (event.key === "ArrowDown") {
+                      event.preventDefault();
+                      setOpen(Math.min(faqItems.length - 1, index + 1));
+                    }
+                    if (event.key === "ArrowUp") {
+                      event.preventDefault();
+                      setOpen(Math.max(0, index - 1));
+                    }
+                  }}
                 >
                   <span className="faq-q">{item.question}</span>
                   <span className="faq-icon" aria-hidden="true">
@@ -88,19 +73,15 @@ export function Faq() {
                   {isOpen ? (
                     <motion.div
                       className="faq-answer"
+                      id={panelId}
+                      role="region"
+                      aria-labelledby={triggerId}
                       initial={reduce ? false : { height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={reduce ? undefined : { height: 0, opacity: 0 }}
-                      transition={{ duration: 0.42, ease }}
+                      transition={{ duration: 0.4, ease }}
                     >
-                      <motion.p
-                        initial={reduce ? false : { opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={reduce ? undefined : { opacity: 0, y: 6 }}
-                        transition={{ duration: 0.36, ease, delay: reduce ? 0 : 0.06 }}
-                      >
-                        {item.answer}
-                      </motion.p>
+                      <p>{item.answer}</p>
                     </motion.div>
                   ) : null}
                 </AnimatePresence>
