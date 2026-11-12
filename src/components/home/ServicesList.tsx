@@ -19,6 +19,7 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { services, type ServiceSlug } from "@/content/services";
+import { ServicePreviewBody } from "./ServicePreviewBodies";
 import "./services-toolkit.css";
 
 type PreviewSpec = {
@@ -26,20 +27,7 @@ type PreviewSpec = {
   stack: string;
   kicker: string;
   title: string;
-  lanes: [string, string, string, string];
-  bars: Array<{ left: string; width: string }>;
-  stats: Array<{ label: string; value: string; accent?: boolean }>;
-  scan: "down" | "across" | "up" | "wipe" | "pulse";
 };
-
-const DAYS = ["M", "T", "W", "T", "F", "M", "T", "W", "T", "F"] as const;
-
-const BAR_GEOMETRY: PreviewSpec["bars"] = [
-  { left: "0%", width: "30%" },
-  { left: "20%", width: "40%" },
-  { left: "50%", width: "30%" },
-  { left: "80%", width: "20%" },
-];
 
 const previews: Record<ServiceSlug, PreviewSpec> = {
   crm: {
@@ -47,70 +35,30 @@ const previews: Record<ServiceSlug, PreviewSpec> = {
     stack: "Profiles · Pipeline · Follow-ups",
     kicker: "Guest workspace · wk 1–4",
     title: "From first hello to a guest you know.",
-    lanes: ["Profiles", "Pipeline", "Follow-ups", "Handoff"],
-    bars: BAR_GEOMETRY,
-    stats: [
-      { label: "Scope", value: "12 open" },
-      { label: "Won", value: "4 deals" },
-      { label: "Reply", value: "2h", accent: true },
-    ],
-    scan: "down",
   },
   oms: {
     pace: "6–10 weeks",
     stack: "Tables · Tickets · The pass",
     kicker: "Service board · live night",
     title: "Floor and pass, moving as one.",
-    lanes: ["Floor", "Tickets", "Pass", "Close"],
-    bars: BAR_GEOMETRY,
-    stats: [
-      { label: "Open", value: "9 tickets" },
-      { label: "Pass", value: "3 ready" },
-      { label: "Avg", value: "11m", accent: true },
-    ],
-    scan: "across",
   },
   hms: {
     pace: "8–14 weeks",
     stack: "Rooms · Arrivals · Departure",
     kicker: "Property view · today",
     title: "Ready before anyone is at the door.",
-    lanes: ["Arrivals", "Rooms", "Housekeeping", "Desk"],
-    bars: BAR_GEOMETRY,
-    stats: [
-      { label: "Ready", value: "14 rooms" },
-      { label: "In", value: "6 stays" },
-      { label: "Out", value: "5 due", accent: true },
-    ],
-    scan: "up",
   },
   web: {
     pace: "6–12 weeks",
     stack: "Design · Build · Enquiry path",
     kicker: "Site build · wk 1–8",
     title: "A front door that earns the next step.",
-    lanes: ["Story", "Design", "Build", "Launch"],
-    bars: BAR_GEOMETRY,
-    stats: [
-      { label: "LCP", value: "1.1s" },
-      { label: "CWV", value: "98" },
-      { label: "Path", value: "1 step", accent: true },
-    ],
-    scan: "wipe",
   },
   growth: {
     pace: "Ongoing",
     stack: "Brand · Search · Campaigns",
     kicker: "Growth plan · this month",
     title: "Found by the right guest. Booked direct.",
-    lanes: ["Brand", "Search", "Content", "Campaigns"],
-    bars: BAR_GEOMETRY,
-    stats: [
-      { label: "Enq", value: "128" },
-      { label: "Direct", value: "42%" },
-      { label: "Map", value: "3×", accent: true },
-    ],
-    scan: "pulse",
   },
 };
 
@@ -216,8 +164,10 @@ export function ServicesList() {
       // Home sits in the right pocket; pointer pulls the card freely without covering titles.
       const homeX = rect.width * 0.82;
       const homeY = rect.height * 0.5;
-      followX.set(clamp((localX - homeX) * 0.55, -56, 48));
-      followY.set(clamp(localY - homeY, -150, 150));
+      // Right bound stays small so the card never drifts over the ↑ ↓ controls.
+      followX.set(clamp((localX - homeX) * 0.3, -20, 6));
+      // Small vertical drift only — the card stays parked beside the list.
+      followY.set(clamp((localY - homeY) * 0.25, -36, 36));
       tiltNX.set(nx - 0.5);
       tiltNY.set(ny - 0.5);
     },
@@ -226,7 +176,6 @@ export function ServicesList() {
 
   useLayoutEffect(() => {
     if (!live) {
-      setPill((prev) => ({ ...prev, ready: false }));
       resetFollow();
       return;
     }
@@ -494,22 +443,24 @@ function PreviewPanel({
   tiltX: MotionValue<number>;
   tiltY: MotionValue<number>;
 }) {
-  const rotateX = useTransform(tiltY, [-0.5, 0.5], [5.5, -5.5]);
-  const rotateY = useTransform(tiltX, [-0.5, 0.5], [-7, 7]);
+  // Resting pose is a slight lean (matches the reference); pointer adds to it.
+  const rotateX = useTransform(tiltY, [-0.5, 0.5], [7, -3]);
+  const rotateY = useTransform(tiltX, [-0.5, 0.5], [-14, 2]);
 
   return (
     <motion.div
       className={`svc-preview is-${slug}`}
-      initial={reduce ? false : { opacity: 0, scale: 0.96 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={reduce ? undefined : { opacity: 0, scale: 0.985 }}
-      transition={reduce ? { duration: 0 } : morph}
+      initial={reduce ? false : { opacity: 0, scale: 0.94, y: 18 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={reduce ? undefined : { opacity: 0, scale: 0.97, transition: { duration: 0.18 } }}
+      transition={reduce ? { duration: 0 } : { duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       style={
         reduce
-          ? undefined
+          ? { rotate: -2 }
           : {
               x,
               y,
+              rotate: -2,
               rotateX,
               rotateY,
               transformPerspective: 1200,
@@ -517,210 +468,43 @@ function PreviewPanel({
       }
     >
       <div className={`svc-preview-card is-${slug}`}>
-        <LightBand key={`light-${slug}`} reduce={reduce} />
-        <ScanBand key={`scan-${slug}-${preview.scan}`} variant={preview.scan} reduce={reduce} />
-
-        <div className="svc-preview-head">
-          <AnimatePresence mode="wait" initial={false}>
+        {/* Keyed remount (no exit queue) so rapid switching always lands on the active service. */}
+        <motion.div
+          key={slug}
+          className="svc-preview-swap"
+          initial={reduce ? false : { opacity: 0.4 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: reduce ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="svc-preview-head">
             <motion.span
-              key={`${slug}-kicker`}
               className="mono svc-preview-kicker"
               initial={reduce ? false : { opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={reduce ? undefined : { opacity: 0, y: -6 }}
-              transition={reduce ? { duration: 0 } : { ...morph, duration: 0.28 }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             >
               {preview.kicker}
             </motion.span>
-          </AnimatePresence>
-          <span className="svc-preview-open" aria-hidden="true">
-            →
-          </span>
-        </div>
+            <span className="svc-preview-open" aria-hidden="true">
+              →
+            </span>
+          </div>
 
-        <AnimatePresence mode="wait" initial={false}>
           <motion.h3
-            key={`${slug}-title`}
             initial={reduce ? false : { opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={reduce ? undefined : { opacity: 0, y: -10 }}
-            transition={reduce ? { duration: 0 } : { ...morph, duration: 0.36, delay: 0.03 }}
+            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1], delay: 0.04 }}
           >
             {preview.title}
           </motion.h3>
-        </AnimatePresence>
 
-        <div className="svc-board">
-          <div className="svc-days" aria-hidden="true">
-            {DAYS.map((day, index) => (
-              <span key={`${day}-${index}`}>{day}</span>
-            ))}
-          </div>
-          <div className="svc-timeline">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={`${slug}-lanes`}
-                className="svc-timeline-swap"
-                initial={reduce ? false : { opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={reduce ? undefined : { opacity: 0, y: -8 }}
-                transition={reduce ? { duration: 0 } : { ...morph, delay: 0.06 }}
-              >
-                {preview.lanes.map((lane, index) => {
-                  const bar = preview.bars[index]!;
-                  const accent = index === preview.lanes.length - 1;
-                  return (
-                    <motion.div
-                      key={lane}
-                      className={`svc-timeline-row${accent ? " is-accent" : ""}`}
-                      initial={reduce ? false : { opacity: 0, x: -8 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={
-                        reduce
-                          ? { duration: 0 }
-                          : { ...morph, delay: 0.08 + index * 0.045 }
-                      }
-                    >
-                      <span>{lane}</span>
-                      <div className="svc-track">
-                        <motion.i
-                          initial={reduce ? false : { scaleX: 0.35, opacity: 0.4 }}
-                          animate={{ scaleX: 1, opacity: 1 }}
-                          transition={
-                            reduce
-                              ? { duration: 0 }
-                              : { ...morph, delay: 0.12 + index * 0.05 }
-                          }
-                          style={{ left: bar.left, width: bar.width }}
-                        />
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
-
-        <div className="svc-preview-stats">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={`${slug}-stats`}
-              className="svc-preview-stats-swap"
-              initial={reduce ? false : { opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduce ? undefined : { opacity: 0, y: -6 }}
-              transition={reduce ? { duration: 0 } : { ...morph, delay: 0.1 }}
-            >
-              {preview.stats.map((stat, index) => (
-                <motion.div
-                  key={stat.label}
-                  initial={reduce ? false : { opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={
-                    reduce ? { duration: 0 } : { ...morph, delay: 0.14 + index * 0.04 }
-                  }
-                >
-                  <span className="mono">{stat.label}</span>
-                  <strong className={stat.accent ? "is-accent" : undefined}>
-                    {stat.value}
-                  </strong>
-                </motion.div>
-              ))}
-            </motion.div>
-          </AnimatePresence>
-        </div>
+          <ServicePreviewBody slug={slug} reduce={reduce} />
+        </motion.div>
       </div>
 
       <p className="mono svc-preview-foot">
         Live preview · {name} · 5 services · 3 ways to engage
       </p>
     </motion.div>
-  );
-}
-
-function LightBand({ reduce }: { reduce: boolean }) {
-  if (reduce) {
-    return <span className="svc-light-band" aria-hidden="true" />;
-  }
-
-  return (
-    <motion.span
-      className="svc-light-band"
-      aria-hidden="true"
-      initial={{ x: "-40%", opacity: 0 }}
-      animate={{ x: "170%", opacity: [0, 1, 1, 0] }}
-      transition={{ duration: 1.15, ease: [0.22, 1, 0.36, 1] }}
-    />
-  );
-}
-
-function ScanBand({
-  variant,
-  reduce,
-}: {
-  variant: PreviewSpec["scan"];
-  reduce: boolean;
-}) {
-  if (reduce) {
-    return <span className={`svc-scan svc-scan-${variant}`} aria-hidden="true" />;
-  }
-
-  const common = {
-    className: `svc-scan svc-scan-${variant}`,
-    "aria-hidden": true as const,
-  };
-
-  if (variant === "down") {
-    return (
-      <motion.span
-        {...common}
-        initial={{ top: "-18%", opacity: 0 }}
-        animate={{ top: "108%", opacity: [0, 1, 1, 0] }}
-        transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
-      />
-    );
-  }
-
-  if (variant === "up") {
-    return (
-      <motion.span
-        {...common}
-        initial={{ top: "108%", opacity: 0 }}
-        animate={{ top: "-18%", opacity: [0, 1, 1, 0] }}
-        transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
-      />
-    );
-  }
-
-  if (variant === "across") {
-    return (
-      <motion.span
-        {...common}
-        initial={{ left: "-20%", opacity: 0 }}
-        animate={{ left: "108%", opacity: [0, 1, 1, 0] }}
-        transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
-      />
-    );
-  }
-
-  if (variant === "wipe") {
-    return (
-      <motion.span
-        {...common}
-        initial={{ opacity: 0, x: "-30%" }}
-        animate={{ opacity: [0, 0.95, 0.95, 0], x: "40%" }}
-        transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
-      />
-    );
-  }
-
-  return (
-    <motion.span
-      {...common}
-      initial={{ opacity: 0.1, scale: 0.86 }}
-      animate={{ opacity: [0.1, 0.55, 0], scale: [0.86, 1.08, 1.12] }}
-      transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
-    />
   );
 }
