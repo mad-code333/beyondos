@@ -124,7 +124,7 @@ export function EngagementModels() {
                   <span className="price-label">Price on request</span>
                 </div>
                 <Link className="engage-cta" href={card.href}>
-                  {card.cta} <span aria-hidden="true">↗</span>
+                  {card.cta} <span aria-hidden="true">↗︎</span>
                 </Link>
               </article>
             </Reveal>

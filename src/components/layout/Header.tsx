@@ -134,7 +134,7 @@ export function Header() {
       </nav>
 
       <Link href="/#contact" className="nav-cta" onClick={closeAll}>
-        Let&apos;s talk <span>↗</span>
+        Let&apos;s talk <span>↗︎</span>
       </Link>
 
       <button
@@ -175,7 +175,7 @@ export function Header() {
                 </Link>
               ))}
               <Link href="/#contact" onClick={closeAll} className="mobile-nav-cta">
-                Let&apos;s talk ↗
+                Let&apos;s talk ↗︎
               </Link>
             </div>
           </motion.div>

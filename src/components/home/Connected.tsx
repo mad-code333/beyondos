@@ -134,7 +134,7 @@ export function Connected() {
                           onClick={(event) => event.stopPropagation()}
                           tabIndex={active ? 0 : -1}
                         >
-                          {item.cta} ↗
+                          {item.cta} ↗︎
                         </a>
                       ) : (
                         <Link
@@ -142,7 +142,7 @@ export function Connected() {
                           onClick={(event) => event.stopPropagation()}
                           tabIndex={active ? 0 : -1}
                         >
-                          {item.cta} ↗
+                          {item.cta} ↗︎
                         </Link>
                       )}
                     </div>

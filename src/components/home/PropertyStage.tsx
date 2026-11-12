@@ -189,7 +189,7 @@ export function PropertyStage() {
               </h3>
               <p>{active.description}</p>
               <Link href={`/services/${active.slug}`}>
-                {active.cta} ↗
+                {active.cta} ↗︎
               </Link>
             </div>
             <div className="world-photo">

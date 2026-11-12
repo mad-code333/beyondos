@@ -23,7 +23,7 @@ export function PricingSection() {
 
           <Reveal delay={0.08} y={14}>
             <Link href="/pricing" className="pricing-section-link">
-              Full pricing details <span aria-hidden="true">↗</span>
+              Full pricing details <span aria-hidden="true">↗︎</span>
             </Link>
           </Reveal>
         </div>

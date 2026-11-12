@@ -37,7 +37,7 @@ export function Footer() {
             <span className="mono">Services</span>
             <Link href="/services/web">Web Development</Link>
             <Link href="/services/growth">Digital Growth &amp; Branding</Link>
-            <Link href="/#contact">Start a conversation ↗</Link>
+            <Link href="/#contact">Start a conversation ↗︎</Link>
           </div>
 
           <div className="footer-col">
@@ -46,7 +46,7 @@ export function Footer() {
             <Link href="/#approach">Our approach</Link>
             <Link href="/#insights">Insights</Link>
             <a href="https://www.beyondgeorgia.com/" target="_blank" rel="noopener noreferrer">
-              Beyond Georgia ↗
+              Beyond Georgia ↗︎
             </a>
             <Link href="/#ecosystem">The ecosystem</Link>
           </div>

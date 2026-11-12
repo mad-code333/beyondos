@@ -132,7 +132,7 @@ export function Vision() {
           <Reveal delay={0.22} y={14}>
             <Link href="/#ecosystem" className="vision-link">
               See the Beyond ecosystem
-              <span aria-hidden="true">↗</span>
+              <span aria-hidden="true">↗︎</span>
             </Link>
           </Reveal>
         </div>

@@ -73,7 +73,7 @@ export function ServiceView({ service }: { service: Service }) {
                 transition={{ duration: 0.6, delay: 0.22, ease }}
               >
                 <Link className="svc-btn" href="/#contact">
-                  Let&apos;s talk <span>↗</span>
+                  Let&apos;s talk <span>↗︎</span>
                 </Link>
                 <Link className="svc-btn outline" href="#workspace">
                   See the workspace <span>↓</span>
@@ -172,7 +172,7 @@ export function ServiceView({ service }: { service: Service }) {
                   </div>
                   <p>{item.summary}</p>
                   <span className="circle-arrow" aria-hidden="true">
-                    ↗
+                    ↗︎
                   </span>
                 </Link>
               </Reveal>

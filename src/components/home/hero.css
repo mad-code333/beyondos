@@ -150,6 +150,25 @@
   animation: heroEnter 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
 }
 
+/* Sizer + live copy share one grid cell; the sizer holds the tallest slide's height. */
+.hero-copy {
+  display: grid;
+}
+
+.hero-copy > * {
+  grid-area: 1 / 1;
+}
+
+.hero-copy-sizer {
+  display: grid;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.hero-copy-sizer > * {
+  grid-area: 1 / 1;
+}
+
 .hero-copy-stack {
   position: relative;
   width: 100%;
@@ -264,7 +283,15 @@
     box-shadow 0.3s;
 }
 
+.hero-arrow {
+  display: block;
+  width: 12px;
+  height: 12px;
+}
+
 .hero-btn span {
+  display: inline-grid;
+  place-items: center;
   font-size: 16px;
   font-weight: 400;
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
@@ -312,6 +339,11 @@
   height: 460px;
   touch-action: pan-y;
   animation: heroFade 1s cubic-bezier(0.22, 1, 0.36, 1) 0.16s both;
+}
+
+/* Desktop: the wrapper is invisible to layout — items keep their orbit positions. */
+.hero-orbit-list {
+  display: contents;
 }
 
 .hero-orbit-ring {
@@ -480,7 +512,8 @@
 
 .hero-orbit-callout strong span {
   display: inline-block;
-  margin-left: 4px;
+  margin-left: 6px;
+  vertical-align: 1px;
 }
 
 .hero-orbit-thumb-img {
@@ -1196,6 +1229,171 @@
 @media (max-width: 560px) {
   .hero-grid {
     opacity: 0.8;
+  }
+}
+
+/* ───────────── Phones & small tablets: chip row instead of the orbit ───────────── */
+@media (max-width: 900px) {
+  .hero-immersive {
+    padding-bottom: 20px;
+  }
+
+  .hero-beyond-mark {
+    top: 150px;
+    opacity: 0.03;
+  }
+
+  .hero-stage {
+    width: calc(100% - 40px);
+    padding-top: 22px;
+    padding-bottom: 0;
+    gap: 28px;
+  }
+
+  .hero-copy {
+    padding: 0;
+  }
+
+  .hero-copy-stack {
+    gap: 18px;
+  }
+
+  .hero-welcome {
+    padding: 7px 12px;
+    font-size: 8px;
+    letter-spacing: 0.16em;
+    line-height: 1.6;
+  }
+
+  .hero-copy p {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  /* The underline link duplicates the primary button on small screens. */
+  .hero-explore-link {
+    display: none;
+  }
+
+  .hero-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .hero-actions .hero-btn {
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 50px;
+    padding: 0 14px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+  }
+
+  .hero-orbit {
+    display: grid;
+    gap: 14px;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    margin-top: 0;
+  }
+
+  .hero-orbit-ring {
+    display: none;
+  }
+
+  .hero-orbit-list {
+    position: relative;
+    display: flex;
+    gap: 8px;
+    margin: 0 -20px;
+    padding: 2px 20px 6px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: 20px;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 20px, #000 calc(100% - 20px), transparent 100%);
+  }
+
+  .hero-orbit-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hero-orbit-item,
+  .hero-orbit-item[data-index] {
+    position: relative;
+    top: auto;
+    left: auto;
+    flex: 0 0 auto;
+    width: auto;
+    gap: 10px;
+    padding: 6px 16px 6px 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999px;
+    background: rgba(14, 13, 20, 0.72);
+    transform: none;
+    opacity: 0.72;
+    filter: none;
+    scroll-snap-align: center;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      opacity 0.25s ease,
+      border-color 0.25s ease,
+      background-color 0.25s ease;
+  }
+
+  .hero-orbit-item[aria-pressed="true"] {
+    opacity: 1;
+    border-color: rgba(200, 184, 255, 0.55);
+    background: rgba(56, 40, 104, 0.5);
+    box-shadow: 0 0 24px rgba(146, 116, 236, 0.28);
+  }
+
+  .hero-orbit-thumb,
+  .hero-orbit-item[aria-pressed="true"] .hero-orbit-thumb {
+    width: 36px;
+    height: 36px;
+    border-color: rgba(255, 255, 255, 0.22);
+    box-shadow: none;
+  }
+
+  .hero-orbit-item[aria-pressed="true"] .hero-orbit-thumb {
+    border-color: rgba(214, 202, 255, 0.85);
+  }
+
+  .hero-orbit-index,
+  .hero-orbit-label small {
+    display: none;
+  }
+
+  .hero-orbit-label strong,
+  .hero-orbit-item[aria-pressed="true"] .hero-orbit-label strong {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    color: #f2f0fa;
+    text-shadow: none;
+  }
+
+  .hero-orbit-callout {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    margin-top: 0;
+    padding: 16px 18px;
+    background: rgba(10, 10, 16, 0.78);
+  }
+
+  .hero-bottom {
+    width: calc(100% - 40px);
+    margin-top: 28px;
+    padding-top: 0;
   }
 }
 

@@ -43,7 +43,11 @@ const slides: Slide[] = [
     previewRows: [
       { label: "Nino K. · suite enquiry", meta: "Follow-up due", tone: "warn" },
       { label: "David R. · returning guest", meta: "Confirmed", tone: "ok" },
-      { label: "Ana M. · dining request", meta: "In conversation", tone: "soft" },
+      {
+        label: "Ana M. · dining request",
+        meta: "In conversation",
+        tone: "soft",
+      },
     ],
   },
   {
@@ -61,7 +65,11 @@ const slides: Slide[] = [
     previewTabs: ["Floor", "Kitchen", "Orders", "Close"],
     previewActive: 1,
     previewRows: [
-      { label: "T12 · 2× tasting · note: no shellfish", meta: "Preparing", tone: "warn" },
+      {
+        label: "T12 · 2× tasting · note: no shellfish",
+        meta: "Preparing",
+        tone: "warn",
+      },
       { label: "T04 · mains fired", meta: "Ready", tone: "ok" },
       { label: "T09 · dessert course", meta: "Received", tone: "soft" },
     ],
@@ -117,7 +125,7 @@ const slides: Slide[] = [
     orbitLabel: "Digital growth & branding",
     thumb: "/media/table.jpg",
     alt: "A set table for two, a candle and a glass.",
-    icon: "↗",
+    icon: "↗︎",
     previewTabs: ["Brand", "Search", "Campaigns", "Enquiries"],
     previewActive: 3,
     previewRows: [
@@ -131,7 +139,33 @@ const slides: Slide[] = [
 const CYCLE_MS = 5500;
 const ease = [0.22, 1, 0.36, 1] as const;
 
-function CopyBody({ slide, href }: { slide: Slide; href: string }) {
+/** Drawn arrow — iOS renders the ↗︎ character as a colour emoji. */
+function ArrowUpRight() {
+  return (
+    <svg className="hero-arrow" viewBox="0 0 12 12" aria-hidden="true">
+      <path
+        d="M3 9L9 3M4 3h5v5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function CopyBody({
+  slide,
+  href,
+  idle = false,
+}: {
+  slide: Slide;
+  href: string;
+  idle?: boolean;
+}) {
+  // idle copies are invisible height sizers: not focusable, not announced.
+  const tab = idle ? -1 : undefined;
   return (
     <>
       <span className="hero-welcome">
@@ -143,15 +177,25 @@ function CopyBody({ slide, href }: { slide: Slide; href: string }) {
         <em>{slide.titleEm}</em>
       </h1>
       <p>{slide.lead}</p>
-      <Link className="hero-explore-link" href={href}>
+      <Link className="hero-explore-link" href={href} tabIndex={tab}>
         Explore {slide.name} <span aria-hidden="true">→</span>
       </Link>
       <div className="hero-actions">
-        <Link className="hero-btn hero-cta-primary" href={href}>
-          Explore {slide.name} <span>↗</span>
+        <Link className="hero-btn hero-cta-primary" href={href} tabIndex={tab}>
+          Explore {slide.name}{" "}
+          <span>
+            <ArrowUpRight />
+          </span>
         </Link>
-        <Link className="hero-btn hero-cta-secondary" href="/#contact">
-          Let&apos;s talk <span>↗</span>
+        <Link
+          className="hero-btn hero-cta-secondary"
+          href="/#contact"
+          tabIndex={tab}
+        >
+          Let&apos;s talk{" "}
+          <span>
+            <ArrowUpRight />
+          </span>
         </Link>
       </div>
     </>
@@ -165,6 +209,11 @@ export function Hero() {
   const [paused, setPaused] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const markRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+  // Was the pressed item already active when the press began? Focus (and hover)
+  // select an item before its click fires, so `selected` alone can't tell
+  // "first tap selects" from "tap on the active item opens it".
+  const pressedActive = useRef<boolean | null>(null);
   const slide = slides[active];
   const href = `/services/${slide.slug}`;
 
@@ -176,7 +225,12 @@ export function Hero() {
   useEffect(() => {
     const node = heroRef.current;
     const mark = markRef.current;
-    if (!node || !mark || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (
+      !node ||
+      !mark ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    )
+      return;
 
     let frame = 0;
     function update() {
@@ -198,10 +252,25 @@ export function Hero() {
     };
   }, []);
 
+  // Phones: the services become a swipeable chip row — keep the active chip in view.
+  // (On desktop the row is display: contents, so it never scrolls.)
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list || list.scrollWidth <= list.clientWidth + 1) return;
+    const chip = list.children[active] as HTMLElement | undefined;
+    if (!chip) return;
+    const left = chip.offsetLeft - (list.clientWidth - chip.offsetWidth) / 2;
+    list.scrollTo({
+      left: Math.max(0, left),
+      behavior: reduce ? "auto" : "smooth",
+    });
+  }, [active, reduce]);
+
   useEffect(() => {
     if (reduce || paused) return;
     const id = window.setInterval(() => {
-      const motionOff = document.documentElement.getAttribute("data-motion") === "paused";
+      const motionOff =
+        document.documentElement.getAttribute("data-motion") === "paused";
       if (motionOff) return;
       setActive((current) => (current + 1) % slides.length);
     }, CYCLE_MS);
@@ -256,6 +325,15 @@ export function Hero() {
 
         <div className="wrap hero-stage">
           <div className="hero-copy">
+            {/* Invisible copies of every slide reserve the tallest height,
+                so autoplay never pushes the page around. */}
+            <div className="hero-copy-sizer" aria-hidden="true" inert>
+              {slides.map((item) => (
+                <div key={item.slug} className="hero-copy-stack">
+                  <CopyBody slide={item} href={`/services/${item.slug}`} idle />
+                </div>
+              ))}
+            </div>
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={slide.slug}
@@ -277,7 +355,11 @@ export function Hero() {
             onMouseLeave={() => setPaused(false)}
             onFocusCapture={() => setPaused(true)}
             onBlurCapture={(event) => {
-              if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+              if (
+                !event.currentTarget.contains(
+                  event.relatedTarget as Node | null,
+                )
+              ) {
                 setPaused(false);
               }
             }}
@@ -291,49 +373,67 @@ export function Hero() {
               </svg>
             </div>
 
-            {slides.map((item, index) => {
-              const selected = index === active;
-              return (
-                <button
-                  key={item.slug}
-                  className="hero-orbit-item"
-                  type="button"
-                  data-index={index}
-                  aria-pressed={selected}
-                  tabIndex={selected ? 0 : -1}
-                  aria-label={selected ? `Explore ${item.name}` : `Show ${item.name}`}
-                  onMouseEnter={() => select(index)}
-                  onFocus={() => select(index)}
-                  onClick={() => {
-                    if (selected) router.push(`/services/${item.slug}`);
-                    else select(index);
-                  }}
-                >
-                  <span className="hero-orbit-thumb">
-                    <Image
-                      src={item.thumb}
-                      alt=""
-                      fill
-                      sizes="120px"
-                      className="hero-orbit-thumb-img"
-                    />
-                    <span className="hero-orbit-thumb-veil" />
-                    <span className="hero-orbit-index">{item.number}</span>
-                  </span>
-                  <span className="hero-orbit-label">
-                    <strong>{item.name}</strong>
-                    <small>{item.orbitLabel}</small>
-                  </span>
-                </button>
-              );
-            })}
+            <div className="hero-orbit-list" ref={listRef}>
+              {slides.map((item, index) => {
+                const selected = index === active;
+                return (
+                  <button
+                    key={item.slug}
+                    className="hero-orbit-item"
+                    type="button"
+                    data-index={index}
+                    aria-pressed={selected}
+                    tabIndex={selected ? 0 : -1}
+                    aria-label={
+                      selected ? `Explore ${item.name}` : `Show ${item.name}`
+                    }
+                    // Hover-select for mice only; touch selects on tap.
+                    onPointerEnter={(event) => {
+                      if (event.pointerType === "mouse") select(index);
+                    }}
+                    onPointerDown={(event) => {
+                      // A mouse has already selected on hover, so its click opens.
+                      pressedActive.current =
+                        event.pointerType === "mouse" ? true : selected;
+                    }}
+                    onFocus={() => select(index)}
+                    onClick={() => {
+                      // Keyboard activation has no pointerdown: fall back to `selected`.
+                      const open = pressedActive.current ?? selected;
+                      pressedActive.current = null;
+                      if (open) router.push(`/services/${item.slug}`);
+                      else select(index);
+                    }}
+                  >
+                    <span className="hero-orbit-thumb">
+                      <Image
+                        src={item.thumb}
+                        alt=""
+                        fill
+                        sizes="120px"
+                        className="hero-orbit-thumb-img"
+                      />
+                      <span className="hero-orbit-thumb-veil" />
+                      <span className="hero-orbit-index">{item.number}</span>
+                    </span>
+                    <span className="hero-orbit-label">
+                      <strong>{item.name}</strong>
+                      <small>{item.orbitLabel}</small>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
 
             <Link href="/#workspace" className="hero-orbit-callout">
               <span className="hero-orbit-callout-kicker">
                 One booking. A connected journey.
               </span>
               <strong>
-                See how it could work <span aria-hidden="true">↗</span>
+                See how it could work{" "}
+                <span aria-hidden="true">
+                  <ArrowUpRight />
+                </span>
               </strong>
             </Link>
           </div>
@@ -347,7 +447,9 @@ export function Hero() {
             <button
               type="button"
               aria-pressed={paused}
-              aria-label={paused ? "Play service rotation" : "Pause service rotation"}
+              aria-label={
+                paused ? "Play service rotation" : "Pause service rotation"
+              }
               onClick={() => setPaused((value) => !value)}
             >
               {paused ? "▶" : "Ⅱ"}

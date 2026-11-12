@@ -28,27 +28,27 @@ const tabs: { id: TabId; label: string }[] = [
 const explore: Record<TabId, { href: string; label: string; foot: string }> = {
   crm: {
     href: "/services/crm",
-    label: "Explore CRM ↗",
+    label: "Explore CRM ↗︎",
     foot: "Guest profiles, pipeline and an operations assistant preview — so the desk starts with context.",
   },
   oms: {
     href: "/services/oms",
-    label: "Explore Restaurant OMS ↗",
+    label: "Explore Restaurant OMS ↗︎",
     foot: "Floor map, POS and kitchen display moving through one service — from seating to settlement.",
   },
   hms: {
     href: "/services/hms",
-    label: "Explore Hotel HMS ↗",
+    label: "Explore Hotel HMS ↗︎",
     foot: "Arrivals, reservations and housekeeping readiness in one front-desk picture of the property.",
   },
   web: {
     href: "/services/web",
-    label: "Explore Web Development ↗",
+    label: "Explore Web Development ↗︎",
     foot: "A hospitality website that can speak for a stay or a dining room. Switch between the two.",
   },
   growth: {
     href: "/services/growth",
-    label: "Explore Digital Growth ↗",
+    label: "Explore Digital Growth ↗︎",
     foot: "Search, content and direct enquiries in one view. Change the window to read the trend.",
   },
 };
@@ -131,7 +131,7 @@ export function WorkspaceDemo({
           <div className="demo-top">
             <span className="ws-kicker">The workspace</span>
             {lockedTab ? (
-              <span className="pill">{pill ?? `${explore[tab].label.replace("Explore ", "").replace(" ↗", "")} · Interactive preview`}</span>
+              <span className="pill">{pill ?? `${explore[tab].label.replace("Explore ", "").replace(" ↗︎", "")} · Interactive preview`}</span>
             ) : (
               <LayoutGroup>
                 <div
@@ -280,7 +280,7 @@ function WebPanel({ stay, onToggle }: { stay: boolean; onToggle: () => void }) {
           <p>Desktop preview · Hospitality website</p>
         </div>
         <button className="mini-btn" type="button" onClick={onToggle}>
-          {stay ? "View the restaurant ↗" : "View the stay ↗"}
+          {stay ? "View the restaurant ↗︎" : "View the stay ↗︎"}
         </button>
       </div>
       <AnimatePresence mode="wait">

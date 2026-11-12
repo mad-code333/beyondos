@@ -188,7 +188,7 @@ export function Contact() {
               </label>
               <button className="closing-btn" type="submit">
                 Send enquiry
-                <span aria-hidden="true">↗</span>
+                <span aria-hidden="true">↗︎</span>
               </button>
             </form>
           )}

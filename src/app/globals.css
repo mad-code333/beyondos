@@ -367,6 +367,7 @@ html[data-motion="paused"] *::after {
 }
 
 .menu-button {
+  flex: none;
   display: grid;
   place-items: center;
   width: 35px;
@@ -502,5 +503,16 @@ html[data-motion="paused"] *::after {
   .dropdown a,
   .drop-note {
     white-space: normal;
+  }
+}
+
+/* Narrow phones: keep logo, CTA and menu button on one line without squashing. */
+@media (max-width: 400px) {
+  .nav-cta {
+    gap: 8px;
+    min-height: 38px;
+    padding: 0 14px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
   }
 }

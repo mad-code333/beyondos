@@ -233,11 +233,11 @@ export const services: Service[] = [
   {
     slug: "growth",
     number: "05",
-    icon: "↗",
+    icon: "↗︎",
     shortName: "Digital Growth",
     name: "Digital Growth",
     category: "Growth, Marketing & Branding",
-    code: "↗",
+    code: "↗︎",
     tagline: "The right guest, a clear reason.",
     heroLine: "Be found by the right guest.",
     heroEm: "Give them a way to book.",

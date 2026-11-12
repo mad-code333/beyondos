@@ -148,7 +148,9 @@ export function EclipseHorizon() {
 
       cx = W / 2;
       // Arc crest sits ~71% down the hero, like the original layout.
-      horizonY = Math.round(H * (W < 760 ? 0.66 : 0.71));
+      // Phones stack everything in one tall column, so the arc sits near the
+      // bottom (behind the status row) instead of cutting through the content.
+      horizonY = W <= 900 ? Math.round(Math.max(H * 0.6, H - 64)) : Math.round(H * 0.71);
       R = Math.max(W, 600) * CURVATURE;
       planetCy = horizonY + R;
 

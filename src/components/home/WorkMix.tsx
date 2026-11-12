@@ -429,7 +429,7 @@ export function WorkMix() {
                       <span className="work-project-type">
                         <span className="mono">{project.type}</span>
                         <span className="work-project-arrow" aria-hidden="true">
-                          ↗
+                          ↗︎
                         </span>
                       </span>
                     </motion.div>
