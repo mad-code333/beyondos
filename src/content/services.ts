@@ -15,6 +15,8 @@ export type Service = {
   heroLead: string;
   heroImage: string;
   heroAlt: string;
+  /** Short facts shown under the service hero. */
+  facts: { timeline: string; includes: string; bestFor: string };
   conceptLine: string;
   conceptEm: string;
   workspacePill: string;
@@ -42,6 +44,11 @@ export const services: Service[] = [
       "Profiles, enquiries and follow-ups in one workspace, so the next conversation starts with what was already said.",
     heroImage: "/media/residence.jpg",
     heroAlt: "A hotel dining room and kitchen, table set for guests.",
+    facts: {
+      timeline: "4–8 weeks",
+      includes: "Profiles · Pipeline · Follow-ups",
+      bestFor: "Hotels and restaurants answering enquiries by hand",
+    },
     conceptLine: "Every relationship",
     conceptEm: "remembered.",
     workspacePill: "CRM · Interactive preview",
@@ -93,6 +100,11 @@ export const services: Service[] = [
       "A shared view of the floor, the ticket and the pass, so the room and the kitchen move through service together.",
     heroImage: "/media/kitchen.jpg",
     heroAlt: "The pass between a restaurant kitchen and the dining room, plates ready.",
+    facts: {
+      timeline: "6–10 weeks",
+      includes: "Tables · Tickets · The pass",
+      bestFor: "Restaurants running a busy floor and kitchen",
+    },
     conceptLine: "Every order",
     conceptEm: "in sync.",
     workspacePill: "Restaurant OMS · Interactive preview",
@@ -144,6 +156,11 @@ export const services: Service[] = [
       "Reservations, room readiness and the guest’s notes in one workspace, so the desk is ready before anyone is at the door.",
     heroImage: "/media/suite.jpg",
     heroAlt: "A boutique hotel bedroom in morning light, linen and a chair by the window.",
+    facts: {
+      timeline: "8–14 weeks",
+      includes: "Rooms · Arrivals · Departure",
+      bestFor: "Boutique hotels, guesthouses and residences",
+    },
     conceptLine: "Every stay",
     conceptEm: "connected.",
     workspacePill: "Hotel HMS · Interactive preview",
@@ -195,6 +212,11 @@ export const services: Service[] = [
       "Websites for hotels, restaurants and hospitality brands. From the first scroll to the enquiry, the page should help a guest take the next step.",
     heroImage: "/media/facade.jpg",
     heroAlt: "A hotel entrance at blue hour, one warm doorway on a dark stone facade.",
+    facts: {
+      timeline: "6–12 weeks",
+      includes: "Design · Build · Enquiry path",
+      bestFor: "Properties ready for a stronger direct channel",
+    },
     conceptLine: "A front door",
     conceptEm: "worth staying for.",
     workspacePill: "Web Development · Interactive preview",
@@ -246,6 +268,11 @@ export const services: Service[] = [
       "Brand, search, content and campaigns with one promise, and a path from that promise to a direct enquiry.",
     heroImage: "/media/table.jpg",
     heroAlt: "A set table for two, a candle and a glass, the guest's side of the evening.",
+    facts: {
+      timeline: "Ongoing",
+      includes: "Brand · Search · Campaigns",
+      bestFor: "Properties that want more direct bookings",
+    },
     conceptLine: "The right guest",
     conceptEm: "a clear reason.",
     workspacePill: "Digital Growth · Interactive preview",

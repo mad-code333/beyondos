@@ -45,12 +45,15 @@ export function ServiceView({ service }: { service: Service }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease }}
         >
-          <Link className="back-link mono" href="/#services">
-            ← All services
+          <Link className="back-link" href="/#services">
+            <span aria-hidden="true">←</span> All services
           </Link>
-          <div className="eyebrow mono">{service.category}</div>
           <div className="service-hero-grid">
             <div>
+              <div className="eyebrow">
+                <b>{service.number}</b>
+                {service.category}
+              </div>
               <motion.h1
                 initial={reduce ? false : { opacity: 0, y: 22 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -80,6 +83,25 @@ export function ServiceView({ service }: { service: Service }) {
                   See the workspace <span>↓</span>
                 </Link>
               </motion.div>
+              <motion.dl
+                className="service-facts"
+                initial={reduce ? false : { opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3, ease }}
+              >
+                <div>
+                  <dt>Timeline</dt>
+                  <dd>{service.facts.timeline}</dd>
+                </div>
+                <div>
+                  <dt>Includes</dt>
+                  <dd>{service.facts.includes}</dd>
+                </div>
+                <div>
+                  <dt>Best for</dt>
+                  <dd>{service.facts.bestFor}</dd>
+                </div>
+              </motion.dl>
             </div>
             <motion.div
               ref={photoRef}
@@ -101,7 +123,13 @@ export function ServiceView({ service }: { service: Service }) {
                   priority
                 />
               </motion.div>
-              <span className="photo-label mono">BEYOND / {service.code}</span>
+              <div className="photo-caption">
+                <span className="photo-caption-num">{service.number}</span>
+                <span className="photo-caption-text">
+                  <strong>{service.name}</strong>
+                  <small>{service.tagline}</small>
+                </span>
+              </div>
             </motion.div>
           </div>
         </motion.div>
