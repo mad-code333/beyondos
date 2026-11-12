@@ -20,7 +20,7 @@ export type StoryPlayback = {
  * Shared stage controller. Remount (via React key) when the active story changes
  * so playback always starts clean without a storyId reset effect.
  */
-export function useStoryPlayback(reduceMotion: boolean): StoryPlayback {
+export function useStoryPlayback(reduceMotion: boolean, inView = true): StoryPlayback {
   const [stage, setStageState] = useState(0);
   const [progress, setProgress] = useState(0);
   const [playing, setPlaying] = useState(() => !reduceMotion);
@@ -29,10 +29,11 @@ export function useStoryPlayback(reduceMotion: boolean): StoryPlayback {
   const playingRef = useRef(!reduceMotion);
 
   useEffect(() => {
-    if (reduceMotion || !playing) return;
+    // Ticking re-renders the panel 25×/s, so only run while it is on screen.
+    if (reduceMotion || !playing || !inView) return;
 
     const id = window.setInterval(() => {
-      if (!playingRef.current) return;
+      if (!playingRef.current || document.hidden) return;
 
       const next = progressRef.current + TICK_MS / STAGE_HOLD_MS;
       if (next >= 1) {
@@ -49,7 +50,7 @@ export function useStoryPlayback(reduceMotion: boolean): StoryPlayback {
     }, TICK_MS);
 
     return () => window.clearInterval(id);
-  }, [playing, reduceMotion]);
+  }, [inView, playing, reduceMotion]);
 
   const play = useCallback(() => {
     if (reduceMotion) return;

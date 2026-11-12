@@ -1,7 +1,7 @@
 "use client";
 
-import type { CSSProperties, KeyboardEvent, ReactNode } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useRef, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
 import { getStory, type EcosystemStoryId } from "./stories";
 import { useStoryPlayback } from "./useStoryPlayback";
 import {
@@ -70,7 +70,9 @@ function ReplayIcon() {
 export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
   const reduce = useReducedMotion() ?? false;
   const story = getStory(activeId);
-  const playback = useStoryPlayback(reduce);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(stageRef);
+  const playback = useStoryPlayback(reduce, inView);
   const nodes = NODE_MAP[activeId];
 
   const stageProgress = (index: number) => {
@@ -81,6 +83,7 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
 
   return (
     <div
+      ref={stageRef}
       className="eco-story-stage"
       data-story={activeId}
       style={

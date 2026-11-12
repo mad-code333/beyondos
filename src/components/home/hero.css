@@ -27,30 +27,6 @@
     linear-gradient(180deg, #050506 0%, #040407 48%, #010104 100%);
 }
 
-.hero-atmosphere-glow {
-  position: absolute;
-  left: 50%;
-  bottom: 6%;
-  width: min(130vw, 1400px);
-  height: 55%;
-  translate: -50% 0;
-  background:
-    radial-gradient(
-      ellipse 62% 52% at 50% 70%,
-      rgba(210, 180, 255, 0.4) 0%,
-      rgba(150, 110, 230, 0.22) 30%,
-      rgba(90, 60, 170, 0.1) 55%,
-      transparent 78%
-    );
-  filter: blur(24px);
-  opacity: 1;
-  will-change: transform;
-}
-
-.hero-atmosphere-glow-side {
-  display: none;
-}
-
 .hero-grid {
   position: absolute;
   inset: 0;
@@ -59,74 +35,38 @@
   overflow: hidden;
 }
 
+/* Holdout Eclipse Horizon: dots fade in from the top, planet rim drawn in canvas */
+.hero-eclipse {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 34%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 34%);
+}
+
 .hero-eclipse-canvas {
   position: absolute;
   inset: 0;
   display: block;
   width: 100%;
   height: 100%;
-  /* Soft vignette — keep left/right strips readable like Holdout's red-box crop */
-  -webkit-mask-image: radial-gradient(
-    ellipse 110% 88% at 50% 55%,
-    #000 0%,
-    rgba(0, 0, 0, 0.92) 48%,
-    rgba(0, 0, 0, 0.45) 72%,
-    transparent 90%
-  );
-  mask-image: radial-gradient(
-    ellipse 110% 88% at 50% 55%,
-    #000 0%,
-    rgba(0, 0, 0, 0.92) 48%,
-    rgba(0, 0, 0, 0.45) 72%,
-    transparent 90%
-  );
 }
 
-.hero-grid-veil {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    ellipse 55% 48% at 50% 78%,
-    rgba(175, 140, 255, 0.14),
-    transparent 68%
-  );
-  pointer-events: none;
-}
-
+/* Holds the geo label just above the canvas horizon */
 .hero-horizon {
   position: absolute;
   left: 0;
   right: 0;
-  /* Flatter, lower arc — follows the annotated red horizon line */
-  bottom: clamp(-24px, -1.5vh, 6px);
-  width: 100%;
-  height: clamp(360px, 50vh, 580px);
+  top: 64%;
   z-index: 1;
-  /* Let soft bloom breathe past the box — no hard clip edge */
-  overflow: visible;
   pointer-events: none;
-}
-
-.hero-horizon-svg {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  filter: drop-shadow(0 0 36px rgba(160, 125, 240, 0.32));
-}
-
-.hero-horizon-bloom {
-  opacity: 1;
-}
-
-.hero-horizon-line {
-  opacity: 1;
 }
 
 .hero-geo {
   position: absolute;
   left: 50%;
-  top: 7%;
+  top: 0;
   translate: -50% 0;
   font-family: var(--font-display), Manrope, sans-serif;
   font-size: 9px;
@@ -1063,14 +1003,6 @@
     opacity: 0.035;
   }
 
-  .hero-horizon {
-    width: 100%;
-    left: 0;
-    right: 0;
-    height: clamp(220px, 48vw, 340px);
-    bottom: 14%;
-  }
-
   .hero-geo {
     top: 12%;
     font-size: 8px;
@@ -1262,22 +1194,8 @@
 }
 
 @media (max-width: 560px) {
-  .hero-atmosphere-glow {
-    opacity: 0.7;
-    filter: blur(6px);
-  }
-
-  .hero-atmosphere-glow-side {
-    display: none;
-  }
-
   .hero-grid {
-    opacity: 0.55;
-  }
-
-  .hero-horizon {
-    bottom: 16%;
-    height: 230px;
+    opacity: 0.8;
   }
 }
 
@@ -1308,14 +1226,11 @@
   .hero-workspace-wrap,
   .hero-bottom,
   .scope-strip,
-  .hero-horizon-bloom,
-  .hero-atmosphere-glow,
   .hero-orbit-path,
   .hero-orbit-item[aria-pressed="true"] .hero-orbit-thumb {
     animation: none;
   }
 
-  .hero-atmosphere-glow,
   .hero-beyond-mark {
     transform: none !important;
   }
@@ -1340,8 +1255,6 @@ html[data-motion="paused"] .hero-orbit,
 html[data-motion="paused"] .hero-workspace-wrap,
 html[data-motion="paused"] .hero-bottom,
 html[data-motion="paused"] .scope-strip,
-html[data-motion="paused"] .hero-horizon-bloom,
-html[data-motion="paused"] .hero-atmosphere-glow,
 html[data-motion="paused"] .hero-orbit-path,
 html[data-motion="paused"] .hero-orbit-item[aria-pressed="true"] .hero-orbit-thumb {
   animation: none;

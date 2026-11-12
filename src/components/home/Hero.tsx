@@ -164,7 +164,7 @@ export function Hero() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
-  const [parallax, setParallax] = useState(0);
+  const markRef = useRef<HTMLDivElement>(null);
   const slide = slides[active];
   const href = `/services/${slide.slug}`;
 
@@ -172,20 +172,30 @@ export function Hero() {
     setActive((index + slides.length) % slides.length);
   }, []);
 
+  // Parallax on the BEYOND mark: written straight to the DOM (no re-render per scroll).
   useEffect(() => {
     const node = heroRef.current;
-    if (!node || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const mark = markRef.current;
+    if (!node || !mark || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    function onScroll() {
-      if (!node) return;
+    let frame = 0;
+    function update() {
+      frame = 0;
+      if (!node || !mark) return;
       const { top, height } = node.getBoundingClientRect();
       const progress = Math.min(1, Math.max(0, -top / Math.max(height, 1)));
-      setParallax(progress);
+      mark.style.transform = `translate3d(0, ${progress * 14}%, 0)`;
+    }
+    function onScroll() {
+      if (!frame) frame = window.requestAnimationFrame(update);
     }
 
-    onScroll();
+    update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.cancelAnimationFrame(frame);
+    };
   }, []);
 
   useEffect(() => {
@@ -223,107 +233,17 @@ export function Hero() {
       >
         <div className="hero-atmosphere" aria-hidden="true">
           <div className="hero-atmosphere-base" />
-          <div
-            className="hero-atmosphere-glow"
-            style={{ transform: `translate3d(0, ${parallax * 4}%, 0)` }}
-          />
-          <div className="hero-atmosphere-glow-side" />
           <div className="hero-grid" aria-hidden="true">
             <EclipseHorizon />
-            <div className="hero-grid-veil" />
           </div>
           <div className="hero-horizon">
-            <svg
-              viewBox="0 -80 1440 640"
-              preserveAspectRatio="xMidYMid slice"
-              className="hero-horizon-svg"
-            >
-              <defs>
-                {/* Ends dark → center bright lilac, smooth like Holdout */}
-                <linearGradient id="heroHorizonStroke" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="rgba(70,45,130,0)" />
-                  <stop offset="8%" stopColor="rgba(90,60,160,0.15)" />
-                  <stop offset="22%" stopColor="rgba(130,95,210,0.4)" />
-                  <stop offset="38%" stopColor="rgba(195,170,255,0.85)" />
-                  <stop offset="50%" stopColor="rgba(236,228,255,1)" />
-                  <stop offset="62%" stopColor="rgba(195,170,255,0.85)" />
-                  <stop offset="78%" stopColor="rgba(130,95,210,0.4)" />
-                  <stop offset="92%" stopColor="rgba(90,60,160,0.15)" />
-                  <stop offset="100%" stopColor="rgba(70,45,130,0)" />
-                </linearGradient>
-                <linearGradient id="heroHorizonBloomGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="rgba(100,70,180,0)" />
-                  <stop offset="12%" stopColor="rgba(110,80,200,0.08)" />
-                  <stop offset="32%" stopColor="rgba(150,115,235,0.28)" />
-                  <stop offset="50%" stopColor="rgba(200,175,255,0.5)" />
-                  <stop offset="68%" stopColor="rgba(150,115,235,0.28)" />
-                  <stop offset="88%" stopColor="rgba(110,80,200,0.08)" />
-                  <stop offset="100%" stopColor="rgba(100,70,180,0)" />
-                </linearGradient>
-                <radialGradient id="heroHorizonHaze" cx="50%" cy="55%" r="52%">
-                  <stop offset="0%" stopColor="rgba(200,170,255,0.42)" />
-                  <stop offset="28%" stopColor="rgba(140,105,220,0.22)" />
-                  <stop offset="60%" stopColor="rgba(80,55,150,0.08)" />
-                  <stop offset="100%" stopColor="rgba(0,0,0,0)" />
-                </radialGradient>
-                <linearGradient id="heroBelowFade" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="rgba(2,2,6,0)" />
-                  <stop offset="12%" stopColor="rgba(2,2,6,0.45)" />
-                  <stop offset="40%" stopColor="rgba(2,2,6,0.88)" />
-                  <stop offset="100%" stopColor="rgba(2,2,6,1)" />
-                </linearGradient>
-                <filter id="heroSoftBloom" x="-18%" y="-420%" width="136%" height="940%">
-                  <feGaussianBlur stdDeviation="11" result="blur" />
-                  <feMerge>
-                    <feMergeNode in="blur" />
-                  </feMerge>
-                </filter>
-                <filter id="heroLineSoft" x="-8%" y="-260%" width="116%" height="620%">
-                  <feGaussianBlur stdDeviation="1.8" result="blur" />
-                  <feMerge>
-                    <feMergeNode in="blur" />
-                    <feMergeNode in="SourceGraphic" />
-                  </feMerge>
-                </filter>
-              </defs>
-
-              <ellipse cx="720" cy="210" rx="900" ry="200" fill="url(#heroHorizonHaze)" />
-
-              <path
-                d="M-140 400 C 220 260, 460 205, 720 205 S 1220 260, 1580 400 L 1580 680 L -140 680 Z"
-                fill="url(#heroBelowFade)"
-              />
-
-              <path
-                className="hero-horizon-bloom"
-                d="M-140 400 C 220 260, 460 205, 720 205 S 1220 260, 1580 400"
-                fill="none"
-                stroke="url(#heroHorizonBloomGrad)"
-                strokeWidth="56"
-                vectorEffect="non-scaling-stroke"
-                filter="url(#heroSoftBloom)"
-              />
-              <path
-                className="hero-horizon-line"
-                d="M-140 400 C 220 260, 460 205, 720 205 S 1220 260, 1580 400"
-                fill="none"
-                stroke="url(#heroHorizonStroke)"
-                strokeWidth="1.55"
-                vectorEffect="non-scaling-stroke"
-                filter="url(#heroLineSoft)"
-              />
-            </svg>
             <span className="hero-geo mono">
               Tbilisi, Georgia · 41.7151° N, 44.8271° E
             </span>
           </div>
         </div>
 
-        <div
-          className="hero-beyond-mark"
-          aria-hidden="true"
-          style={{ transform: `translate3d(0, ${parallax * 14}%, 0)` }}
-        >
+        <div ref={markRef} className="hero-beyond-mark" aria-hidden="true">
           BEYOND
         </div>
 

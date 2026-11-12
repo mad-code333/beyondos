@@ -54,6 +54,8 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
     let pointerActive = false;
     let lastTs = performance.now();
     let cancelled = false;
+    // Only animate while the footer is on screen and the tab is visible.
+    let visible = false;
 
     const fontFamily =
       getComputedStyle(document.documentElement).getPropertyValue("--font-display").trim() ||
@@ -201,7 +203,8 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
     }
 
     function frame(now: number) {
-      if (!running) return;
+      raf = 0;
+      if (!running || !visible || document.hidden) return;
       const dt = Math.min(0.033, (now - lastTs) / 1000);
       lastTs = now;
       paint(now, dt);
@@ -221,11 +224,17 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
       pointerY = -9999;
     }
 
+    function kick() {
+      if (raf || reduceMotion || !running || !visible || document.hidden) return;
+      lastTs = performance.now();
+      raf = window.requestAnimationFrame(frame);
+    }
+
     function start() {
       if (cancelled || !running) return;
       rebuild();
       paint(performance.now(), 0.016);
-      if (!reduceMotion) raf = window.requestAnimationFrame(frame);
+      kick();
     }
 
     const fontsReady = document.fonts?.ready;
@@ -241,6 +250,13 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
     });
     if (surface.parentElement) ro.observe(surface.parentElement);
 
+    const io = new IntersectionObserver((entries) => {
+      visible = entries[0]?.isIntersecting ?? true;
+      kick();
+    });
+    io.observe(surface);
+    document.addEventListener("visibilitychange", kick);
+
     surface.addEventListener("pointermove", onPointerMove, { passive: true });
     surface.addEventListener("pointerleave", onPointerLeave);
     surface.addEventListener("pointercancel", onPointerLeave);
@@ -250,6 +266,8 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
       running = false;
       window.cancelAnimationFrame(raf);
       ro.disconnect();
+      io.disconnect();
+      document.removeEventListener("visibilitychange", kick);
       surface.removeEventListener("pointermove", onPointerMove);
       surface.removeEventListener("pointerleave", onPointerLeave);
       surface.removeEventListener("pointercancel", onPointerLeave);
