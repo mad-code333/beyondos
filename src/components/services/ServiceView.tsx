@@ -13,6 +13,7 @@ import {
 import { getRelatedServices, type Service } from "@/content/services";
 import { Reveal } from "@/components/ui/Reveal";
 import { WorkspaceDemo } from "@/components/home/WorkspaceDemo";
+import { ServicesList } from "@/components/home/ServicesList";
 import "./service-page.css";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -67,7 +68,7 @@ export function ServiceView({ service }: { service: Service }) {
                 {service.heroLead}
               </motion.p>
               <motion.div
-                className="hero-actions"
+                className="service-hero-actions"
                 initial={reduce ? false : { opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.22, ease }}
@@ -159,27 +160,15 @@ export function ServiceView({ service }: { service: Service }) {
         </div>
       </section>
 
-      <section className="service-section">
-        <div className="wrap">
-          <div className="eyebrow mono">The rest of the toolkit</div>
-          <div className="next-services">
-            {related.map((item, index) => (
-              <Reveal key={item.slug} delay={index * 0.06}>
-                <Link className="service-row" href={`/services/${item.slug}`}>
-                  <span className="num">0{index + 1}</span>
-                  <div>
-                    <h3>{item.name}</h3>
-                  </div>
-                  <p>{item.summary}</p>
-                  <span className="circle-arrow" aria-hidden="true">
-                    ↗︎
-                  </span>
-                </Link>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Same interactive list as the home page's "What we build", limited to the other services. */}
+      <ServicesList
+        key={service.slug}
+        items={related}
+        id="toolkit"
+        kicker="The rest of the toolkit"
+        count={`${related.length} more ways forward`}
+        compact
+      />
     </main>
   );
 }
@@ -189,25 +178,25 @@ function ShipList({ steps }: { steps: Service["steps"] }) {
   const reduce = useReducedMotion();
 
   return (
-    <div className="ship-list">
+    <div className="step-list">
       {steps.map((step, index) => {
         const isOpen = open === index;
         return (
           <Reveal key={step.title} delay={index * 0.06}>
             <button
-              className={`ship-row${isOpen ? " active" : ""}`}
+              className={`step-card${isOpen ? " active" : ""}`}
               type="button"
               aria-expanded={isOpen}
               onClick={() => setOpen(index)}
             >
-              <span className="ship-num">0{index + 1}</span>
+              <span className="step-num">0{index + 1}</span>
               <strong>{step.title}</strong>
-              <span className="ship-body">
+              <span className="step-body">
                 <AnimatePresence initial={false}>
                   {isOpen ? (
                     <motion.span
                       key="copy"
-                      className="ship-copy"
+                      className="step-copy"
                       initial={reduce ? false : { opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={reduce ? undefined : { opacity: 0, height: 0 }}
@@ -219,7 +208,7 @@ function ShipList({ steps }: { steps: Service["steps"] }) {
                 </AnimatePresence>
               </span>
               {/* Drawn plus/minus: the display font renders + and − badly. */}
-              <span className="ship-toggle" aria-hidden="true" />
+              <span className="step-toggle" aria-hidden="true" />
             </button>
           </Reveal>
         );

@@ -2,7 +2,8 @@
   --svc-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.service-page .mono {
+/* The embedded "rest of the toolkit" section keeps its own display-font labels. */
+.service-page .mono:not(.services-toolkit .mono) {
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -83,7 +84,7 @@
   color: #c6c6c0;
 }
 
-.service-hero .hero-actions {
+.service-hero .service-hero-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
@@ -137,6 +138,9 @@
 
 .service-hero-photo {
   position: relative;
+  /* aspect-ratio + min-height otherwise sets a minimum width wider than a phone */
+  min-width: 0;
+  width: 100%;
   overflow: hidden;
   min-height: 460px;
   aspect-ratio: 5 / 4;
@@ -299,14 +303,14 @@
 }
 
 /* "Built with you" steps — same card language as "The rest of the toolkit". */
-.ship-list {
+.step-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin-top: 28px;
 }
 
-.ship-row {
+.step-card {
   display: grid;
   grid-template-columns: 65px 1fr 1.1fr 55px;
   align-items: center;
@@ -327,28 +331,28 @@
     transform 0.3s;
 }
 
-.ship-row:hover {
+.step-card:hover {
   background: #161616;
   border-color: rgba(255, 255, 255, 0.165);
   transform: translateY(-2px);
 }
 
-.ship-row:focus-visible {
+.step-card:focus-visible {
   outline: 2px solid rgba(255, 255, 255, 0.5);
   outline-offset: 3px;
 }
 
-.ship-row.active {
+.step-card.active {
   background: #141414;
   border-color: rgba(255, 255, 255, 0.165);
 }
 
-.ship-num {
+.step-num {
   font-size: 13px;
   color: #deded8;
 }
 
-.ship-row strong {
+.step-card strong {
   font-family: var(--font-display), Orbitron, sans-serif;
   font-size: 28px;
   font-weight: 500;
@@ -358,16 +362,16 @@
   transition: color 0.3s;
 }
 
-.ship-row:hover strong,
-.ship-row.active strong {
+.step-card:hover strong,
+.step-card.active strong {
   color: #f4f4f0;
 }
 
-.ship-body {
+.step-body {
   min-width: 0;
 }
 
-.ship-copy {
+.step-copy {
   display: block;
   overflow: hidden;
   max-width: 46ch;
@@ -376,7 +380,7 @@
   color: #c8c8c2;
 }
 
-.ship-toggle {
+.step-toggle {
   position: relative;
   justify-self: end;
   width: 40px;
@@ -390,8 +394,8 @@
     border-color 0.2s;
 }
 
-.ship-toggle::before,
-.ship-toggle::after {
+.step-toggle::before,
+.step-toggle::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -405,16 +409,16 @@
 }
 
 /* vertical bar of the plus; collapses into a minus when open */
-.ship-toggle::after {
+.step-toggle::after {
   transform: rotate(90deg);
 }
 
-.ship-row.active .ship-toggle::after {
+.step-card.active .step-toggle::after {
   transform: rotate(0deg);
 }
 
-.ship-row:hover .ship-toggle,
-.ship-row.active .ship-toggle {
+.step-card:hover .step-toggle,
+.step-card.active .step-toggle {
   background: #eee;
   color: #111;
   border-color: transparent;
@@ -525,27 +529,27 @@
 }
 
 @media (max-width: 1100px) {
-  .ship-row {
+  .step-card {
     grid-template-columns: 48px minmax(0, 1fr) 40px;
     gap: 0 16px;
     padding: 22px 20px;
   }
 
-  .ship-body {
+  .step-body {
     grid-column: 2;
     grid-row: 2;
   }
 
-  .ship-toggle {
+  .step-toggle {
     grid-column: 3;
     grid-row: 1;
   }
 
-  .ship-row strong {
+  .step-card strong {
     font-size: clamp(20px, 5.4vw, 28px);
   }
 
-  .ship-copy {
+  .step-copy {
     padding-top: 10px;
     font-size: 15px;
   }
@@ -583,7 +587,7 @@
 
   .feature-card:hover,
   .service-row:hover,
-  .ship-row:hover {
+  .step-card:hover {
     transform: none;
   }
 
@@ -599,17 +603,17 @@
   .svc-btn,
   .feature-card,
   .service-row,
-  .ship-row,
-  .ship-toggle,
-  .ship-toggle::before,
-  .ship-toggle::after,
+  .step-card,
+  .step-toggle,
+  .step-toggle::before,
+  .step-toggle::after,
   .service-hero-photo img {
     transition: none;
   }
 
   .feature-card:hover,
   .service-row:hover,
-  .ship-row:hover,
+  .step-card:hover,
   .svc-btn:hover {
     transform: none;
   }

@@ -18,7 +18,7 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
-import { services, type ServiceSlug } from "@/content/services";
+import { services as allServices, type Service, type ServiceSlug } from "@/content/services";
 import { ServicePreviewBody } from "./ServicePreviewBodies";
 import "./services-toolkit.css";
 
@@ -74,7 +74,28 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
-export function ServicesList() {
+type ServicesListProps = {
+  /** Services to show (defaults to all five). */
+  items?: Service[];
+  id?: string;
+  kicker?: string;
+  count?: string;
+  /** Compact: height follows content instead of a full viewport. */
+  compact?: boolean;
+};
+
+export function ServicesList({
+  items = allServices,
+  id = "services",
+  kicker = "02 / What we build",
+  count = "5 services · 3 ways to engage",
+  compact = false,
+}: ServicesListProps = {}) {
+  const services = items;
+  const total = services.length;
+  // ↑ ↓ controls sit half a row from centre for odd counts (middle row's arrow takes
+  // the counter's spot) and a full row out for even counts (arrows land between).
+  const centreIndex = total % 2 === 1 ? (total - 1) / 2 : -1;
   const reduceMotion = useReducedMotion();
   const reduce = Boolean(reduceMotion);
   const [active, setActive] = useState(0);
@@ -89,6 +110,7 @@ export function ServicesList() {
   const current = services[active]!;
   const preview = previews[current.slug];
   const indexLabel = String(active + 1).padStart(2, "0");
+  const totalLabel = String(total).padStart(2, "0");
 
   const followX = useMotionValue(0);
   const followY = useMotionValue(0);
@@ -116,20 +138,20 @@ export function ServicesList() {
   const select = useCallback(
     (index: number) => {
       clearLeave();
-      const next = ((index % services.length) + services.length) % services.length;
+      const next = ((index % total) + total) % total;
       setLive(true);
       setActive(next);
     },
-    [clearLeave],
+    [clearLeave, total],
   );
 
   const step = useCallback(
     (direction: 1 | -1) => {
       clearLeave();
       setLive(true);
-      setActive((value) => (value + direction + services.length) % services.length);
+      setActive((value) => (value + direction + total) % total);
     },
-    [clearLeave],
+    [clearLeave, total],
   );
 
   const measurePill = useCallback(() => {
@@ -209,22 +231,24 @@ export function ServicesList() {
 
   return (
     <section
-      id="services"
-      className={`services-toolkit is-tessvik${reduce ? " is-still" : ""}`}
-      aria-label="What we build"
+      id={id}
+      className={`services-toolkit is-tessvik${compact ? " is-compact" : ""}${
+        total % 2 === 0 ? " is-even" : ""
+      }${reduce ? " is-still" : ""}`}
+      aria-label={kicker.replace(/^\d+\s*\/\s*/, "")}
     >
       <div className="svc-glow" aria-hidden="true" />
       <div className="svc-shell">
         <header className="svc-top">
-          <p className="mono svc-kicker">02 / What we build</p>
-          <p className="mono svc-count">5 services · 3 ways to engage</p>
+          <p className="mono svc-kicker">{kicker}</p>
+          <p className="mono svc-count">{count}</p>
           <p className="mono svc-hint">Hover or tab through ↑ ↓ to preview</p>
         </header>
 
         <div
           ref={stageRef}
           className={`svc-stage${live ? " has-active" : " is-idle"}`}
-          data-active={live ? active : undefined}
+          data-centre={live && active === centreIndex ? "" : undefined}
           role="listbox"
           aria-label="Beyond OS services"
           tabIndex={0}
@@ -301,7 +325,7 @@ export function ServicesList() {
                     }}
                   >
                     <span className="svc-lead">
-                      <span className="svc-num">({service.number})</span>
+                      <span className="svc-num">({String(index + 1).padStart(2, "0")})</span>
                       <AnimatePresence initial={false} mode="popLayout">
                         {selected ? (
                           <motion.span
@@ -401,7 +425,7 @@ export function ServicesList() {
             </button>
             <span className="mono svc-side-index" aria-hidden="true">
               {live ? indexLabel : "··"}
-              <i>/05</i>
+              <i>/{totalLabel}</i>
             </span>
             <button
               type="button"
