@@ -1,70 +1,86 @@
 .vision {
   position: relative;
   overflow: clip;
-  min-height: 500px;
-  padding: 100px 0;
-  background: radial-gradient(at 80% 70%, rgba(255, 255, 255, 0.035), transparent 55%);
+  min-height: min(72vh, 720px);
+  padding: clamp(88px, 10vw, 132px) 0 clamp(56px, 7vw, 88px);
+  background:
+    radial-gradient(ellipse 55% 60% at 78% 48%, rgba(255, 255, 255, 0.045), transparent 70%),
+    #000;
 }
 
 .vision-ambient {
   position: absolute;
-  inset: 12% 4% auto auto;
-  width: min(520px, 48vw);
-  height: 72%;
+  inset: 10% 2% auto auto;
+  width: min(560px, 52vw);
+  height: 78%;
   pointer-events: none;
-  background: radial-gradient(ellipse at 55% 48%, rgba(255, 255, 255, 0.07), transparent 62%);
-  filter: blur(2px);
+  background: radial-gradient(ellipse at 55% 48%, rgba(255, 255, 255, 0.08), transparent 64%);
+  filter: blur(3px);
   animation: visionAmbient 16s ease-in-out infinite alternate;
 }
 
 .vision-grid {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-  gap: clamp(36px, 6vw, 80px);
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: clamp(40px, 7vw, 96px);
   align-items: center;
 }
 
 .vision-copy {
-  max-width: 36rem;
+  max-width: 38rem;
 }
 
-.vision-copy .eyebrow {
+.vision-copy .eyebrow,
+.vision-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
   font-family: var(--font-display), Manrope, sans-serif;
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: #9a9a94;
+}
+
+.vision-eyebrow::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  flex: none;
+  background: #858585;
 }
 
 .vision-title {
   display: grid;
   gap: 0.02em;
-  margin: 14px 0 0;
-  max-width: 640px;
+  margin: 20px 0 0;
+  max-width: 680px;
   font-family: var(--font-display), Manrope, sans-serif;
-  font-size: clamp(28px, 3.6vw, 44px);
+  font-size: clamp(36px, 4.8vw, 58px);
   font-weight: 800;
-  letter-spacing: 0.045em;
-  line-height: 1.12;
+  letter-spacing: 0.04em;
+  line-height: 1.05;
   text-transform: uppercase;
-  color: #f1f1ee;
+  color: #f7f7f3;
 }
 
 .vision-title em {
   display: block;
-  margin-top: 0.12em;
+  margin-top: 0.06em;
   font-style: normal;
   font-weight: 700;
-  letter-spacing: 0.045em;
-  color: #c8c8c0;
+  letter-spacing: 0.04em;
+  color: rgba(120, 120, 114, 0.78);
 }
 
 .vision-copy > p {
-  margin: 26px 0 0;
-  max-width: 42ch;
+  margin: 28px 0 0;
+  max-width: 44ch;
   font-size: 15px;
-  line-height: 1.75;
+  line-height: 1.78;
   letter-spacing: 0.01em;
   color: #b4b4ae;
 }
@@ -73,12 +89,12 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-top: 22px;
-  padding-bottom: 3px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.251);
+  margin-top: 26px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.28);
   color: #f1f1ee;
-  font-size: 12px;
-  letter-spacing: 0.02em;
+  font-size: 13px;
+  letter-spacing: 0.01em;
   text-decoration: none;
   transition:
     border-color 0.35s ease,
@@ -87,11 +103,12 @@
 }
 
 .vision-link span {
+  display: inline-block;
   transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .vision-link:hover {
-  border-color: rgba(255, 255, 255, 0.627);
+  border-color: rgba(255, 255, 255, 0.7);
   gap: 14px;
 }
 
@@ -99,24 +116,29 @@
   transform: translate(3px, -3px);
 }
 
+.vision-link:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.35);
+  outline-offset: 6px;
+}
+
 .vision-orbit {
   position: relative;
   display: grid;
-  height: 360px;
+  height: min(440px, 52vw);
   place-items: center;
-  perspective: 1100px;
+  perspective: 1200px;
   transform-style: preserve-3d;
   touch-action: pan-y;
 }
 
 .vision-orbit-aura {
   position: absolute;
-  width: min(340px, 72%);
+  width: min(360px, 76%);
   aspect-ratio: 1;
   border-radius: 50%;
   pointer-events: none;
-  background: radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.14), transparent 60%);
-  filter: blur(22px);
+  background: radial-gradient(circle at 50% 48%, rgba(255, 255, 255, 0.16), transparent 62%);
+  filter: blur(26px);
   animation: visionAura 8s ease-in-out infinite alternate;
 }
 
@@ -127,7 +149,7 @@
   place-items: center;
   transform-style: preserve-3d;
   pointer-events: none;
-  transform: rotateZ(-8deg);
+  transform: rotateZ(-10deg);
   animation: visionRingsDrift 18s ease-in-out infinite alternate;
 }
 
@@ -145,6 +167,11 @@
 
 .vision-ring.is-reverse {
   animation-name: visionOrbitSpinRev, visionRingBreath;
+}
+
+.vision-ring--halo {
+  z-index: 0;
+  opacity: 0.55;
 }
 
 .vision-ring--far {
@@ -168,29 +195,33 @@
 }
 
 .vision-ring-edge {
-  border: 1px solid rgba(255, 255, 255, 0.267);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   box-shadow:
-    0 6px 10px rgba(0, 0, 0, 0.533),
-    inset 0 2px 3px rgba(255, 255, 255, 0.133);
-  background: radial-gradient(ellipse, transparent 60%, rgba(255, 255, 255, 0.067));
+    0 8px 16px rgba(0, 0, 0, 0.45),
+    inset 0 1px 2px rgba(255, 255, 255, 0.1);
+  background: radial-gradient(ellipse at 50% 40%, transparent 58%, rgba(255, 255, 255, 0.04));
+}
+
+.vision-ring--halo .vision-ring-edge {
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .vision-ring--far .vision-ring-edge {
-  border-color: rgba(255, 255, 255, 0.133);
+  border-color: rgba(255, 255, 255, 0.14);
 }
 
 .vision-ring--near .vision-ring-edge {
-  border-color: rgba(255, 255, 255, 0.333);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .vision-ring-glow {
   inset: -1px;
-  border-color: rgba(255, 255, 255, 0.941) rgba(255, 255, 255, 0.333) transparent transparent;
+  border-color: rgba(255, 255, 255, 0.85) rgba(255, 255, 255, 0.28) transparent transparent;
   border-style: solid;
-  border-width: 1.5px;
-  mask-image: linear-gradient(115deg, #000 4%, transparent 38%);
-  -webkit-mask-image: linear-gradient(115deg, #000 4%, transparent 38%);
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.45));
+  border-width: 1.25px;
+  mask-image: linear-gradient(115deg, #000 4%, transparent 40%);
+  -webkit-mask-image: linear-gradient(115deg, #000 4%, transparent 40%);
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.35));
   animation: visionTrailPulse 2.8s ease-in-out infinite;
   animation-delay: var(--d, 0s);
 }
@@ -199,34 +230,35 @@
   position: absolute;
   top: 0;
   left: 50%;
-  width: 6px;
-  height: 6px;
-  margin: -3px 0 0 -3px;
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
   border-radius: 50%;
   background: #fff;
   box-shadow:
-    0 0 10px rgba(255, 255, 255, 0.753),
-    0 0 18px rgba(255, 255, 255, 0.376);
+    0 0 8px rgba(255, 255, 255, 0.7),
+    0 0 16px rgba(255, 255, 255, 0.3);
   pointer-events: none;
 }
 
 .vision-ring-node.is-second {
   top: auto;
   bottom: 0;
-  margin: 0 0 -3px -2px;
-  width: 4px;
-  height: 4px;
-  opacity: 0.7;
+  margin: 0 0 -2px -2px;
+  width: 3.5px;
+  height: 3.5px;
+  opacity: 0.65;
   box-shadow:
-    0 0 8px rgba(255, 255, 255, 0.627),
-    0 0 14px rgba(255, 255, 255, 0.251);
+    0 0 7px rgba(255, 255, 255, 0.55),
+    0 0 12px rgba(255, 255, 255, 0.22);
 }
 
-.vision-ring--far .vision-ring-node {
-  width: 4px;
-  height: 4px;
-  margin: -2px 0 0 -2px;
-  opacity: 0.65;
+.vision-ring--far .vision-ring-node,
+.vision-ring--halo .vision-ring-node {
+  width: 3.5px;
+  height: 3.5px;
+  margin: -1.75px 0 0 -1.75px;
+  opacity: 0.55;
 }
 
 .vision-core-track {
@@ -234,26 +266,42 @@
   z-index: 4;
   transform-style: preserve-3d;
   transform: rotateX(12deg) rotateY(-18deg);
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .vision-core {
   position: relative;
   display: grid;
   place-items: center;
-  width: 118px;
-  height: 118px;
+  width: 124px;
+  height: 124px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.376);
-  border-radius: 28px;
-  background: linear-gradient(145deg, #6a6a6a 0%, #1a1a1a 32%, #070707 62%, #3a3a3a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 30px;
+  background:
+    linear-gradient(155deg, rgba(255, 255, 255, 0.18) 0%, transparent 28%),
+    linear-gradient(145deg, #5c5c5c 0%, #1c1c1c 30%, #050505 58%, #2e2e2e 100%);
   box-shadow:
-    inset 2px 2px 6px rgba(255, 255, 255, 0.28),
-    inset -8px -12px 18px rgba(0, 0, 0, 0.55),
-    20px 28px 50px rgba(0, 0, 0, 0.6),
-    0 0 32px rgba(255, 255, 255, 0.08);
+    inset 2px 2px 5px rgba(255, 255, 255, 0.26),
+    inset -10px -14px 22px rgba(0, 0, 0, 0.62),
+    18px 26px 48px rgba(0, 0, 0, 0.55),
+    0 0 28px rgba(255, 255, 255, 0.06);
   transform-style: preserve-3d;
   animation: visionCoreGlow 7.5s ease-in-out infinite;
+}
+
+.vision-core.is-alive {
+  animation:
+    visionCoreGlow 7.5s ease-in-out infinite,
+    visionCoreFloat 6.8s ease-in-out infinite;
+}
+
+.vision-core-face {
+  position: absolute;
+  inset: 1px;
+  border-radius: 28px;
+  pointer-events: none;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.12) 0%, transparent 42%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
 .vision-core::before {
@@ -261,7 +309,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.28) 0%, transparent 46%);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.24) 0%, transparent 48%);
 }
 
 .vision-core-sheen {
@@ -271,7 +319,7 @@
   background: linear-gradient(
     115deg,
     transparent 38%,
-    rgba(255, 255, 255, 0.22) 50%,
+    rgba(255, 255, 255, 0.2) 50%,
     transparent 62%
   );
   transform: translateX(-30%) rotate(8deg);
@@ -282,7 +330,7 @@
   position: relative;
   z-index: 1;
   font-family: var(--font-display), Manrope, sans-serif;
-  font-size: 26px;
+  font-size: 27px;
   font-weight: 600;
   letter-spacing: -0.06em;
   color: #f4f4ef;
@@ -291,13 +339,55 @@
 .vision-orbit-label {
   position: absolute;
   bottom: 8px;
+  left: 50%;
   margin: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
   font-family: var(--font-display), Manrope, sans-serif;
   font-size: 9px;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #8f8f88;
+}
+
+.vision-scroll-cue {
+  position: absolute;
+  left: 48%;
+  bottom: -20px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-left: -18px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 50%;
+  background: rgba(8, 8, 8, 0.72);
+  backdrop-filter: blur(8px);
+  text-decoration: none;
+  transition:
+    border-color 0.3s ease,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.vision-scroll-cue span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.45);
+  animation: visionCuePulse 2.4s ease-in-out infinite;
+}
+
+.vision-scroll-cue:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(2px);
+}
+
+.vision-scroll-cue:focus-visible {
+  outline: 1px solid rgba(255, 255, 255, 0.4);
+  outline-offset: 4px;
 }
 
 @keyframes visionAmbient {
@@ -324,34 +414,34 @@
 
 @keyframes visionRingsDrift {
   0% {
-    transform: rotate(-8deg) translateY(2px);
+    transform: rotate(-10deg) translateY(2px);
   }
   to {
-    transform: rotate(-4deg) translateY(-3px);
+    transform: rotate(-5deg) translateY(-3px);
   }
 }
 
 @keyframes visionOrbitSpin {
   0% {
-    transform: rotateX(74deg) rotateY(-10deg) rotate(var(--r)) scale(1);
+    transform: rotateX(var(--tilt, 74deg)) rotateY(-12deg) rotate(var(--r)) scale(1);
   }
   to {
-    transform: rotateX(74deg) rotateY(-10deg) rotate(calc(var(--r) + 1turn)) scale(1);
+    transform: rotateX(var(--tilt, 74deg)) rotateY(-12deg) rotate(calc(var(--r) + 1turn)) scale(1);
   }
 }
 
 @keyframes visionOrbitSpinRev {
   0% {
-    transform: rotateX(74deg) rotateY(-10deg) rotate(var(--r)) scale(1);
+    transform: rotateX(var(--tilt, 74deg)) rotateY(-12deg) rotate(var(--r)) scale(1);
   }
   to {
-    transform: rotateX(74deg) rotateY(-10deg) rotate(calc(var(--r) - 1turn)) scale(1);
+    transform: rotateX(var(--tilt, 74deg)) rotateY(-12deg) rotate(calc(var(--r) - 1turn)) scale(1);
   }
 }
 
 @keyframes visionRingBreath {
   0% {
-    opacity: 0.5;
+    opacity: 0.48;
   }
   to {
     opacity: 1;
@@ -361,7 +451,7 @@
 @keyframes visionTrailPulse {
   0%,
   to {
-    opacity: 0.45;
+    opacity: 0.4;
   }
   50% {
     opacity: 1;
@@ -372,17 +462,27 @@
   0%,
   to {
     box-shadow:
-      inset 2px 2px 6px rgba(255, 255, 255, 0.28),
-      inset -8px -12px 18px rgba(0, 0, 0, 0.55),
-      20px 28px 50px rgba(0, 0, 0, 0.6),
+      inset 2px 2px 5px rgba(255, 255, 255, 0.26),
+      inset -10px -14px 22px rgba(0, 0, 0, 0.62),
+      18px 26px 48px rgba(0, 0, 0, 0.55),
       0 0 0 rgba(255, 255, 255, 0);
   }
   50% {
     box-shadow:
-      inset 2px 2px 6px rgba(255, 255, 255, 0.32),
-      inset -8px -12px 18px rgba(0, 0, 0, 0.55),
-      20px 30px 54px rgba(0, 0, 0, 0.667),
-      0 0 34px rgba(255, 255, 255, 0.078);
+      inset 2px 2px 5px rgba(255, 255, 255, 0.3),
+      inset -10px -14px 22px rgba(0, 0, 0, 0.62),
+      18px 28px 52px rgba(0, 0, 0, 0.62),
+      0 0 30px rgba(255, 255, 255, 0.07);
+  }
+}
+
+@keyframes visionCoreFloat {
+  0%,
+  to {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
   }
 }
 
@@ -393,7 +493,7 @@
     opacity: 0;
   }
   42% {
-    opacity: 0.95;
+    opacity: 0.9;
   }
   58%,
   to {
@@ -402,20 +502,34 @@
   }
 }
 
+@keyframes visionCuePulse {
+  0%,
+  to {
+    opacity: 0.55;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(2px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .vision-ambient,
   .vision-core,
+  .vision-core.is-alive,
   .vision-core-sheen,
   .vision-orbit-aura,
   .vision-orbit-rings,
   .vision-ring,
-  .vision-ring-glow {
+  .vision-ring-glow,
+  .vision-scroll-cue span {
     animation: none !important;
   }
 
   .vision-ring {
     opacity: 0.72;
-    transform: rotateX(74deg) rotateY(-10deg) rotate(var(--r));
+    transform: rotateX(var(--tilt, 74deg)) rotateY(-12deg) rotate(var(--r));
   }
 
   .vision-ring-glow,
@@ -435,13 +549,15 @@ html[data-motion="paused"] .vision-orbit-rings,
 html[data-motion="paused"] .vision-ring,
 html[data-motion="paused"] .vision-ring-glow,
 html[data-motion="paused"] .vision-core,
-html[data-motion="paused"] .vision-core-sheen {
+html[data-motion="paused"] .vision-core.is-alive,
+html[data-motion="paused"] .vision-core-sheen,
+html[data-motion="paused"] .vision-scroll-cue span {
   animation: none !important;
 }
 
 html[data-motion="paused"] .vision-ring {
   opacity: 0.72;
-  transform: rotateX(74deg) rotateY(-10deg) rotate(var(--r));
+  transform: rotateX(var(--tilt, 74deg)) rotateY(-12deg) rotate(var(--r));
 }
 
 html[data-motion="paused"] .vision-core-sheen {
@@ -451,36 +567,51 @@ html[data-motion="paused"] .vision-core-sheen {
 
 @media (max-width: 900px) {
   .vision {
-    padding: 70px 0;
+    min-height: 0;
+    padding: 72px 0 48px;
   }
 
   .vision-grid {
     grid-template-columns: 1fr;
-    gap: 28px;
+    gap: 36px;
   }
 
   .vision-orbit {
-    height: 300px;
-    transform: scale(0.9);
-    margin-top: -12px;
-    margin-bottom: -8px;
-    order: -1;
+    height: 320px;
+    margin-inline: auto;
+    max-width: 420px;
+  }
+
+  .vision-scroll-cue {
+    bottom: -18px;
   }
 }
 
 @media (max-width: 560px) {
+  .vision-title {
+    font-size: clamp(30px, 9vw, 40px);
+  }
+
   .vision-orbit {
-    height: 260px;
-    transform: scale(0.82);
+    height: 280px;
   }
 
   .vision-core {
-    width: 96px;
-    height: 96px;
+    width: 100px;
+    height: 100px;
+    border-radius: 24px;
+  }
+
+  .vision-core-face {
     border-radius: 22px;
   }
 
   .vision-core-mark {
     font-size: 22px;
+  }
+
+  .vision-orbit-label {
+    letter-spacing: 0.12em;
+    font-size: 8px;
   }
 }

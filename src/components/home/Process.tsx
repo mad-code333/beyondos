@@ -19,31 +19,14 @@ export function Process() {
       <div className="wrap process-split-grid">
         <div className="process-copy">
           <Reveal y={18}>
-            <div className="eyebrow">03 / From idea to everyday</div>
+            <div className="eyebrow">03 / How long it takes</div>
           </Reveal>
           <Reveal delay={0.08} y={22}>
             <h2 className="process-heading">
               <span className="process-heading-line">
-                <span>
-                  A clear
-                  <br />
-                  process.
-                </span>
-              </span>
-              <span className="process-heading-line">
-                <em>
-                  A shared
-                  <br />
-                  direction.
-                </em>
+                <span>A clear process.</span>
               </span>
             </h2>
-          </Reveal>
-          <Reveal delay={0.16} y={16}>
-            <p className="process-intro">
-              We start with how your business actually works. Then shape the tools and experiences
-              around it.
-            </p>
           </Reveal>
         </div>
 
@@ -51,31 +34,53 @@ export function Process() {
           {processSteps.map((step, index) => {
             const isOpen = open === index;
             return (
-              <button
+              <motion.div
                 key={step.number}
-                className={`ship-row${isOpen ? " active" : ""}`}
-                type="button"
-                aria-expanded={isOpen}
-                onClick={() => setOpen(index)}
+                initial={reduce ? false : { opacity: 0, y: 14 }}
+                whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.45, ease, delay: 0.05 * index }}
               >
-                <span className="mono">{step.number}</span>
-                <strong>{step.title}</strong>
-                <i aria-hidden="true">{isOpen ? "−" : "+"}</i>
-                <AnimatePresence initial={false}>
-                  {isOpen ? (
-                    <motion.div
-                      className="ship-copy"
-                      initial={reduce ? false : { height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={reduce ? undefined : { height: 0, opacity: 0 }}
-                      transition={{ duration: 0.38, ease }}
-                    >
-                      <p>{step.body}</p>
-                      <em>You get · {step.outcome}</em>
-                    </motion.div>
-                  ) : null}
-                </AnimatePresence>
-              </button>
+                <button
+                  className={`ship-row${isOpen ? " active" : ""}`}
+                  type="button"
+                  aria-expanded={isOpen}
+                  aria-controls={`process-panel-${step.number}`}
+                  id={`process-trigger-${step.number}`}
+                  onClick={() => setOpen(isOpen ? -1 : index)}
+                  onKeyDown={(event) => {
+                    if (event.key === "ArrowDown") {
+                      event.preventDefault();
+                      setOpen(Math.min(processSteps.length - 1, index + 1));
+                    }
+                    if (event.key === "ArrowUp") {
+                      event.preventDefault();
+                      setOpen(Math.max(0, index - 1));
+                    }
+                  }}
+                >
+                  <span className="mono">{step.number}</span>
+                  <strong>{step.title}</strong>
+                  <i aria-hidden="true" />
+                  <AnimatePresence initial={false}>
+                    {isOpen ? (
+                      <motion.div
+                        className="ship-copy"
+                        id={`process-panel-${step.number}`}
+                        role="region"
+                        aria-labelledby={`process-trigger-${step.number}`}
+                        initial={reduce ? false : { height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={reduce ? undefined : { height: 0, opacity: 0 }}
+                        transition={{ duration: 0.38, ease }}
+                      >
+                        <p>{step.body}</p>
+                        <em>You get · {step.outcome}</em>
+                      </motion.div>
+                    ) : null}
+                  </AnimatePresence>
+                </button>
+              </motion.div>
             );
           })}
         </Reveal>
