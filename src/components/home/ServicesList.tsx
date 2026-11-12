@@ -501,11 +501,9 @@ function PreviewPanel({
 
           <ServicePreviewBody slug={slug} reduce={reduce} />
         </motion.div>
+        {/* Caption lives inside the card so the pill can never cut through it. */}
+        <p className="mono svc-preview-foot">Live preview · {name}</p>
       </div>
-
-      <p className="mono svc-preview-foot">
-        Live preview · {name} · 5 services · 3 ways to engage
-      </p>
     </motion.div>
   );
 }

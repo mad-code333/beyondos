@@ -193,33 +193,35 @@ function ShipList({ steps }: { steps: Service["steps"] }) {
       {steps.map((step, index) => {
         const isOpen = open === index;
         return (
-          <button
-            key={step.title}
-            className={`ship-row${isOpen ? " active" : ""}`}
-            type="button"
-            aria-expanded={isOpen}
-            onClick={() => setOpen(index)}
-          >
-            <span className="ship-num mono">0{index + 1}</span>
-            <strong>{step.title}</strong>
-            <AnimatePresence initial={false}>
-              {isOpen ? (
-                <motion.span
-                  key="copy"
-                  className="ship-copy"
-                  initial={reduce ? false : { opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={reduce ? undefined : { opacity: 0, height: 0 }}
-                  transition={{ duration: 0.35, ease }}
-                >
-                  {step.body}
-                </motion.span>
-              ) : null}
-            </AnimatePresence>
-            <i className="ship-toggle" aria-hidden="true">
-              {isOpen ? "−" : "+"}
-            </i>
-          </button>
+          <Reveal key={step.title} delay={index * 0.06}>
+            <button
+              className={`ship-row${isOpen ? " active" : ""}`}
+              type="button"
+              aria-expanded={isOpen}
+              onClick={() => setOpen(index)}
+            >
+              <span className="ship-num">0{index + 1}</span>
+              <strong>{step.title}</strong>
+              <span className="ship-body">
+                <AnimatePresence initial={false}>
+                  {isOpen ? (
+                    <motion.span
+                      key="copy"
+                      className="ship-copy"
+                      initial={reduce ? false : { opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={reduce ? undefined : { opacity: 0, height: 0 }}
+                      transition={{ duration: 0.35, ease }}
+                    >
+                      {step.body}
+                    </motion.span>
+                  ) : null}
+                </AnimatePresence>
+              </span>
+              {/* Drawn plus/minus: the display font renders + and − badly. */}
+              <span className="ship-toggle" aria-hidden="true" />
+            </button>
+          </Reveal>
         );
       })}
     </div>

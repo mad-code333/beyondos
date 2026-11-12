@@ -204,6 +204,10 @@
   color: #9a9a94;
 }
 
+.service-section .section-head:not(.center-head) .eyebrow {
+  justify-content: flex-start;
+}
+
 .service-section .section-head .eyebrow::before {
   content: "";
   width: 22px;
@@ -294,78 +298,126 @@
   padding: 0;
 }
 
+/* "Built with you" steps — same card language as "The rest of the toolkit". */
 .ship-list {
-  margin-top: 42px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 28px;
 }
 
 .ship-row {
   display: grid;
-  grid-template-columns: 64px minmax(0, 1fr) 32px;
-  gap: 12px 28px;
+  grid-template-columns: 65px 1fr 1.1fr 55px;
   align-items: center;
+  gap: 28px;
   width: 100%;
-  min-height: 92px;
-  padding: 18px 8px;
+  min-height: 105px; /* same height as a one-line toolkit row */
+  padding: 28px 32px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: #101010;
+  color: inherit;
   text-align: left;
-  color: #8d8d8d;
-  background: transparent;
-  border: 0;
-  border-top: 1px solid var(--line);
-  border-radius: 18px;
+  font: inherit;
   cursor: pointer;
   transition:
     background 0.3s,
-    color 0.3s,
-    padding 0.3s;
-}
-
-.ship-row:last-child {
-  border-bottom: 1px solid var(--line);
+    border-color 0.3s,
+    transform 0.3s;
 }
 
 .ship-row:hover {
-  background: rgba(255, 255, 255, 0.024);
-  color: #eee;
+  background: #161616;
+  border-color: rgba(255, 255, 255, 0.165);
+  transform: translateY(-2px);
 }
 
-.ship-row strong {
-  font-size: clamp(28px, 3.4vw, 48px);
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  color: #d5d5d5;
-}
-
-.ship-row .ship-num {
-  font-size: 13px;
-  color: #9a9a94;
-}
-
-.ship-row .ship-toggle {
-  justify-self: end;
-  font-style: normal;
-  font-size: 22px;
-  color: #8d8d8d;
+.ship-row:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 3px;
 }
 
 .ship-row.active {
-  grid-template-columns: 64px max-content minmax(240px, 1fr) 32px;
-  column-gap: 48px;
-  padding-inline: 16px;
-  color: #f1f1ee;
-  background: rgba(255, 255, 255, 0.03);
+  background: #141414;
+  border-color: rgba(255, 255, 255, 0.165);
 }
 
+.ship-num {
+  font-size: 13px;
+  color: #deded8;
+}
+
+.ship-row strong {
+  font-family: var(--font-display), Orbitron, sans-serif;
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+  color: #c8c8c2;
+  transition: color 0.3s;
+}
+
+.ship-row:hover strong,
 .ship-row.active strong {
-  color: #fff;
+  color: #f4f4f0;
+}
+
+.ship-body {
+  min-width: 0;
 }
 
 .ship-copy {
+  display: block;
   overflow: hidden;
-  max-width: 42ch;
-  font-size: 15px;
-  line-height: 1.7;
-  color: #c4c4be;
+  max-width: 46ch;
+  font-size: 16px;
+  line-height: 1.55;
+  color: #c8c8c2;
+}
+
+.ship-toggle {
+  position: relative;
+  justify-self: end;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.145);
+  border-radius: 50%;
+  color: #f4f4f0;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.ship-toggle::before,
+.ship-toggle::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 1.5px;
+  margin: -0.75px 0 0 -6px;
+  border-radius: 1px;
+  background: currentColor;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* vertical bar of the plus; collapses into a minus when open */
+.ship-toggle::after {
+  transform: rotate(90deg);
+}
+
+.ship-row.active .ship-toggle::after {
+  transform: rotate(0deg);
+}
+
+.ship-row:hover .ship-toggle,
+.ship-row.active .ship-toggle {
+  background: #eee;
+  color: #111;
+  border-color: transparent;
 }
 
 .next-services {
@@ -459,6 +511,12 @@
     grid-column: 2;
   }
 
+  /* Same title sizing as the step cards above, so both lists match. */
+  .service-row h3 {
+    font-size: clamp(20px, 5.4vw, 28px);
+    line-height: 1.15;
+  }
+
   .circle-arrow {
     grid-column: 3;
     grid-row: 1;
@@ -466,19 +524,30 @@
   }
 }
 
-@media (max-width: 800px) {
-  .ship-row,
-  .ship-row.active {
-    grid-template-columns: 36px 1fr 24px;
-    column-gap: 12px;
+@media (max-width: 1100px) {
+  .ship-row {
+    grid-template-columns: 48px minmax(0, 1fr) 40px;
+    gap: 0 16px;
+    padding: 22px 20px;
   }
 
-  .ship-copy {
-    grid-column: 1 / -1;
+  .ship-body {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .ship-toggle {
+    grid-column: 3;
+    grid-row: 1;
   }
 
   .ship-row strong {
-    font-size: clamp(24px, 7vw, 34px);
+    font-size: clamp(20px, 5.4vw, 28px);
+  }
+
+  .ship-copy {
+    padding-top: 10px;
+    font-size: 15px;
   }
 }
 
@@ -513,7 +582,8 @@
   }
 
   .feature-card:hover,
-  .service-row:hover {
+  .service-row:hover,
+  .ship-row:hover {
     transform: none;
   }
 
@@ -530,12 +600,16 @@
   .feature-card,
   .service-row,
   .ship-row,
+  .ship-toggle,
+  .ship-toggle::before,
+  .ship-toggle::after,
   .service-hero-photo img {
     transition: none;
   }
 
   .feature-card:hover,
   .service-row:hover,
+  .ship-row:hover,
   .svc-btn:hover {
     transform: none;
   }

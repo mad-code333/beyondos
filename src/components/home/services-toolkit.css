@@ -406,14 +406,12 @@ html[data-motion="paused"] .svc-glow {
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 22px;
-  background:
-    linear-gradient(165deg, rgba(28, 28, 26, 0.72), rgba(12, 12, 11, 0.55)),
-    rgba(10, 10, 9, 0.35);
+  /* Solid surface: a see-through card turned the pill behind it into a grey smear. */
+  background: linear-gradient(165deg, #1c1b19 0%, #121211 55%, #0e0e0d 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 22px 50px -28px rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(24px) saturate(1.2);
-  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    0 30px 60px -20px rgba(0, 0, 0, 0.85);
   transform-style: preserve-3d;
   will-change: transform;
 }
@@ -480,13 +478,16 @@ html[data-motion="paused"] .svc-glow {
 }
 
 .svc-preview-foot {
-  margin: 12px 2px 0;
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  line-height: 1.7;
+  position: relative;
+  z-index: 1;
+  margin: -6px 2px 0;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  line-height: 1.5;
   text-transform: uppercase;
-  color: rgba(170, 170, 164, 0.78);
-  text-align: right;
+  color: rgba(170, 170, 164, 0.6);
 }
 
 /* ───── Shared dashboard pieces ───── */
