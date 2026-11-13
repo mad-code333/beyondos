@@ -1,173 +1,232 @@
-/* Full-bleed platform strip: kicker, hairline, then a slow continuous logo row. */
+/* Technology ecosystem: centred caption over a narrow, edge-faded marquee of
+   62px dark tiles with greyscale marks. */
 .logo-showcase {
-  --strip-gutter: 25px;
-  --strip-gap: 36px;
   position: relative;
-  padding: 58px 0 0;
+  padding: 56px 16px 48px;
   background: #070707;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.logo-showcase-kicker {
-  margin: 0;
-  padding: 0 var(--strip-gutter) 16px;
-  font-family: var(--font-display), Orbitron, sans-serif;
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: #8f8f89;
-}
-
-.logo-showcase-marquee {
-  position: relative;
+.tech-ecosystem {
+  width: min(100%, 860px);
+  margin: 0 auto;
   overflow: hidden;
-  padding: 24px 0 52px;
-  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 120px, #000 calc(100% - 120px), transparent 100%);
-  mask-image: linear-gradient(90deg, transparent 0, #000 120px, #000 calc(100% - 120px), transparent 100%);
 }
 
-/* Hairline under the kicker; fades out toward the right edge. */
-.logo-showcase-marquee::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+.tech-caption {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  margin: 0 0 18px;
+  font-family: var(--font-manrope), Manrope, sans-serif;
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 1.7px;
+  text-transform: uppercase;
+  color: #797d87;
+}
+
+.tech-caption > span {
+  width: 30px;
   height: 1px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.07) 80%, transparent);
+  background: rgba(255, 255, 255, 0.07);
 }
 
-.logo-showcase-track {
+.tech-wall {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 88px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7% 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7% 93%, transparent);
+}
+
+.tech-track {
   display: flex;
   width: max-content;
-  animation: logo-showcase-marquee 48s linear infinite;
+  animation: tech-marquee 25s linear infinite;
   will-change: transform;
 }
 
-.logo-showcase-marquee:hover .logo-showcase-track {
+.tech-wall:hover .tech-track {
   animation-play-state: paused;
 }
 
-/* Spacing lives inside each set (trailing padding included), so both halves are
-   exactly equal and translating by -50% lands on a pixel-identical frame. */
-.logo-strip-set {
+/* Trailing padding equals the gap, so both rows are exactly the same width. */
+.tech-row {
   display: flex;
   flex: none;
   align-items: center;
-  gap: var(--strip-gap);
-  padding-right: var(--strip-gap);
+  gap: 20px;
+  padding-right: 20px;
 }
 
-.logo-strip-item {
-  display: inline-flex;
-  flex: none;
+.tech-tile {
+  position: relative;
+  display: flex;
+  flex: 0 0 62px;
   align-items: center;
-  gap: 9px;
-  font-family: var(--font-manrope), Manrope, sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: -0.005em;
-  white-space: nowrap;
-  color: #a9a9a3;
-  transition: color 0.25s;
+  justify-content: center;
+  width: 62px;
+  height: 62px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 14px;
+  background: linear-gradient(145deg, #202225, #191a1c);
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.045),
+    0 9px 18px rgba(0, 0, 0, 0.2);
+  transition:
+    border-color 0.3s,
+    background 0.3s,
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.logo-strip-item:hover {
-  color: #f1f1ec;
+.tech-tile:hover {
+  z-index: 1;
+  border-color: rgba(255, 255, 255, 0.094);
+  background: linear-gradient(145deg, #242629, #1b1c1e);
+  transform: translateY(-3px);
 }
 
-.logo-strip-icon {
+/* Marks are drawn at 52px and scaled to ~25px, then flattened to light grey. */
+.tech-art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: #fff;
+  opacity: 0.9;
+  filter: grayscale(1) brightness(1.38);
+  transform: scale(0.48);
+  transition:
+    filter 0.3s,
+    opacity 0.3s;
+}
+
+.tech-tile:hover .tech-art {
+  opacity: 1;
+  filter: grayscale(1) brightness(1.65);
+}
+
+.tech-art img,
+.tech-art svg {
   display: block;
-  flex: none;
-  width: 17px;
-  height: 17px;
-  background: currentColor;
-  -webkit-mask: var(--logo-icon) center / contain no-repeat;
-  mask: var(--logo-icon) center / contain no-repeat;
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
 }
 
-.logo-strip-icon--svg {
-  background: none;
-  -webkit-mask: none;
-  mask: none;
+.tech-glyph {
+  font-family: var(--font-manrope), Manrope, sans-serif;
+  font-size: 50px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -3px;
+  color: #b9bac0;
+  transform: skew(-7deg);
 }
 
-@keyframes logo-showcase-marquee {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
+/* Original marks are mid-grey or dark once desaturated; lift them to match the white ones. */
+.tech-tile--nextjs .tech-art,
+.tech-tile--vercel .tech-art {
+  filter: grayscale(1) brightness(1.9);
+}
 
+.tech-tile--nextjs:hover .tech-art,
+.tech-tile--vercel:hover .tech-art {
+  filter: grayscale(1) brightness(2.2);
+}
+
+.tech-tile--next-intl .tech-art svg {
+  color: #b9bac0;
+}
+
+/* The square mark reads larger than the others at full size. */
+.tech-tile--typescript .tech-art img {
+  width: 42px;
+  height: 42px;
+  border-radius: 4px;
+}
+
+/* Wide cloud mark: give it the full width so it isn't tiny. */
+.tech-tile--cloudflare .tech-art img {
+  width: 66px;
+}
+
+@keyframes tech-marquee {
   to {
     transform: translate3d(-50%, 0, 0);
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .logo-showcase-marquee {
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-
-  .logo-showcase-track {
-    width: auto;
-    padding: 0 var(--strip-gutter);
-    animation: none !important;
-  }
-
-  .logo-strip-set {
-    flex: 1;
-    flex-wrap: wrap;
-    gap: 18px 28px;
-    padding: 0;
-  }
-
-  .logo-strip-set[aria-hidden="true"] {
-    display: none;
-  }
-}
-
-html[data-motion="paused"] .logo-showcase-track {
+html[data-motion="paused"] .tech-track {
   animation-play-state: paused !important;
 }
 
 @media (max-width: 900px) {
   .logo-showcase {
-    --strip-gap: 30px;
-    padding-top: 48px;
+    padding: 44px 16px 36px;
   }
 
-  .logo-showcase-marquee {
-    padding: 22px 0 44px;
-    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 64px, #000 calc(100% - 64px), transparent 100%);
-    mask-image: linear-gradient(90deg, transparent 0, #000 64px, #000 calc(100% - 64px), transparent 100%);
+  .tech-ecosystem {
+    max-width: 520px;
+  }
+
+  .tech-caption {
+    gap: 9px;
+    margin-bottom: 20px;
+    font-size: 7px;
+    letter-spacing: 1.3px;
+  }
+
+  .tech-caption > span {
+    width: 20px;
+  }
+
+  .tech-wall {
+    height: 72px;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 10% 90%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 10% 90%, transparent);
+  }
+
+  .tech-track {
+    animation-duration: 22s;
+  }
+
+  .tech-row {
+    gap: 14px;
+    padding-right: 14px;
+  }
+
+  .tech-tile {
+    flex-basis: 54px;
+    width: 54px;
+    height: 54px;
+    border-radius: 13px;
   }
 }
 
-@media (max-width: 760px) {
-  .logo-showcase {
-    --strip-gutter: 16px;
-    --strip-gap: 26px;
-    padding-top: 40px;
+@media (prefers-reduced-motion: reduce) {
+  .tech-wall {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
-  .logo-showcase-kicker {
-    letter-spacing: 0.16em;
-    line-height: 1.6;
+  .tech-track {
+    animation: none !important;
   }
 
-  .logo-showcase-marquee {
-    padding: 20px 0 36px;
-    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
-    mask-image: linear-gradient(90deg, transparent 0, #000 32px, #000 calc(100% - 32px), transparent 100%);
+  .tech-row[aria-hidden="true"] {
+    display: none;
   }
 
-  .logo-showcase-track {
-    animation-duration: 38s;
-  }
-
-  .logo-strip-item {
-    font-size: 12.5px;
+  .tech-tile,
+  .tech-art {
+    transition: none;
   }
 }

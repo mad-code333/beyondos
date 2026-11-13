@@ -1,52 +1,62 @@
-import type { CSSProperties } from "react";
 import { BrandMark } from "@/components/layout/BrandMark";
 import "./logo-showcase.css";
 
 type LogoItem = {
   id: string;
   label: string;
-  /** Monochrome silhouette source; rendered as a mask tinted with currentColor. */
-  icon?: string | "beyond";
-  /** Wide marks (e.g. Cloudflare's cloud) need more room than the square icon box. */
-  iconWidth?: number;
+  /** Logo file (shown greyscale), the Beyond mark, or a short glyph for tools without a local logo file. */
+  art: { src: string } | { mark: "beyond" | "globe" } | { glyph: string };
 };
 
 const LOGOS: LogoItem[] = [
-  { id: "claude", label: "Claude", icon: "/media/logos/claude-symbol.png" },
-  { id: "beyond-os", label: "Beyond OS", icon: "beyond" },
-  { id: "nextjs", label: "Next.js", icon: "/media/logos/nextjs.svg" },
-  { id: "vercel", label: "Vercel", icon: "/media/logos/vercel.svg" },
-  { id: "typescript", label: "TypeScript", icon: "/media/logos/typescript-mono.svg" },
-  { id: "figma", label: "Figma", icon: "/media/logos/figma.svg" },
-  { id: "cloudflare", label: "Cloudflare", icon: "/media/logos/cloudflare.svg", iconWidth: 28 },
-  { id: "framer", label: "Framer Motion", icon: "/media/logos/framer.svg" },
-  { id: "whatsapp", label: "WhatsApp", icon: "/media/logos/whatsapp.svg" },
-  { id: "google", label: "Google", icon: "/media/logos/google.svg" },
-  { id: "resend", label: "Resend" },
-  { id: "postgresql", label: "PostgreSQL" },
-  { id: "zod", label: "Zod" },
-  { id: "next-intl", label: "next-intl" },
+  { id: "resend", label: "Resend", art: { glyph: "R" } },
+  { id: "claude", label: "Claude", art: { src: "/media/logos/claude-symbol.png" } },
+  { id: "figma", label: "Figma", art: { src: "/media/logos/figma.svg" } },
+  { id: "vercel", label: "Vercel", art: { src: "/media/logos/vercel.svg" } },
+  { id: "beyond-os", label: "Beyond OS", art: { mark: "beyond" } },
+  { id: "framer", label: "Framer Motion", art: { src: "/media/logos/framer.svg" } },
+  { id: "typescript", label: "TypeScript", art: { src: "/media/logos/typescript-tile.svg" } },
+  { id: "postgresql", label: "PostgreSQL", art: { glyph: "Pg" } },
+  { id: "cloudflare", label: "Cloudflare", art: { src: "/media/logos/cloudflare.svg" } },
+  { id: "nextjs", label: "Next.js", art: { src: "/media/logos/nextjs.svg" } },
+  { id: "whatsapp", label: "WhatsApp", art: { src: "/media/logos/whatsapp.svg" } },
+  { id: "google", label: "Google", art: { src: "/media/logos/google.svg" } },
+  { id: "zod", label: "Zod", art: { glyph: "Z" } },
+  { id: "next-intl", label: "next-intl", art: { mark: "globe" } },
 ];
 
-function LogoIcon({ icon, width }: { icon: string; width?: number }) {
-  if (icon === "beyond") return <BrandMark className="logo-strip-icon logo-strip-icon--svg" />;
+function GlobeMark() {
   return (
-    <span
-      className="logo-strip-icon"
-      style={{ "--logo-icon": `url(${icon})`, width } as CSSProperties}
-      aria-hidden="true"
-    />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+      <circle cx="12" cy="12" r="9.5" />
+      <path d="M2.5 12h19M12 2.5c2.6 2.7 3.9 5.9 3.9 9.5s-1.3 6.8-3.9 9.5c-2.6-2.7-3.9-5.9-3.9-9.5s1.3-6.8 3.9-9.5Z" />
+    </svg>
   );
 }
 
-function LogoTrack({ copy }: { copy: number }) {
+function LogoArt({ art }: { art: LogoItem["art"] }) {
+  if ("src" in art) {
+    return <img src={art.src} alt="" width={52} height={52} draggable={false} decoding="async" loading="lazy" />;
+  }
+  if ("glyph" in art) return <span className="tech-glyph">{art.glyph}</span>;
+  return art.mark === "beyond" ? <BrandMark className="tech-svg" /> : <GlobeMark />;
+}
+
+function TechRow({ duplicate = false }: { duplicate?: boolean }) {
   return (
-    <div className="logo-strip-set" aria-hidden={copy > 0 ? true : undefined}>
+    <div className="tech-row" aria-hidden={duplicate || undefined}>
       {LOGOS.map((item) => (
-        <span key={item.id} className="logo-strip-item" role={copy > 0 ? undefined : "listitem"}>
-          {item.icon ? <LogoIcon icon={item.icon} width={item.iconWidth} /> : null}
-          {item.label}
-        </span>
+        <div
+          key={item.id}
+          className={`tech-tile tech-tile--${item.id}`}
+          role={duplicate ? undefined : "img"}
+          aria-label={duplicate ? undefined : item.label}
+          title={item.label}
+        >
+          <span className="tech-art">
+            <LogoArt art={item.art} />
+          </span>
+        </div>
       ))}
     </div>
   );
@@ -55,13 +65,18 @@ function LogoTrack({ copy }: { copy: number }) {
 export function LogoShowcase() {
   return (
     <section className="logo-showcase" aria-label="Platforms and integrations">
-      <p className="logo-showcase-kicker">Built with the platforms hospitality already trusts</p>
-
-      <div className="logo-showcase-marquee" role="list" aria-label="Platforms we build with">
-        {/* Two identical sets, each translated by its own width — the loop never shows a seam. */}
-        <div className="logo-showcase-track">
-          <LogoTrack copy={0} />
-          <LogoTrack copy={1} />
+      <div className="tech-ecosystem">
+        <p className="tech-caption">
+          <span aria-hidden="true" />
+          Our technology ecosystem
+          <span aria-hidden="true" />
+        </p>
+        <div className="tech-wall" role="group" aria-label="Technologies in our toolkit">
+          {/* Two identical rows; the track moves by exactly one row width, so the loop has no seam. */}
+          <div className="tech-track">
+            <TechRow />
+            <TechRow duplicate />
+          </div>
         </div>
       </div>
     </section>
