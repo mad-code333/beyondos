@@ -2,11 +2,7 @@
    of 62px dark tiles with greyscale marks. */
 .logo-showcase {
   position: relative;
-  z-index: 1;
-  /* Rise into the services section's empty bottom padding (its .svc-shell
-     padding-bottom), so the strip sits right under the service list. */
-  margin-top: calc(-1 * clamp(28px, 4vh, 48px));
-  padding: 8px 0 48px;
+  padding: 48px 0 48px;
   background: #070707;
 }
 
@@ -209,10 +205,8 @@ html[data-motion="paused"] .tech-track {
   }
 }
 
-/* Phones: the services section is no longer full-height, so no overlap. */
 @media (max-width: 760px) {
   .logo-showcase {
-    margin-top: 0;
     padding-top: 8px;
   }
 }

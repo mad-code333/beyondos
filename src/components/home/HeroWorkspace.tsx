@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "framer-motion";
 
@@ -15,7 +16,7 @@ type Tone = "ok" | "warn" | "soft" | "accent";
 
 type Row = { title: string; meta: string; status: string; tone: Tone };
 type Note = { kicker: string; body: string; action: string };
-type View = { heading: string; count: string; rows: Row[]; note: Note };
+type View = { heading: string; count: string; rows: Row[]; note: Note; ask: string };
 
 const TABS: { id: TabId; label: string }[] = [
   { id: "reservations", label: "Reservations" },
@@ -38,6 +39,7 @@ const VIEWS: Record<TabId, View> = {
       body: "Two arrivals before 15:00. Suite 201 cleared for early check-in.",
       action: "Open arrivals",
     },
+    ask: "Ask Beyond about today's arrivals…",
   },
   crm: {
     heading: "Guest CRM",
@@ -52,6 +54,7 @@ const VIEWS: Record<TabId, View> = {
       body: "Nino asked for a quiet table on Friday. Suggest the terrace at 20:00 and confirm the deposit.",
       action: "Draft reply",
     },
+    ask: "Ask Beyond about this guest…",
   },
   operations: {
     heading: "Live service",
@@ -66,6 +69,7 @@ const VIEWS: Record<TabId, View> = {
       body: "Average ticket time 11 minutes. Three plates ready at the pass for terrace tables.",
       action: "Open kitchen view",
     },
+    ask: "Ask Beyond about tonight's service…",
   },
   booking: {
     heading: "Direct booking",
@@ -80,6 +84,7 @@ const VIEWS: Record<TabId, View> = {
       body: "Weekend cottage searches are up. A two-night offer page could catch them before the OTAs do.",
       action: "Plan the offer",
     },
+    ask: "Ask Beyond about direct bookings…",
   },
 };
 
@@ -215,6 +220,14 @@ export function HeroWorkspace({
             </motion.aside>
           </motion.div>
         </AnimatePresence>
+      </div>
+
+      <div className="hw-foot">
+        <Link className="hw-ask" href="/#contact" aria-label="Ask Beyond — request a demo">
+          <span className="hw-ask-plus" aria-hidden="true">+</span>
+          <span className="hw-ask-text">{view.ask}</span>
+          <span className="hw-ask-dot" aria-hidden="true" />
+        </Link>
       </div>
     </div>
   );

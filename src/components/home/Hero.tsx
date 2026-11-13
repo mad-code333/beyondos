@@ -61,6 +61,31 @@ function ArrowUpRight() {
   );
 }
 
+function Chevron({ dir }: { dir: "up" | "down" }) {
+  return (
+    <svg className="hero-chevron" viewBox="0 0 16 16" aria-hidden="true">
+      <path
+        d={dir === "up" ? "M4 10l4-4 4 4" : "M4 6l4 4 4-4"}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/** Two stacked arrows: on hover the first flies out top-right, the second slides in. */
+function ArrowSwap() {
+  return (
+    <span className="hero-arrow-swap" aria-hidden="true">
+      <ArrowUpRight />
+      <ArrowUpRight />
+    </span>
+  );
+}
+
 export function Hero() {
   const reduce = useReducedMotion();
   const router = useRouter();
@@ -73,6 +98,7 @@ export function Hero() {
   // select an item before its click fires, so `selected` alone can't tell
   // "first tap selects" from "tap on the active item opens it".
   const pressedActive = useRef<boolean | null>(null);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
 
   const select = useCallback((index: number) => {
     setActive((index + slides.length) % slides.length);
@@ -141,15 +167,26 @@ export function Hero() {
               Software, websites and digital growth for hotels, cottages and restaurants. One
               partner to connect the way you run and grow.
             </p>
+            <Link
+              key={slides[active].slug}
+              className="hero-explore mono"
+              href={`/services/${slides[active].slug}`}
+            >
+              <span>Explore {slides[active].name}</span>
+              <ArrowUpRight />
+            </Link>
             <div className="hero-actions">
               <Link className="hero-cta" href="#services">
-                Try the product concept
+                <span className="hero-cta-text">Try the product concept</span>
                 <span className="hero-cta-icon">
-                  <ArrowUpRight />
+                  <ArrowSwap />
                 </span>
               </Link>
-              <Link className="hero-link" href="/#contact">
-                Request a demo <ArrowUpRight />
+              <Link className="hero-cta is-ghost" href="/#contact">
+                <span className="hero-cta-text">Request a demo</span>
+                <span className="hero-cta-icon">
+                  <ArrowSwap />
+                </span>
               </Link>
             </div>
             <p className="hero-tagline mono">Your business. One connected system.</p>
@@ -167,80 +204,123 @@ export function Hero() {
               }
             }}
           >
-            <div className="hero-orbit-ring" aria-hidden="true">
-              <svg viewBox="0 0 420 640" preserveAspectRatio="xMidYMid meet">
-                <path
-                  className="hero-orbit-path"
-                  d="M310 18 C 70 130, 28 310, 110 430 S 290 560, 318 628"
-                />
+            <div
+              className="hero-orbit-stage"
+              onTouchStart={(event) => {
+                const t = event.touches[0];
+                touchStart.current = { x: t.clientX, y: t.clientY };
+              }}
+              onTouchEnd={(event) => {
+                const from = touchStart.current;
+                touchStart.current = null;
+                // Phones use the scrollable chip row instead; swipe only drives the arc.
+                if (!from || !window.matchMedia("(min-width: 901px)").matches) return;
+                const t = event.changedTouches[0];
+                const dy = from.y - t.clientY;
+                const dx = from.x - t.clientX;
+                const delta = Math.abs(dy) >= Math.abs(dx) ? dy : dx;
+                if (Math.abs(delta) > 30) select(active + (delta > 0 ? 1 : -1));
+              }}
+            >
+              <svg
+                className="hero-orbit-ring"
+                viewBox="0 0 500 420"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <path className="hero-orbit-path" d="M300 6 A204 204 0 0 0 300 414" />
               </svg>
-            </div>
 
-            <div className="hero-orbit-list" ref={listRef}>
-              {slides.map((item, index) => {
-                const selected = index === active;
-                return (
+              <div className="hero-orbit-list" ref={listRef}>
+                {slides.map((item, index) => {
+                  const selected = index === active;
+                  return (
+                    <button
+                      key={item.slug}
+                      className="hero-orbit-item"
+                      type="button"
+                      data-index={index}
+                      aria-pressed={selected}
+                      tabIndex={selected ? 0 : -1}
+                      aria-label={selected ? `Explore ${item.name}` : `Show ${item.name}`}
+                      onPointerDown={() => {
+                        // Focus selects before click fires, so remember the state at press time.
+                        pressedActive.current = selected;
+                      }}
+                      onFocus={() => select(index)}
+                      onKeyDown={(event) => {
+                        if (event.key === "ArrowDown" || event.key === "ArrowRight") {
+                          event.preventDefault();
+                          select(index + 1);
+                        } else if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+                          event.preventDefault();
+                          select(index - 1);
+                        }
+                      }}
+                      onClick={() => {
+                        // First tap selects; a tap on the active item opens it.
+                        // Keyboard activation has no pointerdown: fall back to `selected`.
+                        const open = pressedActive.current ?? selected;
+                        pressedActive.current = null;
+                        if (open) router.push(`/services/${item.slug}`);
+                        else select(index);
+                      }}
+                    >
+                      <span className="hero-orbit-thumb-wrap">
+                        {selected ? <span className="hero-orbit-pulse" aria-hidden="true" /> : null}
+                        <span className="hero-orbit-thumb">
+                          <Image src={item.thumb} alt="" fill sizes="120px" className="hero-orbit-thumb-img" />
+                          <span className="hero-orbit-thumb-veil" />
+                        </span>
+                        <span className="hero-orbit-index">{item.number}</span>
+                      </span>
+                      <span className="hero-orbit-label">
+                        <strong>{item.name}</strong>
+                        <small>{item.orbitLabel}</small>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="hero-orbit-dots">
+                {slides.map((item, index) => (
                   <button
                     key={item.slug}
-                    className="hero-orbit-item"
                     type="button"
-                    data-index={index}
-                    aria-pressed={selected}
-                    tabIndex={selected ? 0 : -1}
-                    aria-label={selected ? `Explore ${item.name}` : `Show ${item.name}`}
-                    // Hover-select for mice only; touch selects on tap.
-                    onPointerEnter={(event) => {
-                      if (event.pointerType === "mouse") select(index);
-                    }}
-                    onPointerDown={(event) => {
-                      // A mouse has already selected on hover, so its click opens.
-                      pressedActive.current = event.pointerType === "mouse" ? true : selected;
-                    }}
-                    onFocus={() => select(index)}
-                    onKeyDown={(event) => {
-                      if (event.key === "ArrowDown" || event.key === "ArrowRight") {
-                        event.preventDefault();
-                        select(index + 1);
-                      } else if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
-                        event.preventDefault();
-                        select(index - 1);
-                      }
-                    }}
-                    onClick={() => {
-                      // Keyboard activation has no pointerdown: fall back to `selected`.
-                      const open = pressedActive.current ?? selected;
-                      pressedActive.current = null;
-                      if (open) router.push(`/services/${item.slug}`);
-                      else select(index);
-                    }}
-                  >
-                    <span className="hero-orbit-thumb">
-                      <Image src={item.thumb} alt="" fill sizes="120px" className="hero-orbit-thumb-img" />
-                      <span className="hero-orbit-thumb-veil" />
-                      <span className="hero-orbit-index">{item.number}</span>
-                    </span>
-                    <span className="hero-orbit-label">
-                      <strong>{item.name}</strong>
-                      <small>{item.orbitLabel}</small>
-                    </span>
-                  </button>
-                );
-              })}
+                    tabIndex={-1}
+                    className="hero-orbit-dot"
+                    aria-current={index === active}
+                    aria-label={`Go to ${item.name}`}
+                    onClick={() => select(index)}
+                  />
+                ))}
+              </div>
             </div>
 
-            <Link href={`/services/${slides[active].slug}`} className="hero-orbit-callout">
-              <span className="hero-orbit-callout-kicker">One booking. A connected journey.</span>
-              <strong>
-                See {slides[active].name} <ArrowUpRight />
-              </strong>
-            </Link>
-
-            <div className="hero-status mono">
-              <span>{slides[active].number}</span>
-              <i />
-              <span>05</span>
+            <div className="hero-orbit-controls">
+              <span className="hero-orbit-count mono" aria-hidden="true">
+                <b>{slides[active].number}</b> / 05
+              </span>
               <button
                 type="button"
+                className="hero-orbit-btn"
+                aria-label="Previous service"
+                onClick={() => select(active - 1)}
+              >
+                <Chevron dir="up" />
+              </button>
+              <button
+                type="button"
+                className="hero-orbit-btn"
+                aria-label="Next service"
+                onClick={() => select(active + 1)}
+              >
+                <Chevron dir="down" />
+              </button>
+              <button
+                type="button"
+                className="hero-orbit-btn is-play"
                 aria-pressed={paused}
                 aria-label={paused ? "Play service rotation" : "Pause service rotation"}
                 onClick={() => setPaused((value) => !value)}

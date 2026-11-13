@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Eclipse Horizon — port of the Holdout hero canvas:
+ * Eclipse Horizon — hero canvas (warm champagne palette):
  * a 26px dot lattice above a planetary arc, a vertical light beam that
  * sweeps left → right every few seconds (lighting the dots in its column),
  * a trail of "fail" squares left behind the beam, and a soft cursor glow.
@@ -16,18 +16,19 @@ import { useEffect, useRef } from "react";
 
 type RGB = readonly [number, number, number];
 
-const BG: RGB = [4, 4, 7];
-const RIM: RGB = [157, 140, 255]; // #9D8CFF
-const CORE: RGB = [244, 245, 248]; // #F4F5F8
-const GLOW1: RGB = [107, 77, 255]; // #6B4DFF
-const GLOW2: RGB = [46, 107, 255]; // #2E6BFF
-const DOT: RGB = [244, 245, 248];
+// Warm champagne horizon (no violet/blue): a gold rim over a near-black planet.
+const BG: RGB = [6, 5, 4];
+const RIM: RGB = [222, 194, 148]; // #DEC294
+const CORE: RGB = [250, 240, 222]; // #FAF0DE
+const GLOW1: RGB = [176, 128, 66]; // #B08042 amber
+const GLOW2: RGB = [120, 96, 70]; // #786046 bronze
+const DOT: RGB = [236, 232, 224];
 
 const SPACING = 26;
 const SWEEP_SECONDS = 7;
 const FAIL_RATE = 0.046;
 const CURVATURE = 1.15;
-const BLOOM = 0.6;
+const BLOOM = 0.4;
 const TRAIL = 520;
 const BEAM_REACH = 160; // exp(-h²/4232) is ~0 beyond this
 const POINTER_REACH = 420; // exp(-d²/28800) is ~0 beyond this
@@ -214,7 +215,7 @@ export function EclipseHorizon({
       planet.ctx.beginPath();
       planet.ctx.arc(cx, planetCy, R, 0, Math.PI * 2);
       const fill = planet.ctx.createLinearGradient(0, horizonY, 0, horizonY + 220);
-      fill.addColorStop(0, rgba(GLOW1, 0.3));
+      fill.addColorStop(0, rgba(GLOW1, 0.22));
       fill.addColorStop(0.35, rgba(BG, 0.96));
       fill.addColorStop(1, rgba(BG, 1));
       planet.ctx.fillStyle = fill;

@@ -1057,6 +1057,20 @@ html[data-motion="paused"] .svc-glow {
 }
 
 /* Compact (service pages): height follows the list, with room for the card. */
+/* Homepage (desktop): size to the list instead of the viewport, so no dead band
+   is left between "Digital Growth" and the technology strip that follows. */
+@media (min-width: 761px) {
+  .services-toolkit.is-tessvik:not(.is-compact) {
+    height: auto;
+    min-height: 0;
+  }
+
+  .services-toolkit.is-tessvik:not(.is-compact) .svc-shell {
+    flex: none;
+    padding-bottom: 0;
+  }
+}
+
 .services-toolkit.is-tessvik.is-compact {
   height: auto;
   min-height: 0;
@@ -1106,7 +1120,7 @@ html[data-motion="paused"] .svc-glow {
   .services-toolkit.is-tessvik {
     height: auto;
     min-height: 0;
-    padding: 72px 0 56px;
+    padding: 72px 0 32px;
   }
 
   .svc-shell {
