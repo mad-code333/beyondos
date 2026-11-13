@@ -3,143 +3,49 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useReducedMotion } from "framer-motion";
 import { EclipseHorizon } from "./EclipseHorizon";
+import { HeroWorkspace, type TabId } from "./HeroWorkspace";
 import "./hero.css";
 
 type Slide = {
   slug: "crm" | "oms" | "hms" | "web" | "growth";
   number: string;
-  category: string;
   name: string;
-  title: string;
-  titleEm: string;
-  lead: string;
   orbitLabel: string;
   thumb: string;
-  alt: string;
-  icon: string;
-  previewTabs: string[];
-  previewActive: number;
-  previewRows: { label: string; meta: string; tone?: "ok" | "warn" | "soft" }[];
 };
 
 const slides: Slide[] = [
-  {
-    slug: "crm",
-    number: "01",
-    category: "Customer Relationship Management",
-    name: "CRM",
-    title: "Every relationship.",
-    titleEm: "Made personal.",
-    lead: "Know the guest behind every enquiry. Bring conversations, preferences and follow-ups into one thoughtful workspace.",
-    orbitLabel: "Guest relationships & messaging",
-    thumb: "/media/desk.jpg",
-    alt: "A hotel reception desk in stone and warm lamplight.",
-    icon: "◎",
-    previewTabs: ["Reservations", "Guest CRM", "Operations", "Direct booking"],
-    previewActive: 1,
-    previewRows: [
-      { label: "Nino K. · suite enquiry", meta: "Follow-up due", tone: "warn" },
-      { label: "David R. · returning guest", meta: "Confirmed", tone: "ok" },
-      {
-        label: "Ana M. · dining request",
-        meta: "In conversation",
-        tone: "soft",
-      },
-    ],
-  },
-  {
-    slug: "oms",
-    number: "02",
-    category: "Restaurant Order Management",
-    name: "Restaurant OMS",
-    title: "Every order.",
-    titleEm: "In perfect rhythm.",
-    lead: "From the floor to the kitchen, give every team a shared view. Clear orders. Thoughtful handoffs. A calmer service.",
-    orbitLabel: "Restaurant order management",
-    thumb: "/media/dining.jpg",
-    alt: "A restaurant dining room set for service.",
-    icon: "▤",
-    previewTabs: ["Floor", "Kitchen", "Orders", "Close"],
-    previewActive: 1,
-    previewRows: [
-      {
-        label: "T12 · 2× tasting · note: no shellfish",
-        meta: "Preparing",
-        tone: "warn",
-      },
-      { label: "T04 · mains fired", meta: "Ready", tone: "ok" },
-      { label: "T09 · dessert course", meta: "Received", tone: "soft" },
-    ],
-  },
-  {
-    slug: "hms",
-    number: "03",
-    category: "Hotel Management System",
-    name: "Hotel HMS",
-    title: "Every stay.",
-    titleEm: "Considered, together.",
-    lead: "See the whole property in one place. Connect reservations, room readiness and guest context around a better stay.",
-    orbitLabel: "Hotel & property management",
-    thumb: "/media/suite.jpg",
-    alt: "A boutique hotel bedroom in morning light.",
-    icon: "▦",
-    previewTabs: ["Reservations", "Rooms", "Arrivals", "Housekeeping"],
-    previewActive: 0,
-    previewRows: [
-      { label: "Suite 12 · arrival 15:00", meta: "Ready", tone: "ok" },
-      { label: "Room 07 · late checkout", meta: "Cleaning", tone: "warn" },
-      { label: "Cottage 3 · 2 nights", meta: "Confirmed", tone: "soft" },
-    ],
-  },
-  {
-    slug: "web",
-    number: "04",
-    category: "Websites & Digital Experiences",
-    name: "Web Development",
-    title: "First impressions.",
-    titleEm: "Made to last.",
-    lead: "A digital front door with a sense of place. Distinctive websites that turn discovery into a clear next step.",
-    orbitLabel: "Websites & digital experiences",
-    thumb: "/media/facade.jpg",
-    alt: "A hotel entrance at blue hour.",
-    icon: "⌘",
-    previewTabs: ["Pages", "Rooms", "Enquiry", "Preview"],
-    previewActive: 3,
-    previewRows: [
-      { label: "Homepage · hero & stays", meta: "Live", tone: "ok" },
-      { label: "Direct booking path", meta: "In review", tone: "warn" },
-      { label: "Seasonal offer page", meta: "Draft", tone: "soft" },
-    ],
-  },
-  {
-    slug: "growth",
-    number: "05",
-    category: "Growth, Marketing & Branding",
-    name: "Digital Growth",
-    title: "Your next chapter.",
-    titleEm: "Seen by the right people.",
-    lead: "Bring branding, content and campaigns into focus. Build a presence that feels like you — and a clearer path to growth.",
-    orbitLabel: "Digital growth & branding",
-    thumb: "/media/table.jpg",
-    alt: "A set table for two, a candle and a glass.",
-    icon: "↗︎",
-    previewTabs: ["Brand", "Search", "Campaigns", "Enquiries"],
-    previewActive: 3,
-    previewRows: [
-      { label: "Direct enquiries · this week", meta: "+18%", tone: "ok" },
-      { label: "Search visibility · stays", meta: "Steady", tone: "soft" },
-      { label: "Campaign · autumn cottage", meta: "Live", tone: "warn" },
-    ],
-  },
+  { slug: "crm", number: "01", name: "CRM", orbitLabel: "Guest relationships & messaging", thumb: "/media/desk.jpg" },
+  { slug: "oms", number: "02", name: "Restaurant OMS", orbitLabel: "Restaurant order management", thumb: "/media/dining.jpg" },
+  { slug: "hms", number: "03", name: "Hotel HMS", orbitLabel: "Hotel & property management", thumb: "/media/suite.jpg" },
+  { slug: "web", number: "04", name: "Web Development", orbitLabel: "Websites & digital experiences", thumb: "/media/facade.jpg" },
+  { slug: "growth", number: "05", name: "Digital Growth", orbitLabel: "Digital growth & branding", thumb: "/media/table.jpg" },
 ];
 
 const CYCLE_MS = 5500;
-const ease = [0.22, 1, 0.36, 1] as const;
 
-/** Drawn arrow — iOS renders the ↗︎ character as a colour emoji. */
+/** Which Mountain House tab each service lights up. */
+const TAB_FOR: Record<Slide["slug"], TabId> = {
+  crm: "crm",
+  oms: "operations",
+  hms: "reservations",
+  web: "booking",
+  growth: "booking",
+};
+/** Clicking a panel tab highlights this service. */
+const SERVICE_FOR: Record<TabId, number> = {
+  crm: 0,
+  operations: 1,
+  reservations: 2,
+  booking: 3,
+};
+/** Canvas space kept under the arc crest for the planet glow (px). */
+const ARC_PAD = 360;
+
+/** Drawn arrow — iOS renders the ↗ character as a colour emoji. */
 function ArrowUpRight() {
   return (
     <svg className="hero-arrow" viewBox="0 0 12 12" aria-hidden="true">
@@ -155,101 +61,36 @@ function ArrowUpRight() {
   );
 }
 
-function CopyBody({
-  slide,
-  href,
-  idle = false,
-}: {
-  slide: Slide;
-  href: string;
-  idle?: boolean;
-}) {
-  // idle copies are invisible height sizers: not focusable, not announced.
-  const tab = idle ? -1 : undefined;
-  return (
-    <>
-      <span className="hero-welcome">
-        Welcome to Beyond OS · {slide.number} / {slide.category}
-      </span>
-      <h1>
-        {slide.title}
-        <br />
-        <em>{slide.titleEm}</em>
-      </h1>
-      <p>{slide.lead}</p>
-      <Link className="hero-explore-link" href={href} tabIndex={tab}>
-        Explore {slide.name} <span aria-hidden="true">→</span>
-      </Link>
-      <div className="hero-actions">
-        <Link className="hero-btn hero-cta-primary" href={href} tabIndex={tab}>
-          Explore {slide.name}{" "}
-          <span>
-            <ArrowUpRight />
-          </span>
-        </Link>
-        <Link
-          className="hero-btn hero-cta-secondary"
-          href="/#contact"
-          tabIndex={tab}
-        >
-          Let&apos;s talk{" "}
-          <span>
-            <ArrowUpRight />
-          </span>
-        </Link>
-      </div>
-    </>
-  );
-}
-
 export function Hero() {
   const reduce = useReducedMotion();
   const router = useRouter();
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
-  const markRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const arcRef = useRef<HTMLParagraphElement>(null);
   // Was the pressed item already active when the press began? Focus (and hover)
   // select an item before its click fires, so `selected` alone can't tell
   // "first tap selects" from "tap on the active item opens it".
   const pressedActive = useRef<boolean | null>(null);
-  const slide = slides[active];
-  const href = `/services/${slide.slug}`;
 
   const select = useCallback((index: number) => {
     setActive((index + slides.length) % slides.length);
   }, []);
 
-  // Parallax on the BEYOND mark: written straight to the DOM (no re-render per scroll).
-  useEffect(() => {
-    const node = heroRef.current;
-    const mark = markRef.current;
-    if (
-      !node ||
-      !mark ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    )
-      return;
-
-    let frame = 0;
-    function update() {
-      frame = 0;
-      if (!node || !mark) return;
-      const { top, height } = node.getBoundingClientRect();
-      const progress = Math.min(1, Math.max(0, -top / Math.max(height, 1)));
-      mark.style.transform = `translate3d(0, ${progress * 14}%, 0)`;
-    }
-    function onScroll() {
-      if (!frame) frame = window.requestAnimationFrame(update);
-    }
-
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.cancelAnimationFrame(frame);
+  // The arc crest sits just under the "Tbilisi" label; the canvas is sized to match.
+  useLayoutEffect(() => {
+    const hero = heroRef.current;
+    const label = arcRef.current;
+    if (!hero || !label) return;
+    const measure = () => {
+      const y = label.getBoundingClientRect().bottom - hero.getBoundingClientRect().top + 14;
+      hero.style.setProperty("--arc-y", `${Math.round(y)}px`);
     };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(hero);
+    return () => ro.disconnect();
   }, []);
 
   // Phones: the services become a swipeable chip row — keep the active chip in view.
@@ -260,92 +101,58 @@ export function Hero() {
     const chip = list.children[active] as HTMLElement | undefined;
     if (!chip) return;
     const left = chip.offsetLeft - (list.clientWidth - chip.offsetWidth) / 2;
-    list.scrollTo({
-      left: Math.max(0, left),
-      behavior: reduce ? "auto" : "smooth",
-    });
+    list.scrollTo({ left: Math.max(0, left), behavior: reduce ? "auto" : "smooth" });
   }, [active, reduce]);
 
   useEffect(() => {
     if (reduce || paused) return;
     const id = window.setInterval(() => {
-      const motionOff =
-        document.documentElement.getAttribute("data-motion") === "paused";
+      const motionOff = document.documentElement.getAttribute("data-motion") === "paused";
       if (motionOff) return;
       setActive((current) => (current + 1) % slides.length);
     }, CYCLE_MS);
     return () => window.clearInterval(id);
   }, [paused, reduce, active]);
 
-  useEffect(() => {
-    function onKey(event: KeyboardEvent) {
-      if (event.key === "ArrowDown" || event.key === "ArrowRight") {
-        event.preventDefault();
-        select(active + 1);
-      } else if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
-        event.preventDefault();
-        select(active - 1);
-      }
-    }
-    const node = heroRef.current;
-    node?.addEventListener("keydown", onKey);
-    return () => node?.removeEventListener("keydown", onKey);
-  }, [active, select]);
-
   return (
-    <>
-      <section
-        ref={heroRef}
-        className="hero-immersive"
-        aria-label="Explore Beyond OS services"
-        tabIndex={-1}
-      >
-        <div className="hero-atmosphere" aria-hidden="true">
-          <div className="hero-atmosphere-base" />
-          <div className="hero-grid" aria-hidden="true">
-            <EclipseHorizon />
-          </div>
-          <div className="hero-horizon">
-            <span className="hero-geo mono">
-              Tbilisi, Georgia · 41.7151° N, 44.8271° E
-            </span>
-          </div>
+    <section ref={heroRef} className="hero" aria-label="Beyond OS">
+      <div className="hero-atmosphere" aria-hidden="true">
+        <div className="hero-atmosphere-base" />
+        <div className="hero-grid">
+          <EclipseHorizon bottomOffset={ARC_PAD} />
         </div>
+      </div>
 
-        <div ref={markRef} className="hero-beyond-mark" aria-hidden="true">
-          BEYOND
-        </div>
-
+      <div className="wrap hero-inner">
         <div className="hero-top mono">
           <span>
-            <i className="dot" /> THE CONNECTED HOSPITALITY TOOLKIT
+            <i className="dot" /> Built in Georgia. Designed for hospitality.
           </span>
-          <span>BUILT IN GEORGIA / DESIGNED AROUND YOU</span>
+          <span>Local roots / Global thinking</span>
         </div>
 
-        <div className="wrap hero-stage">
+        <div className="hero-stage">
           <div className="hero-copy">
-            {/* Invisible copies of every slide reserve the tallest height,
-                so autoplay never pushes the page around. */}
-            <div className="hero-copy-sizer" aria-hidden="true" inert>
-              {slides.map((item) => (
-                <div key={item.slug} className="hero-copy-stack">
-                  <CopyBody slide={item} href={`/services/${item.slug}`} idle />
-                </div>
-              ))}
+            <h1>
+              <span>Your hospitality.</span>
+              <em>Connected.</em>
+            </h1>
+            <p className="hero-lead">
+              Software, websites and digital growth for hotels, cottages and restaurants. One
+              partner to connect the way you run and grow.
+            </p>
+            <div className="hero-actions">
+              <Link className="hero-cta" href="#workspace">
+                Try the product concept
+                <span className="hero-cta-icon">
+                  <ArrowUpRight />
+                </span>
+              </Link>
+              <Link className="hero-link" href="/#contact">
+                Request a demo <ArrowUpRight />
+              </Link>
             </div>
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={slide.slug}
-                className="hero-copy-stack"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.24, ease }}
-              >
-                <CopyBody slide={slide} href={href} />
-              </motion.div>
-            </AnimatePresence>
+            <p className="hero-tagline mono">Your business. One connected system.</p>
           </div>
 
           <div
@@ -355,11 +162,7 @@ export function Hero() {
             onMouseLeave={() => setPaused(false)}
             onFocusCapture={() => setPaused(true)}
             onBlurCapture={(event) => {
-              if (
-                !event.currentTarget.contains(
-                  event.relatedTarget as Node | null,
-                )
-              ) {
+              if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
                 setPaused(false);
               }
             }}
@@ -384,19 +187,25 @@ export function Hero() {
                     data-index={index}
                     aria-pressed={selected}
                     tabIndex={selected ? 0 : -1}
-                    aria-label={
-                      selected ? `Explore ${item.name}` : `Show ${item.name}`
-                    }
+                    aria-label={selected ? `Explore ${item.name}` : `Show ${item.name}`}
                     // Hover-select for mice only; touch selects on tap.
                     onPointerEnter={(event) => {
                       if (event.pointerType === "mouse") select(index);
                     }}
                     onPointerDown={(event) => {
                       // A mouse has already selected on hover, so its click opens.
-                      pressedActive.current =
-                        event.pointerType === "mouse" ? true : selected;
+                      pressedActive.current = event.pointerType === "mouse" ? true : selected;
                     }}
                     onFocus={() => select(index)}
+                    onKeyDown={(event) => {
+                      if (event.key === "ArrowDown" || event.key === "ArrowRight") {
+                        event.preventDefault();
+                        select(index + 1);
+                      } else if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+                        event.preventDefault();
+                        select(index - 1);
+                      }
+                    }}
                     onClick={() => {
                       // Keyboard activation has no pointerdown: fall back to `selected`.
                       const open = pressedActive.current ?? selected;
@@ -406,13 +215,7 @@ export function Hero() {
                     }}
                   >
                     <span className="hero-orbit-thumb">
-                      <Image
-                        src={item.thumb}
-                        alt=""
-                        fill
-                        sizes="120px"
-                        className="hero-orbit-thumb-img"
-                      />
+                      <Image src={item.thumb} alt="" fill sizes="120px" className="hero-orbit-thumb-img" />
                       <span className="hero-orbit-thumb-veil" />
                       <span className="hero-orbit-index">{item.number}</span>
                     </span>
@@ -425,65 +228,49 @@ export function Hero() {
               })}
             </div>
 
-            <Link href="/#workspace" className="hero-orbit-callout">
-              <span className="hero-orbit-callout-kicker">
-                One booking. A connected journey.
-              </span>
+            <Link href={`/services/${slides[active].slug}`} className="hero-orbit-callout">
+              <span className="hero-orbit-callout-kicker">One booking. A connected journey.</span>
               <strong>
-                See how it could work{" "}
-                <span aria-hidden="true">
-                  <ArrowUpRight />
-                </span>
+                See {slides[active].name} <ArrowUpRight />
               </strong>
             </Link>
+
+            <div className="hero-status mono">
+              <span>{slides[active].number}</span>
+              <i />
+              <span>05</span>
+              <button
+                type="button"
+                aria-pressed={paused}
+                aria-label={paused ? "Play service rotation" : "Pause service rotation"}
+                onClick={() => setPaused((value) => !value)}
+              >
+                {paused ? "▶" : "Ⅱ"}
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="hero-bottom wrap">
-          <div className="hero-status">
-            <span>{slide.number}</span>
-            <i />
-            <span>05</span>
-            <button
-              type="button"
-              aria-pressed={paused}
-              aria-label={
-                paused ? "Play service rotation" : "Pause service rotation"
-              }
-              onClick={() => setPaused((value) => !value)}
-            >
-              {paused ? "▶" : "Ⅱ"}
-            </button>
-          </div>
-          <a className="hero-scroll mono" href="#workspace">
-            SCROLL TO DISCOVER <span>↓</span>
-          </a>
-          <div className="hero-bottom-spacer" aria-hidden="true" />
+        <p ref={arcRef} className="hero-arc-label mono">
+          Tbilisi, Georgia <span>41.7151° N / 44.8271° E</span>
+        </p>
+
+        {/* The panel follows the highlighted service; hovering it pauses autoplay. */}
+        <div
+          className="hero-panel"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          <HeroWorkspace
+            tab={TAB_FOR[slides[active].slug]}
+            onTabChange={(next) => select(SERVICE_FOR[next])}
+          />
         </div>
+
         <span className="sr-only" aria-live="polite">
-          Showing {slide.name}
+          Showing {slides[active].name}
         </span>
-      </section>
-
-      <div className="scope-strip">
-        <div className="wrap scope-inner">
-          <span className="mono">
-            ONE CONNECTED PARTNER.
-            <br />
-            FIVE WAYS FORWARD.
-          </span>
-          {slides.map((item) => (
-            <Link
-              key={item.slug}
-              href={`/services/${item.slug}`}
-              aria-current={item.slug === slide.slug ? "true" : undefined}
-            >
-              <b>{item.icon}</b>
-              {item.name}
-            </Link>
-          ))}
-        </div>
       </div>
-    </>
+    </section>
   );
 }

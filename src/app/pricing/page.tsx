@@ -4,7 +4,7 @@ import { PricingCards } from "@/components/pricing/PricingCards";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Simple Beyond OS pricing — Hobby, Pro, and Expert tiers with clear value and no surprises.",
+    "Beyond OS pricing follows scope: start with one service, connect a few, or run the complete system. Every plan starts with Discovery and a fixed quote.",
 };
 
 export default function PricingPage() {

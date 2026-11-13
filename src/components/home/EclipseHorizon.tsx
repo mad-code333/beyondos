@@ -49,7 +49,12 @@ function makeLayer(w: number, h: number, dpr: number) {
   return { canvas, ctx };
 }
 
-export function EclipseHorizon() {
+export function EclipseHorizon({
+  bottomOffset,
+}: {
+  /** Place the arc crest this many px above the canvas bottom. */
+  bottomOffset?: number;
+} = {}) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -150,7 +155,12 @@ export function EclipseHorizon() {
       // Arc crest sits ~71% down the hero, like the original layout.
       // Phones stack everything in one tall column, so the arc sits near the
       // bottom (behind the status row) instead of cutting through the content.
-      horizonY = W <= 900 ? Math.round(Math.max(H * 0.6, H - 64)) : Math.round(H * 0.71);
+      horizonY =
+        bottomOffset != null
+          ? Math.round(Math.max(H * 0.4, H - bottomOffset))
+          : W <= 900
+            ? Math.round(Math.max(H * 0.6, H - 64))
+            : Math.round(H * 0.71);
       R = Math.max(W, 600) * CURVATURE;
       planetCy = horizonY + R;
 
@@ -398,7 +408,7 @@ export function EclipseHorizon() {
       window.removeEventListener("pointermove", onPointerMove);
       document.removeEventListener("pointerleave", onPointerLeave);
     };
-  }, []);
+  }, [bottomOffset]);
 
   return (
     <div ref={wrapRef} className="hero-eclipse" aria-hidden="true">
