@@ -142,7 +142,7 @@ export function Hero() {
               partner to connect the way you run and grow.
             </p>
             <div className="hero-actions">
-              <Link className="hero-cta" href="#workspace">
+              <Link className="hero-cta" href="#services">
                 Try the product concept
                 <span className="hero-cta-icon">
                   <ArrowUpRight />

@@ -11,13 +11,11 @@ import { Process } from "@/components/home/Process";
 import { ServicesList } from "@/components/home/ServicesList";
 import { Vision } from "@/components/home/Vision";
 import { WorkMix } from "@/components/home/WorkMix";
-import { WorkspaceDemo } from "@/components/home/WorkspaceDemo";
 
 export default function Home() {
   return (
     <main>
       <Hero />
-      <WorkspaceDemo />
       <ServicesList />
       <LogoShowcase />
       <PricingSection />

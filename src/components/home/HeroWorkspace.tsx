@@ -209,7 +209,7 @@ export function HeroWorkspace({
                 {view.note.kicker}
               </small>
               <p>{view.note.body}</p>
-              <a href="#workspace">
+              <a href="#services">
                 {view.note.action} <ArrowRight />
               </a>
             </motion.aside>
