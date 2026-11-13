@@ -109,24 +109,25 @@
 
 .hero-copy h1 {
   margin: 0;
-  font-family: var(--font-manrope), Manrope, sans-serif;
-  font-size: clamp(48px, 4.3vw, 82px);
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.058em;
-  color: #f6f6f1;
+  font-family: var(--font-display), Orbitron, sans-serif;
+  font-size: clamp(34px, 3.6vw, 60px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #f4f4f0;
 }
 
-/* Desktop keeps each line whole, as in the reference. */
 .hero-copy h1 span,
 .hero-copy h1 em {
   display: block;
-  white-space: nowrap;
 }
 
 .hero-copy h1 em {
+  margin-top: 0.12em;
   font-style: normal;
-  color: #8f8f89;
+  font-weight: 700;
+  color: #8e8e88;
 }
 
 .hero-lead {
@@ -325,6 +326,8 @@
 .hero-orbit-item[data-index="4"] {
   --slot-x: 84px;
   --slot-y: 164px;
+  /* stop short of the callout so a long label wraps instead of sliding under it */
+  width: calc(100% - min(196px, 38%) - 4% - var(--slot-x) - 16px);
 }
 
 .hero-orbit-item[aria-pressed="true"] {
@@ -440,7 +443,7 @@
   z-index: 6;
   display: grid;
   gap: 8px;
-  width: min(212px, 42%);
+  width: min(196px, 38%);
   padding: 14px 16px 16px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 12px;
@@ -902,7 +905,7 @@
   }
 
   .hero-copy h1 {
-    font-size: clamp(40px, 11vw, 64px);
+    font-size: clamp(28px, 8.4vw, 44px);
   }
 
   .hero-copy h1 span,

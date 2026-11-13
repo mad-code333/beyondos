@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandMark } from "@/components/layout/BrandMark";
 import { FooterCanvas } from "./FooterCanvas";
 import { MotionToggle } from "./MotionToggle";
 import "./footer.css";
@@ -10,7 +11,7 @@ export function Footer() {
         <div className="wrap footer-top">
           <div>
             <Link href="/" className="wordmark" aria-label="Beyond OS home">
-              <span className="brand-icon">b</span>
+              <BrandMark />
               beyond
               <span className="os">os</span>
             </Link>

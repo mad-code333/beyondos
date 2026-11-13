@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { BrandMark } from "@/components/layout/BrandMark";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -74,7 +75,7 @@ export function Header() {
   return (
     <header className="site-header">
       <Link href="/" onClick={closeAll} className="wordmark" aria-label="Beyond OS home">
-        <span className="brand-icon">b</span>
+        <BrandMark />
         beyond
         <span className="os">os</span>
       </Link>

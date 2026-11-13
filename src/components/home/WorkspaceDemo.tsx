@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { BrandMark } from "@/components/layout/BrandMark";
 import {
   AnimatePresence,
   LayoutGroup,
@@ -205,7 +206,7 @@ export function WorkspaceDemo({
                   href={explore[tab].href}
                   aria-label="Beyond OS home"
                 >
-                  <span className="brand-icon">b</span>
+                  <BrandMark />
                   beyond
                   <span className="os">OS</span>
                 </Link>
