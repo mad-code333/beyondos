@@ -1,0 +1,133 @@
+.contact-page {
+  min-height: 70vh;
+  padding: clamp(72px, 10vw, 120px) 0 96px;
+  background:
+    radial-gradient(ellipse 55% 40% at 50% 0%, rgba(196, 165, 116, 0.1), transparent 70%),
+    #080808;
+}
+
+.contact-enquiry {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: clamp(28px, 5vw, 64px);
+  align-items: start;
+}
+
+.contact-enquiry-copy .mono {
+  margin: 0 0 14px;
+  font-family: var(--font-display), Orbitron, system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #c4a574;
+}
+
+.contact-enquiry-copy h1 {
+  margin: 0 0 14px;
+  font-family: var(--font-display), Orbitron, system-ui, sans-serif;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  text-transform: uppercase;
+  color: #f2f1eb;
+}
+
+.contact-enquiry-copy p {
+  margin: 0;
+  max-width: 42ch;
+  color: #8a8a84;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.contact-enquiry-form,
+.contact-enquiry-done {
+  display: grid;
+  gap: 16px;
+  padding: 28px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 22px;
+  background: #0c0c0c;
+}
+
+.contact-enquiry-form label {
+  display: grid;
+  gap: 8px;
+  color: #b8b8b2;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.contact-enquiry-form input,
+.contact-enquiry-form select,
+.contact-enquiry-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: #101010;
+  color: #f2f1eb;
+  font: inherit;
+  font-size: 14px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.contact-enquiry-form textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.contact-enquiry-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 50px;
+  margin-top: 6px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 999px;
+  background: #f2f1eb;
+  color: #111;
+  font-family: var(--font-display), Orbitron, system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    transform 0.25s ease;
+}
+
+.contact-enquiry-submit:hover {
+  background: #fff;
+  transform: translateY(-1px);
+}
+
+.contact-enquiry-done h2 {
+  margin: 0;
+  color: #f2f1eb;
+  font-size: 22px;
+}
+
+.contact-enquiry-done p {
+  margin: 0;
+  color: #8a8a84;
+  line-height: 1.6;
+}
+
+.contact-enquiry-done a {
+  color: #c4a574;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 860px) {
+  .contact-enquiry {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,20 +1,49 @@
-/* Ways of Working — engagement / pricing cards (UI only) */
+/* Ways of Working — three engagement cards */
 
 .engagement-models {
-  padding: clamp(56px, 9vw, 96px) 0;
-  background: #0a0a0a;
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  padding: clamp(64px, 9vw, 96px) 0;
+  background: #050505;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.engagement-models .mono,
-.engage-eyebrow {
-  margin: 0;
-  font-family: var(--font-display), Orbitron, system-ui, sans-serif;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: #c4c4bc;
+.engage-cassis .engage-glow {
+  pointer-events: none;
+  position: absolute;
+  left: 50%;
+  top: -8%;
+  z-index: 0;
+  width: min(900px, 95vw);
+  height: 420px;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(196, 165, 116, 0.28) 0%,
+    rgba(196, 165, 116, 0.16) 42%,
+    transparent 72%
+  );
+}
+
+.engage-cassis .engage-glow--pulse {
+  top: 22%;
+  width: min(560px, 58vw);
+  height: 560px;
+  opacity: 0.65;
+  filter: blur(18px);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(196, 165, 116, 0.32) 0%,
+    rgba(196, 165, 116, 0.12) 48%,
+    transparent 70%
+  );
+  animation: engage-glow-breathe 7.5s ease-in-out infinite;
+}
+
+.engage-cassis .wrap {
+  position: relative;
+  z-index: 1;
 }
 
 .engage-head {
@@ -26,8 +55,22 @@
   margin-bottom: 36px;
 }
 
-.engage-copy {
-  max-width: min(720px, 100%);
+.engage-head--center {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.engagement-models .mono {
+  margin: 0;
+  font-family: var(--font-display), Orbitron, system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #9a9a94;
 }
 
 .engage-head h2 {
@@ -35,10 +78,20 @@
   font-family: var(--font-display), Orbitron, system-ui, sans-serif;
   font-size: clamp(28px, 4.2vw, 44px);
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   line-height: 1.12;
   text-transform: uppercase;
-  color: #f4f4f0;
+  color: #f2f1eb;
+}
+
+.engage-heading-line {
+  display: block;
+  overflow: hidden;
+}
+
+.engage-heading-line > span,
+.engage-heading-line > em {
+  display: block;
 }
 
 .engage-head h2 em {
@@ -49,200 +102,266 @@
 
 .engage-lead {
   margin: 0;
-  max-width: 42ch;
+  max-width: 46ch;
   color: #8a8a84;
   font-size: 14px;
-  line-height: 1.55;
+  line-height: 1.6;
 }
 
-.currency-toggle {
-  display: inline-flex;
-  gap: 4px;
-  padding: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  background: transparent;
-  flex-shrink: 0;
+.engage-head--center .engage-lead {
+  margin: 0 auto;
 }
 
-.currency-opt {
-  cursor: pointer;
-  margin: 0;
-}
-
-.currency-opt input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.currency-opt span {
-  display: block;
-  padding: 8px 12px;
-  border-radius: 999px;
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  color: #8a8a84;
-  white-space: nowrap;
-  transition:
-    background 0.2s ease,
-    color 0.2s ease;
-}
-
-.currency-opt input:checked + span {
-  background: #f2f1eb;
-  color: #111;
-}
-
-.currency-opt input:focus-visible + span {
-  outline: 2px solid #c4a574;
-  outline-offset: 2px;
-}
-
-.engage-grid {
+.pricing-tiers {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
+  gap: clamp(18px, 2vw, 28px);
   align-items: stretch;
 }
 
-.engage-grid > * {
-  display: flex;
+.engage-pricing-tiers {
+  margin-top: 8px;
+}
+
+.pricing-tier {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto;
+  gap: 16px;
   min-height: 100%;
+  padding: 30px 26px 26px;
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035) 0%, transparent 46%),
+    #0c0c0c;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  overflow: hidden;
+  transition:
+    border-color 0.35s ease,
+    box-shadow 0.35s ease,
+    background 0.35s ease;
 }
 
-.engage-card {
-  width: 100%;
-  padding: 26px 24px 24px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  background: #101010;
+.pricing-tier:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.pricing-tier.is-popular {
+  border-color: rgba(196, 165, 116, 0.4);
+  box-shadow:
+    0 0 0 1px rgba(196, 165, 116, 0.2),
+    0 30px 80px -40px rgba(196, 165, 116, 0.4);
+  animation: engage-popular-border 5.5s ease-in-out infinite;
+}
+
+.pricing-tier.is-popular:hover {
+  border-color: rgba(196, 165, 116, 0.62);
+}
+
+.pricing-tier-aura {
+  pointer-events: none;
+  position: absolute;
+  left: -20%;
+  bottom: -40%;
+  width: 80%;
+  height: 70%;
+  background: radial-gradient(circle, rgba(196, 165, 116, 0.22) 0%, transparent 70%);
+  animation: engage-card-aura 6.5s ease-in-out infinite;
+}
+
+.pricing-tier-head {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-height: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  min-height: 28px;
 }
 
-.engage-card.is-highlight {
-  border-color: rgba(196, 165, 116, 0.38);
-  background: linear-gradient(160deg, #161410, #101010 62%);
-}
-
-.engage-mode {
+.pricing-tier h3 {
   margin: 0;
-  color: #c4a574;
+  font-family: var(--font-display), Orbitron, system-ui, sans-serif;
+  font-size: clamp(22px, 2.4vw, 28px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #f2f1eb;
+}
+
+.pricing-badge {
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: #c4a574;
+  color: #14110c;
+  font-family: var(--font-manrope), Manrope, system-ui, sans-serif;
   font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.engage-card h3 {
+.pricing-best {
   margin: 0;
-  font-family: var(--font-display), Orbitron, system-ui, sans-serif;
-  font-size: clamp(22px, 2.2vw, 26px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: #f4f4f0;
-}
-
-.engage-card > p {
-  margin: 0;
-  color: #a3a3a3;
-  font-size: 14px;
+  min-height: 4.2em;
+  color: #9a9a94;
+  font-size: 13.5px;
   line-height: 1.55;
 }
 
-.engage-card ul {
-  margin: 4px 0 4px;
-  padding: 0;
-  list-style: none;
+.pricing-amount {
   display: grid;
-  gap: 8px;
-  flex: 1 1 auto;
+  gap: 4px;
+  margin: 2px 0 4px;
 }
 
-.engage-card li {
+.pricing-amount > span {
+  font-family: var(--font-manrope), Manrope, system-ui, sans-serif;
+  font-size: clamp(32px, 3.2vw, 44px);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: #f2f1eb;
+}
+
+.pricing-amount small {
+  color: #8a8a84;
+  font-size: 12px;
+  letter-spacing: 0.01em;
+}
+
+.pricing-tier ul {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0 4px;
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.pricing-tier li {
   position: relative;
-  padding-left: 18px;
-  font-size: 13px;
+  padding-left: 22px;
+  font-size: 13.5px;
   line-height: 1.45;
-  color: #cfcfc9;
+  color: #b8b8b2;
 }
 
-.engage-card li::before {
-  content: "✓";
+.pricing-tier li::before {
+  content: "";
   position: absolute;
   left: 0;
-  top: 0;
-  color: #c4a574;
-  font-size: 12px;
-  font-weight: 700;
+  top: 0.35em;
+  width: 12px;
+  height: 12px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M3.5 8.2 6.4 11l6.1-6.5' stroke='%23c4a574' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    50% center / contain no-repeat;
 }
 
-.engage-price {
-  margin-top: auto;
-  padding-top: 14px;
-}
-
-.price-label {
-  display: block;
-  color: #cfcfc9;
-  font-size: 15px;
-  font-weight: 500;
-}
-
-.engage-cta {
+.pricing-cta {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  justify-content: center;
   width: 100%;
-  min-height: 50px;
-  margin-top: 4px;
-  padding: 14px 22px;
-  border: 1px solid #ececea;
-  border-radius: 100px;
-  background: #ececea;
-  color: #0e0e0e;
-  font-family: var(--font-display), Orbitron, system-ui, sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  min-height: 48px;
+  margin-top: 8px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: #f2f1eb;
+  color: #111;
+  font-family: var(--font-manrope), Manrope, system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
   text-decoration: none;
   transition:
-    transform 0.25s ease,
     background 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.25s ease;
 }
 
-.engage-cta > span {
-  font-size: 16px;
-  font-weight: 400;
-  letter-spacing: 0;
-}
-
-.engage-cta:hover {
+.pricing-cta:hover {
   background: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
 }
 
-.engage-cta:focus-visible {
+.pricing-cta:focus-visible {
   outline: 2px solid #c4a574;
   outline-offset: 3px;
 }
 
-@media (max-width: 960px) {
-  .engage-head {
-    align-items: flex-start;
-  }
+.engage-foot {
+  margin: 28px 0 0;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8a8a84;
+}
 
-  .engage-grid {
+.engage-foot a {
+  color: #f2f1eb;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+
+.engage-foot a:hover {
+  color: #c4a574;
+}
+
+@keyframes engage-glow-breathe {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: translateX(-50%) scale(1.06);
+  }
+}
+
+@keyframes engage-card-aura {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes engage-popular-border {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(196, 165, 116, 0.18),
+      0 30px 80px -40px rgba(196, 165, 116, 0.35);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(196, 165, 116, 0.32),
+      0 34px 90px -36px rgba(196, 165, 116, 0.55);
+  }
+}
+
+@media (max-width: 980px) {
+  .pricing-tiers {
     grid-template-columns: 1fr;
     max-width: 520px;
+    margin-inline: auto;
+  }
+
+  .pricing-best {
+    min-height: 0;
+  }
+
+  .engage-head--center {
+    margin-bottom: 36px;
   }
 }
 
@@ -251,41 +370,29 @@
     padding: 64px 0;
   }
 
-  .engage-head {
-    margin-bottom: 28px;
-    gap: 18px;
+  .pricing-tier {
+    padding: 24px 20px 20px;
+    border-radius: 20px;
   }
 
-  .engage-head h2 {
-    font-size: clamp(26px, 8vw, 34px);
-  }
-
-  .currency-toggle {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .currency-opt {
-    flex: 1 1 0;
-  }
-
-  .currency-opt span {
-    text-align: center;
-    padding: 9px 8px;
-  }
-
-  .engage-card {
-    padding: 22px 18px;
+  .pricing-amount > span {
+    font-size: clamp(28px, 9vw, 36px);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .engage-cta,
-  .currency-opt span {
+  .engage-glow--pulse,
+  .pricing-tier-aura,
+  .pricing-tier.is-popular {
+    animation: none;
+  }
+
+  .pricing-cta,
+  .pricing-tier {
     transition: none;
   }
 
-  .engage-cta:hover {
+  .pricing-cta:hover {
     transform: none;
   }
 }

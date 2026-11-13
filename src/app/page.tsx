@@ -6,7 +6,6 @@ import { FeaturesBento } from "@/components/home/FeaturesBento";
 import { Hero } from "@/components/home/Hero";
 import { Insights } from "@/components/home/Insights";
 import { LogoShowcase } from "@/components/home/LogoShowcase";
-import { PricingSection } from "@/components/home/PricingSection";
 import { Process } from "@/components/home/Process";
 import { ServicesList } from "@/components/home/ServicesList";
 import { Vision } from "@/components/home/Vision";
@@ -18,7 +17,6 @@ export default function Home() {
       <Hero />
       <ServicesList />
       <LogoShowcase />
-      <PricingSection />
       <EngagementModels />
       <FeaturesBento />
       <Connected />
