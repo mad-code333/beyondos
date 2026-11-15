@@ -621,6 +621,11 @@
   font-size: 11px;
 }
 
+.hero-playpause {
+  width: 11px;
+  height: 11px;
+}
+
 .hero-chevron {
   width: 16px;
   height: 16px;

@@ -76,6 +76,19 @@ function Chevron({ dir }: { dir: "up" | "down" }) {
   );
 }
 
+/** Drawn play / pause glyphs — "▶" renders as a colour emoji on iOS. */
+function PlayPauseIcon({ playing }: { playing: boolean }) {
+  return (
+    <svg className="hero-playpause" viewBox="0 0 12 12" aria-hidden="true">
+      {playing ? (
+        <path d="M3.5 2.5v7M8.5 2.5v7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      ) : (
+        <path d="M4 2.6v6.8L9.4 6z" fill="currentColor" />
+      )}
+    </svg>
+  );
+}
+
 /** Two stacked arrows: on hover the first flies out top-right, the second slides in. */
 function ArrowSwap() {
   return (
@@ -90,7 +103,11 @@ export function Hero() {
   const reduce = useReducedMotion();
   const router = useRouter();
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
+  // Two independent reasons to stop autoplay: the user pressed pause (sticky),
+  // or the pointer/focus is resting on the orbit or panel (temporary).
+  const [userPaused, setUserPaused] = useState(false);
+  const [hoverPaused, setHoverPaused] = useState(false);
+  const [inView, setInView] = useState(true);
   const heroRef = useRef<HTMLElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const arcRef = useRef<HTMLParagraphElement>(null);
@@ -130,15 +147,38 @@ export function Hero() {
     list.scrollTo({ left: Math.max(0, left), behavior: reduce ? "auto" : "smooth" });
   }, [active, reduce]);
 
+  // Stop rotating while the hero is scrolled out of view.
   useEffect(() => {
-    if (reduce || paused) return;
+    const hero = heroRef.current;
+    if (!hero) return;
+    const io = new IntersectionObserver(([entry]) => setInView(entry?.isIntersecting ?? true));
+    io.observe(hero);
+    return () => io.disconnect();
+  }, []);
+
+  // Autoplay. Like the rest of the site's motion, it follows the footer's
+  // "Pause motion" toggle (data-motion) rather than the OS reduced-motion flag.
+  // `active` is a dependency so a manual pick restarts the full interval.
+  useEffect(() => {
+    if (userPaused || hoverPaused || !inView) return;
     const id = window.setInterval(() => {
-      const motionOff = document.documentElement.getAttribute("data-motion") === "paused";
-      if (motionOff) return;
+      if (document.hidden) return;
+      if (document.documentElement.getAttribute("data-motion") === "paused") return;
       setActive((current) => (current + 1) % slides.length);
     }, CYCLE_MS);
     return () => window.clearInterval(id);
-  }, [paused, reduce, active]);
+  }, [userPaused, hoverPaused, inView, active]);
+
+  // Hover-pause only for real mouse pointers: touch taps fire "enter" without
+  // a matching "leave", which used to freeze autoplay for good on phones.
+  const hoverHandlers = {
+    onPointerEnter: (event: React.PointerEvent) => {
+      if (event.pointerType === "mouse") setHoverPaused(true);
+    },
+    onPointerLeave: (event: React.PointerEvent) => {
+      if (event.pointerType === "mouse") setHoverPaused(false);
+    },
+  };
 
   return (
     <section ref={heroRef} className="hero" aria-label="BeyondOS">
@@ -195,12 +235,11 @@ export function Hero() {
           <div
             className="hero-orbit"
             aria-label="Choose a service"
-            onMouseEnter={() => setPaused(true)}
-            onMouseLeave={() => setPaused(false)}
-            onFocusCapture={() => setPaused(true)}
+            {...hoverHandlers}
+            onFocusCapture={() => setHoverPaused(true)}
             onBlurCapture={(event) => {
               if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-                setPaused(false);
+                setHoverPaused(false);
               }
             }}
           >
@@ -321,11 +360,11 @@ export function Hero() {
               <button
                 type="button"
                 className="hero-orbit-btn is-play"
-                aria-pressed={paused}
-                aria-label={paused ? "Play service rotation" : "Pause service rotation"}
-                onClick={() => setPaused((value) => !value)}
+                aria-pressed={userPaused}
+                aria-label={userPaused ? "Play service rotation" : "Pause service rotation"}
+                onClick={() => setUserPaused((value) => !value)}
               >
-                {paused ? "▶" : "Ⅱ"}
+                <PlayPauseIcon playing={!userPaused} />
               </button>
             </div>
           </div>
@@ -336,11 +375,7 @@ export function Hero() {
         </p>
 
         {/* The panel follows the highlighted service; hovering it pauses autoplay. */}
-        <div
-          className="hero-panel"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-        >
+        <div className="hero-panel" {...hoverHandlers}>
           <HeroWorkspace
             tab={TAB_FOR[slides[active].slug]}
             onTabChange={(next) => select(SERVICE_FOR[next])}

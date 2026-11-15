@@ -216,21 +216,9 @@ html[data-motion="paused"] .tech-track {
   }
 }
 
+/* The marquee keeps scrolling even when the OS asks for reduced motion;
+   only the site's own "Pause motion" button (or hovering) stops it. */
 @media (prefers-reduced-motion: reduce) {
-  .tech-wall {
-    overflow-x: auto;
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-
-  .tech-track {
-    animation: none !important;
-  }
-
-  .tech-row[aria-hidden="true"] {
-    display: none;
-  }
-
   .tech-tile,
   .tech-art {
     transition: none;

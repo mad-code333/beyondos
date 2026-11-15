@@ -7,9 +7,12 @@ export function MotionToggle() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const stored = window.localStorage.getItem("beyondos-motion");
-    const prefersReduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const next = stored ? stored !== "paused" : !prefersReduce;
+    // Motion is on by default; only an explicit "Pause motion" click (stored) turns it off.
+    let stored: string | null = null;
+    try {
+      stored = window.localStorage.getItem("beyondos-motion");
+    } catch {}
+    const next = stored !== "paused";
     setMotionOn(next);
     document.documentElement.setAttribute("data-motion", next ? "on" : "paused");
     setReady(true);

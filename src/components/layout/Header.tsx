@@ -47,6 +47,7 @@ export function Header() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
   const servicesActive = pathname === "/services" || pathname.startsWith("/services/");
 
@@ -54,6 +55,14 @@ export function Header() {
     setMenuOpen(false);
     setServicesOpen(false);
   }
+
+  // Sticky header: show the glass bar once the page has scrolled.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     function onPointerDown(event: MouseEvent) {
@@ -73,7 +82,7 @@ export function Header() {
   }, []);
 
   return (
-    <header className="site-header">
+    <header className={cn("site-header", scrolled && "is-scrolled")}>
       <Link href="/" onClick={closeAll} className="wordmark" aria-label="BeyondOS home">
         <BrandMark />
         BeyondOS
