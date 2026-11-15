@@ -1,8 +1,14 @@
 .georgia-globe-section {
+  /* Section palette: warm near-black, warm off-white and champagne gold.
+     Every colour in this section is a mix of these three. */
+  --eco-ink: #0b0a08;
+  --eco-paper: #f2efe8;
+  --eco-accent: #c9a96e;
+
   position: relative;
   overflow: clip;
   padding: 72px 0 48px;
-  background: #000;
+  background: var(--eco-ink);
 }
 
 .eco-nav-strip {
@@ -13,14 +19,14 @@
   width: min(1320px, calc(100% - 100px));
   margin: 0 auto 36px;
   padding: 0 0 18px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid color-mix(in srgb, var(--eco-paper) 8%, transparent);
 }
 
 .eco-nav-strip a {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #a8a8a2;
+  color: color-mix(in srgb, var(--eco-paper) 68%, var(--eco-ink));
   font-size: 11px;
   letter-spacing: 0.04em;
   text-decoration: none;
@@ -28,14 +34,14 @@
 }
 
 .eco-nav-strip a:hover {
-  color: #f1f1ee;
+  color: var(--eco-paper);
 }
 
 .eco-nav-strip i {
   width: 8px;
   height: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid color-mix(in srgb, var(--eco-paper) 35%, transparent);
+  background: color-mix(in srgb, var(--eco-paper) 6%, transparent);
   flex: none;
 }
 
@@ -56,7 +62,7 @@
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #9a9a94;
+  color: color-mix(in srgb, var(--eco-paper) 62%, var(--eco-ink));
 }
 
 .georgia-globe-layout h2 {
@@ -67,20 +73,20 @@
   letter-spacing: -0.02em;
   line-height: 1.08;
   text-transform: uppercase;
-  color: #f4f4f0;
+  color: var(--eco-paper);
 }
 
 .georgia-globe-layout h2 em {
   font-style: normal;
   font-weight: 700;
   display: block;
-  color: #c8c8c2;
+  color: color-mix(in srgb, var(--eco-paper) 82%, var(--eco-ink));
 }
 
 .georgia-globe-copy > p {
   max-width: 42ch;
   margin: 0 0 22px;
-  color: #a3a3a3;
+  color: color-mix(in srgb, var(--eco-paper) 67%, var(--eco-ink));
   font-size: 14px;
   line-height: 1.65;
 }
@@ -97,14 +103,14 @@
   width: 100%;
   max-width: none;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: #020202;
+  border: 1px solid color-mix(in srgb, var(--eco-paper) 16%, transparent);
+  background: var(--eco-ink);
   overflow: hidden;
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 18px 40px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.65);
+    0 0 0 1px color-mix(in srgb, var(--eco-paper) 4%, transparent),
+    0 18px 40px color-mix(in srgb, var(--eco-ink) 55%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--eco-paper) 8%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, var(--eco-ink) 65%, transparent);
 }
 
 .ecosystem-list li,
@@ -115,13 +121,13 @@
   padding: 16px 18px;
   border: none;
   border-radius: 0;
-  background: #050505;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  background: var(--eco-ink);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--eco-paper) 3.5%, transparent);
   will-change: background;
 }
 
 .georgia-globe-copy .ecosystem-list > * {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid color-mix(in srgb, var(--eco-paper) 7%, transparent);
 }
 
 .georgia-globe-copy .ecosystem-list > *:last-child {
@@ -140,58 +146,58 @@
 }
 
 .ecosystem-item:hover {
-  background: #0c0c0c;
+  background: var(--eco-ink);
 }
 
 .ecosystem-item:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.35);
+  outline: 2px solid color-mix(in srgb, var(--eco-paper) 35%, transparent);
   outline-offset: -2px;
 }
 
 .ecosystem-item[data-story="georgia"] .mono {
-  color: #b8a06a;
+  color: color-mix(in srgb, var(--eco-ink) 7%, var(--eco-accent));
 }
 
 .ecosystem-item[data-story="supply"] .mono {
-  color: #9b84d8;
+  color: color-mix(in srgb, var(--eco-paper) 19%, var(--eco-accent));
 }
 
 .ecosystem-item[data-story="os"] .mono {
-  color: #b8a4f0;
+  color: color-mix(in srgb, var(--eco-paper) 47%, var(--eco-accent));
 }
 
 .ecosystem-item.is-active {
   position: relative;
   z-index: 1;
-  background: #0d0d0d;
+  background: var(--eco-ink);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    inset 3px 0 0 var(--eco-item-accent, #d4b87a),
-    0 0 0 1px color-mix(in srgb, var(--eco-item-accent, #d4b87a) 42%, transparent);
+    inset 0 1px 0 color-mix(in srgb, var(--eco-paper) 5%, transparent),
+    inset 3px 0 0 var(--eco-item-accent, color-mix(in srgb, var(--eco-paper) 12%, var(--eco-accent))),
+    0 0 0 1px color-mix(in srgb, var(--eco-item-accent, color-mix(in srgb, var(--eco-paper) 12%, var(--eco-accent))) 42%, transparent);
 }
 
 .ecosystem-item[data-story="georgia"].is-active {
-  --eco-item-accent: #d4b87a;
+  --eco-item-accent: color-mix(in srgb, var(--eco-paper) 12%, var(--eco-accent));
 }
 
 .ecosystem-item[data-story="supply"].is-active {
-  --eco-item-accent: #a78bfa;
+  --eco-item-accent: color-mix(in srgb, var(--eco-paper) 39%, var(--eco-accent));
 }
 
 .ecosystem-item[data-story="os"].is-active {
-  --eco-item-accent: #c4b5fd;
+  --eco-item-accent: color-mix(in srgb, var(--eco-paper) 62%, var(--eco-accent));
 }
 
 .ecosystem-item.is-active .mono {
-  color: var(--eco-item-accent, #d4b87a);
+  color: var(--eco-item-accent, color-mix(in srgb, var(--eco-paper) 12%, var(--eco-accent)));
 }
 
 .ecosystem-item.is-active strong {
-  color: #ffffff;
+  color: var(--eco-paper);
 }
 
 .ecosystem-item.is-active p {
-  color: #b8b8b2;
+  color: color-mix(in srgb, var(--eco-paper) 75%, var(--eco-ink));
 }
 
 .ecosystem-item strong em {
@@ -202,12 +208,12 @@
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #7e7e78;
+  color: color-mix(in srgb, var(--eco-paper) 50%, var(--eco-ink));
   vertical-align: 1px;
 }
 
 .ecosystem-item.is-active strong em {
-  color: color-mix(in srgb, var(--eco-item-accent, #d4b87a) 80%, white);
+  color: color-mix(in srgb, var(--eco-item-accent, color-mix(in srgb, var(--eco-paper) 12%, var(--eco-accent))) 80%, var(--eco-paper));
 }
 
 .ecosystem-item:hover .mono {
@@ -215,15 +221,15 @@
 }
 
 .ecosystem-item:hover strong {
-  color: #ffffff;
+  color: var(--eco-paper);
 }
 
 .ecosystem-item:hover p {
-  color: #b0b0aa;
+  color: color-mix(in srgb, var(--eco-paper) 72%, var(--eco-ink));
 }
 
 .ecosystem-item:hover a {
-  color: #ffffff;
+  color: var(--eco-paper);
   transform: translateX(4px);
 }
 
@@ -232,7 +238,7 @@
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: #8a8a84;
+  color: color-mix(in srgb, var(--eco-paper) 55%, var(--eco-ink));
   padding-top: 2px;
   transition: color 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -242,14 +248,14 @@
   margin-bottom: 4px;
   font-size: 15px;
   font-weight: 600;
-  color: #f1f1ee;
+  color: var(--eco-paper);
   transition: color 220ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .ecosystem-list p {
   margin: 0 0 8px;
   max-width: none;
-  color: #a3a3a3;
+  color: color-mix(in srgb, var(--eco-paper) 67%, var(--eco-ink));
   font-size: 14px;
   line-height: 1.55;
   transition: color 220ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -259,7 +265,7 @@
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  color: #f1f1ee;
+  color: var(--eco-paper);
   font-size: 13px;
   text-decoration: none;
   transition:
@@ -280,7 +286,7 @@
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #8a8a84;
+  color: color-mix(in srgb, var(--eco-paper) 55%, var(--eco-ink));
 }
 
 .globe-stage {
@@ -296,17 +302,17 @@
   max-height: none;
   align-self: center;
   justify-self: stretch;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid color-mix(in srgb, var(--eco-paper) 16%, transparent);
   border-radius: 24px;
   background:
-    radial-gradient(ellipse 70% 55% at 50% 42%, rgba(28, 28, 26, 0.7), transparent 62%),
-    radial-gradient(ellipse 90% 80% at 50% 50%, rgb(8, 8, 8), rgb(2, 2, 2));
+    radial-gradient(ellipse 70% 55% at 50% 42%, color-mix(in srgb, color-mix(in srgb, var(--eco-paper) 8%, var(--eco-ink)) 70%, transparent), transparent 62%),
+    radial-gradient(ellipse 90% 80% at 50% 50%, var(--eco-ink), var(--eco-ink));
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 22px 48px rgba(0, 0, 0, 0.55),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.7),
-    inset 0 0 80px rgba(0, 0, 0, 0.35);
+    0 0 0 1px color-mix(in srgb, var(--eco-paper) 4%, transparent),
+    0 22px 48px color-mix(in srgb, var(--eco-ink) 55%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--eco-paper) 8%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, var(--eco-ink) 70%, transparent),
+    inset 0 0 80px color-mix(in srgb, var(--eco-ink) 35%, transparent);
   overflow: hidden;
   /* Isolate from left-column height / hover reflow; skip offscreen paint work */
   contain: layout paint;
@@ -355,11 +361,11 @@
   margin: auto;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 38% 32%, rgba(255, 255, 255, 0.14), transparent 40%),
-    radial-gradient(circle at 50% 50%, #121212 0%, #050505 72%);
+    radial-gradient(circle at 38% 32%, color-mix(in srgb, var(--eco-paper) 14%, transparent), transparent 40%),
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--eco-paper) 4%, var(--eco-ink)) 0%, var(--eco-ink) 72%);
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
-    0 0 48px rgba(255, 255, 255, 0.045);
+    inset 0 0 0 1px color-mix(in srgb, var(--eco-paper) 10%, transparent),
+    0 0 48px color-mix(in srgb, var(--eco-paper) 4.5%, transparent);
   position: relative;
   overflow: hidden;
 }
@@ -380,7 +386,7 @@
   /* Dotted land — avoid filter + mix-blend-mode (expensive while spinning) */
   background-image: radial-gradient(
     circle,
-    rgba(242, 242, 236, 0.9) 0.85px,
+    color-mix(in srgb, var(--eco-paper) 90%, transparent) 0.85px,
     transparent 1.05px
   );
   background-size: 3.4px 3.4px;
@@ -425,11 +431,11 @@
   height: 16px;
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  background: #00e676;
+  background: color-mix(in srgb, var(--eco-ink) 26%, var(--eco-accent));
   border: none;
   box-shadow:
-    0 0 0 5px rgba(0, 230, 118, 0.45),
-    0 0 22px rgba(0, 230, 118, 1);
+    0 0 0 5px color-mix(in srgb, color-mix(in srgb, var(--eco-ink) 26%, var(--eco-accent)) 45%, transparent),
+    0 0 22px color-mix(in srgb, var(--eco-ink) 26%, var(--eco-accent));
   pointer-events: none;
   animation: earth-pin-blink 1.3s ease-in-out infinite;
 }
@@ -440,15 +446,15 @@
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
     box-shadow:
-      0 0 0 6px rgba(0, 230, 118, 0.5),
-      0 0 24px rgba(0, 230, 118, 1);
+      0 0 0 6px color-mix(in srgb, color-mix(in srgb, var(--eco-ink) 26%, var(--eco-accent)) 50%, transparent),
+      0 0 24px color-mix(in srgb, var(--eco-ink) 26%, var(--eco-accent));
   }
   50% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(0.9);
     box-shadow:
-      0 0 0 3px rgba(0, 230, 118, 0.32),
-      0 0 14px rgba(0, 230, 118, 0.85);
+      0 0 0 3px color-mix(in srgb, color-mix(in srgb, var(--eco-ink) 26%, var(--eco-accent)) 32%, transparent),
+      0 0 14px color-mix(in srgb, color-mix(in srgb, var(--eco-ink) 26%, var(--eco-accent)) 85%, transparent);
   }
 }
 
@@ -467,7 +473,7 @@
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #8a8a84;
+  color: color-mix(in srgb, var(--eco-paper) 55%, var(--eco-ink));
 }
 
 .eco-flow-block {
@@ -495,7 +501,7 @@
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #9a9a94;
+  color: color-mix(in srgb, var(--eco-paper) 62%, var(--eco-ink));
   text-align: center;
 }
 
@@ -507,7 +513,7 @@
   letter-spacing: -0.02em;
   line-height: 1.2;
   text-align: center;
-  color: #f1f1ee;
+  color: var(--eco-paper);
 }
 
 .eco-flow-list {
@@ -516,14 +522,14 @@
   width: 100%;
   gap: 0;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  background: #020202;
+  border: 1px solid color-mix(in srgb, var(--eco-paper) 16%, transparent);
+  background: var(--eco-ink);
   overflow: hidden;
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 18px 40px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.65);
+    0 0 0 1px color-mix(in srgb, var(--eco-paper) 4%, transparent),
+    0 18px 40px color-mix(in srgb, var(--eco-ink) 45%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--eco-paper) 8%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, var(--eco-ink) 65%, transparent);
 }
 
 .eco-flow-list li {
@@ -532,10 +538,10 @@
   gap: 12px;
   border: none;
   border-radius: 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid color-mix(in srgb, var(--eco-paper) 7%, transparent);
   padding: 10px 18px;
-  background: #050505;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  background: var(--eco-ink);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--eco-paper) 3%, transparent);
   transition: none;
   transform: none;
 }
@@ -545,11 +551,11 @@
 }
 
 .eco-flow-list li:hover {
-  background: #080808;
+  background: var(--eco-ink);
   border-color: transparent;
   color: inherit;
   transform: none;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--eco-paper) 3%, transparent);
 }
 
 .eco-flow-list li:hover .mono,
@@ -558,7 +564,7 @@
 }
 
 .eco-flow-list li:hover p {
-  color: #929292;
+  color: color-mix(in srgb, var(--eco-paper) 59%, var(--eco-ink));
 }
 
 .eco-flow-list li .mono {
@@ -566,7 +572,7 @@
   padding-top: 2px;
   font-size: 11px;
   letter-spacing: 0.06em;
-  color: #8a8a84;
+  color: color-mix(in srgb, var(--eco-paper) 55%, var(--eco-ink));
 }
 
 .eco-flow-list li strong {
@@ -575,7 +581,7 @@
   font-size: 15px;
   font-weight: 600;
   line-height: 1.2;
-  color: #f1f1ee;
+  color: var(--eco-paper);
 }
 
 .eco-flow-list li p {
@@ -583,7 +589,7 @@
   max-width: none;
   font-size: 13.5px;
   line-height: 1.35;
-  color: #929292;
+  color: color-mix(in srgb, var(--eco-paper) 59%, var(--eco-ink));
 }
 
 @media (max-width: 960px) {

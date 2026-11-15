@@ -44,7 +44,7 @@ function SupplyStatus({ lit }: { lit: boolean }) {
       {lit ? (
         <svg viewBox="0 0 20 20" width="14" height="14" fill="none">
           <circle cx="10" cy="10" r="9" fill="currentColor" />
-          <path d="m6.2 10.2 2.4 2.4 5.2-5.2" stroke="#120816" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="m6.2 10.2 2.4 2.4 5.2-5.2" stroke="#12110f" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       ) : (
         <svg viewBox="0 0 20 20" width="14" height="14" fill="none">
