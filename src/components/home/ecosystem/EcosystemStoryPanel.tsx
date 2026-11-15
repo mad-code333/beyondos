@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
-import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 import { getStory, type EcosystemStoryId } from "./stories";
 import { useStoryPlayback } from "./useStoryPlayback";
 import {

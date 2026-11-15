@@ -18,6 +18,6 @@ type FooterCanvasProps = {
 };
 
 /** Client boundary so canvas code never runs during SSR/prerender. */
-export function FooterCanvas({ text = "beyond" }: FooterCanvasProps) {
+export function FooterCanvas({ text = "BeyondOS" }: FooterCanvasProps) {
   return <FooterParticles text={text} />;
 }

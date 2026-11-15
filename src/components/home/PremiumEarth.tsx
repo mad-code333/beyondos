@@ -202,7 +202,7 @@ export function PremiumEarth({ className }: PremiumEarthProps) {
     const container = containerRef.current;
     if (!container) return;
 
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reducedMotion = document.documentElement.getAttribute("data-motion") === "paused";
     const width = Math.max(container.clientWidth, 1);
     const height = Math.max(container.clientHeight, 1);
 

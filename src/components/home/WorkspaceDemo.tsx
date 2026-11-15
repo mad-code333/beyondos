@@ -3,12 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { BrandMark } from "@/components/layout/BrandMark";
-import {
-  AnimatePresence,
-  LayoutGroup,
-  motion,
-  useReducedMotion,
-} from "framer-motion";
+import { AnimatePresence, LayoutGroup, motion } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 import { Reveal } from "@/components/ui/Reveal";
 import { ConnectedJourney } from "./showcase/ConnectedJourney";
 import { HotelCrmPanel } from "./showcase/HotelCrmPanel";

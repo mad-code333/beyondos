@@ -2,7 +2,8 @@
 
 import { useCallback, useState, type KeyboardEvent } from "react";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 import { BookingFlow } from "./BookingFlow";
 import { EcosystemStoryPanel } from "./ecosystem/EcosystemStoryPanel";
 import { ECOSYSTEM_STORIES, type EcosystemStoryId } from "./ecosystem/stories";

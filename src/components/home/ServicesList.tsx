@@ -9,15 +9,8 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import {
-  AnimatePresence,
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-  useTransform,
-  type MotionValue,
-} from "framer-motion";
+import { AnimatePresence, motion, useMotionValue, useSpring, useTransform, type MotionValue } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 import { services as allServices, type Service, type ServiceSlug } from "@/content/services";
 import { ServicePreviewBody } from "./ServicePreviewBodies";
 import "./services-toolkit.css";

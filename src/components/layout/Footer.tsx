@@ -63,7 +63,7 @@ export function Footer() {
       <div className="footer-stage">
         <div className="footer-particles" aria-hidden="true">
           <span className="footer-particles-fallback">beyond</span>
-          <FooterCanvas text="beyond" />
+          <FooterCanvas text="BeyondOS" />
         </div>
       </div>
     </footer>

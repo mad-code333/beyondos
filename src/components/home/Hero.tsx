@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 import { EclipseHorizon } from "./EclipseHorizon";
 import { HeroWorkspace, type TabId } from "./HeroWorkspace";
 import "./hero.css";

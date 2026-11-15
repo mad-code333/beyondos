@@ -3,13 +3,8 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  AnimatePresence,
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 import { getRelatedServices, type Service } from "@/content/services";
 import { Reveal } from "@/components/ui/Reveal";
 import { WorkspaceDemo } from "@/components/home/WorkspaceDemo";

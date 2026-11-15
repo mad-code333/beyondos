@@ -11,6 +11,8 @@ type Particle = {
   vy: number;
   size: number;
   shade: number;
+  /** A few particles are navy, like the dots in the hero. */
+  navy: boolean;
   phase: number;
   speed: number;
 };
@@ -20,10 +22,11 @@ type FooterParticlesProps = {
 };
 
 /**
- * Oversized footer wordmark built from thousands of warm amber particles.
+ * Oversized footer wordmark built from thousands of particles — white,
+ * brightening toward the bottom, with a sprinkle of navy (the hero's palette).
  * Client-only Canvas 2D work runs entirely in useEffect after mount.
  */
-export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
+export function FooterParticles({ text = "BeyondOS" }: FooterParticlesProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -40,8 +43,6 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
     const offscreen = sample.getContext("2d", { willReadFrequently: true });
     if (!offscreen) return;
     const sampleCtx: CanvasRenderingContext2D = offscreen;
-
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     let width = 0;
     let height = 0;
@@ -82,7 +83,6 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
       surface.style.height = `${height}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const fontSize = Math.min(width * 0.22, height * 0.78);
       sample.width = Math.max(1, Math.floor(width));
       sample.height = Math.max(1, Math.floor(height));
       sampleCtx.setTransform(1, 0, 0, 1, 0, 0);
@@ -90,6 +90,11 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
       sampleCtx.fillStyle = "#fff";
       sampleCtx.textAlign = "center";
       sampleCtx.textBaseline = "middle";
+      // Size the word to fill ~94% of the width, capped by the height.
+      let fontSize = Math.min(width * 0.22, height * 0.78);
+      sampleCtx.font = `800 ${fontSize}px ${fontFamily}, Manrope, sans-serif`;
+      const measured = sampleCtx.measureText(text).width;
+      if (measured > 0) fontSize = Math.min(fontSize * ((width * 0.94) / measured), height * 0.78);
       sampleCtx.font = `800 ${fontSize}px ${fontFamily}, Manrope, sans-serif`;
       sampleCtx.fillText(text, width * 0.5, height * 0.58);
 
@@ -135,6 +140,7 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
           vy: 0,
           size: 0.55 + Math.random() * 1.15 + c.shade * 0.35,
           shade: c.shade,
+          navy: Math.random() < 0.14,
           phase: Math.random() * Math.PI * 2,
           speed: 0.55 + Math.random() * 1.1,
         };
@@ -144,10 +150,10 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
     function paint(now: number, dt: number) {
       ctx.clearRect(0, 0, width, height);
 
+      // Only the site's own "Pause motion" button stops it (not the OS
+      // reduced-motion flag), matching the hero background and logo strip.
       const paused =
-        document.hidden ||
-        document.documentElement.getAttribute("data-motion") === "paused" ||
-        reduceMotion;
+        document.hidden || document.documentElement.getAttribute("data-motion") === "paused";
 
       const t = now * 0.001;
       const mouseRadius = Math.min(160, width * 0.14);
@@ -191,9 +197,10 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
         const alpha = Math.min(0.95, (0.18 + p.shade * 0.82) * twinkle);
         if (alpha < 0.05) continue;
 
-        const r = Math.round(95 + p.shade * 155);
-        const g = Math.round(55 + p.shade * 110);
-        const b = Math.round(18 + p.shade * 22);
+        // White, dim at the top and bright at the bottom; navy particles stay navy.
+        const r = p.navy ? 74 : Math.round(110 + p.shade * 140);
+        const g = p.navy ? 108 : Math.round(112 + p.shade * 140);
+        const b = p.navy ? 235 : Math.round(118 + p.shade * 137);
 
         ctx.beginPath();
         ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
@@ -225,7 +232,7 @@ export function FooterParticles({ text = "beyond" }: FooterParticlesProps) {
     }
 
     function kick() {
-      if (raf || reduceMotion || !running || !visible || document.hidden) return;
+      if (raf || !running || !visible || document.hidden) return;
       lastTs = performance.now();
       raf = window.requestAnimationFrame(frame);
     }

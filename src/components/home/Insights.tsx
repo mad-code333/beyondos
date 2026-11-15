@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 import { insights } from "@/content/insights";
 import { Reveal } from "@/components/ui/Reveal";
 import "./insights.css";

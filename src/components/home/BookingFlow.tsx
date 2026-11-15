@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef, type CSSProperties, type ReactNode } from "react";
-import { motion, useInView, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 import "./booking-flow.css";
 
 const ease = [0.22, 1, 0.36, 1] as const;

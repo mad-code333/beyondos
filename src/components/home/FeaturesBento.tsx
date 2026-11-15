@@ -2,14 +2,8 @@
 
 import Image from "next/image";
 import { useRef } from "react";
-import {
-  motion,
-  useInView,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-  type Variants,
-} from "framer-motion";
+import { motion, useInView, useScroll, useTransform, type Variants } from "framer-motion";
+import { useReducedMotion } from "@/lib/motion";
 import "./features-bento.css";
 
 const ease = [0.22, 1, 0.36, 1] as const;
