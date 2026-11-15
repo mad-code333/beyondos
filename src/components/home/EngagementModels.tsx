@@ -7,38 +7,54 @@ import "./engagement.css";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
+/** Bold check (same weight as the reference's icon set). */
+function Check() {
+  return (
+    <svg className="ec-check" viewBox="0 0 256 256" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M232.49 80.49l-128 128a12 12 0 0 1-17 0l-56-56a12 12 0 1 1 17-17L96 183 215.51 63.51a12 12 0 0 1 17 17Z"
+      />
+    </svg>
+  );
+}
+
 function PlanCard({ plan, index, reduce }: { plan: EngagementPlan; index: number; reduce: boolean }) {
   return (
     <motion.article
-      className={`pricing-tier${plan.popular ? " is-popular" : ""}`}
+      className={`ec-card${plan.popular ? " is-popular" : ""}`}
       data-plan={plan.id}
-      initial={reduce ? false : { opacity: 0, y: 36, filter: "blur(6px)" }}
-      whileInView={reduce ? undefined : { opacity: 1, y: 0, filter: "blur(0px)" }}
+      initial={reduce ? false : { opacity: 0, y: 28 }}
+      whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.75, ease, delay: reduce ? 0 : 0.12 + index * 0.1 }}
-      whileHover={reduce ? undefined : { y: -6 }}
+      transition={{ duration: 0.7, ease, delay: reduce ? 0 : 0.1 + index * 0.1 }}
     >
-      {plan.popular ? <span className="pricing-tier-aura" aria-hidden="true" /> : null}
+      <div className="ec-body">
+        <header className="ec-head">
+          <div className="ec-title">
+            <h3>{plan.name}</h3>
+            {plan.popular ? <span className="ec-badge">Most popular</span> : null}
+          </div>
+          <p className="ec-desc">{plan.description}</p>
+        </header>
 
-      <header className="pricing-tier-head">
-        <h3>{plan.name}</h3>
-        {plan.popular ? <span className="pricing-badge">Most popular</span> : null}
-      </header>
+        <p className="ec-price">
+          {plan.pricePrefix ? <span className="ec-price-prefix">{plan.pricePrefix}</span> : null}
+          <strong>{plan.price}</strong>
+          <span className="ec-price-suffix">{plan.priceSuffix}</span>
+        </p>
 
-      <p className="pricing-best">{plan.description}</p>
+        <ul className="ec-features">
+          {plan.features.map((feature) => (
+            <li key={feature}>
+              <Check />
+              <span>{feature}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
 
-      <p className="pricing-amount">
-        <span>{plan.priceLabel}</span>
-        <small>{plan.priceNote}</small>
-      </p>
-
-      <ul>
-        {plan.features.map((feature) => (
-          <li key={feature}>{feature}</li>
-        ))}
-      </ul>
-
-      <Link className="pricing-cta" href={plan.href}>
+      <Link className="ec-cta" href={plan.href}>
         {plan.cta}
       </Link>
     </motion.article>
@@ -119,7 +135,7 @@ export function EngagementModels() {
           </motion.p>
         </motion.div>
 
-        <div className="pricing-tiers engage-pricing-tiers">
+        <div className="ec-grid">
           {engagementPlans.map((plan, index) => (
             <PlanCard key={plan.id} plan={plan} index={index} reduce={reduce} />
           ))}

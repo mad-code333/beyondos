@@ -2,8 +2,12 @@ export type EngagementPlan = {
   id: "starter" | "growth" | "custom";
   name: string;
   description: string;
-  priceLabel: string;
-  priceNote: string;
+  /** Big figure, e.g. "₾8,500" or "Scoped". */
+  price: string;
+  /** Small word before the figure, e.g. "From". */
+  pricePrefix?: string;
+  /** Small muted text after the figure, e.g. "/month". */
+  priceSuffix: string;
   features: string[];
   cta: string;
   href: string;
@@ -16,8 +20,8 @@ export const engagementPlans: EngagementPlan[] = [
     name: "Starter",
     description:
       "Perfect for one clear problem — CRM follow-ups, a focused website, or OMS for a single room.",
-    priceLabel: "Scoped",
-    priceNote: "Fixed after discovery",
+    price: "Scoped",
+    priceSuffix: "fixed after discovery",
     features: [
       "Discovery workshop with your desk or floor lead",
       "One BeyondOS capability scoped and launched",
@@ -32,8 +36,9 @@ export const engagementPlans: EngagementPlan[] = [
     name: "Growth",
     description:
       "Great for hotels or restaurants connecting two systems — HMS + CRM, or Web + Growth.",
-    priceLabel: "From ₾8,500",
-    priceNote: "/ month · sample",
+    price: "₾8,500",
+    pricePrefix: "From",
+    priceSuffix: "/month · sample",
     features: [
       "Everything in Starter, for a defined bundle",
       "Integrations between the chosen tools",
@@ -49,8 +54,8 @@ export const engagementPlans: EngagementPlan[] = [
     name: "Custom",
     description:
       "Built for groups, multi-property, or workflows no off-the-shelf tool fits.",
-    priceLabel: "On request",
-    priceNote: "After discovery",
+    price: "On request",
+    priceSuffix: "after discovery",
     features: [
       "Custom software or deep integrations",
       "Phased rollout across properties",
