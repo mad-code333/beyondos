@@ -344,8 +344,8 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--eco-ink) 5%, var(--eco-accent));
-  box-shadow: 0 0 8px color-mix(in srgb, color-mix(in srgb, var(--eco-ink) 5%, var(--eco-accent)) 70%, transparent);
+  background: var(--eco-blue);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--eco-blue) 70%, transparent);
 }
 
 .bf-step.is-inview .bf-book-card,
@@ -601,8 +601,8 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--eco-ink) 5%, var(--eco-accent));
-  box-shadow: 0 0 8px color-mix(in srgb, color-mix(in srgb, var(--eco-ink) 5%, var(--eco-accent)) 70%, transparent);
+  background: var(--eco-blue);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--eco-blue) 70%, transparent);
 }
 
 .bf-step.is-inview .bf-wa-bubble {
@@ -637,8 +637,8 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: color-mix(in srgb, var(--eco-ink) 8%, var(--eco-accent));
-  box-shadow: 0 0 10px color-mix(in srgb, color-mix(in srgb, var(--eco-ink) 8%, var(--eco-accent)) 70%, transparent);
+  background: var(--eco-blue);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--eco-blue) 70%, transparent);
   flex: none;
 }
 
@@ -722,8 +722,8 @@
   place-items: center;
   min-height: 34px;
   border-radius: 999px;
-  background: linear-gradient(105deg, color-mix(in srgb, var(--eco-ink) 31%, var(--eco-accent)) 0%, color-mix(in srgb, var(--eco-ink) 5%, var(--eco-accent)) 45%, color-mix(in srgb, var(--eco-paper) 11%, var(--eco-accent)) 100%);
-  color: var(--eco-paper);
+  background: var(--eco-paper);
+  color: var(--eco-ink);
   font-size: 12px;
   font-weight: 600;
   border: 1px solid color-mix(in srgb, color-mix(in srgb, var(--eco-paper) 62%, var(--eco-accent)) 30%, transparent);

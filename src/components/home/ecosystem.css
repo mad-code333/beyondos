@@ -1,9 +1,10 @@
 .georgia-globe-section {
-  /* Section palette: warm near-black, warm off-white and champagne gold.
-     Every colour in this section is a mix of these three. */
-  --eco-ink: #0b0a08;
-  --eco-paper: #f2efe8;
-  --eco-accent: #c9a96e;
+  /* Section palette: black, white and a silver accent; blue only on small
+     details (timeline, progress bar, status dots). */
+  --eco-ink: #050506;
+  --eco-paper: #f4f5f7;
+  --eco-accent: #d4d7de;
+  --eco-blue: #4a6ceb;
 
   position: relative;
   overflow: clip;

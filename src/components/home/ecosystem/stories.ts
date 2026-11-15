@@ -43,8 +43,8 @@ export const ECOSYSTEM_STORIES: readonly EcosystemStory[] = [
       { id: "enquire", title: "Send an inquiry", caption: "WhatsApp, dates & guests." },
       { id: "reach", title: "Reach the property", caption: "Intent received." },
     ],
-    accent: "#c9a96e",
-    accentSoft: "rgba(201, 169, 110, 0.22)",
+    accent: "#d4d7de",
+    accentSoft: "rgba(212, 215, 222, 0.22)",
   },
   {
     id: "supply",
@@ -64,8 +64,8 @@ export const ECOSYSTEM_STORIES: readonly EcosystemStory[] = [
       { id: "order", title: "Place one order", caption: "Unified procurement." },
       { id: "receive", title: "Receive supplies", caption: "Stock ready." },
     ],
-    accent: "#c9a96e",
-    accentSoft: "rgba(201, 169, 110, 0.22)",
+    accent: "#d4d7de",
+    accentSoft: "rgba(212, 215, 222, 0.22)",
   },
   {
     id: "os",
@@ -85,8 +85,8 @@ export const ECOSYSTEM_STORIES: readonly EcosystemStory[] = [
       { id: "connect", title: "Connect the record", caption: "HMS, OMS and CRM." },
       { id: "ready", title: "Prepare check-in", caption: "Guest context ready." },
     ],
-    accent: "#c9a96e",
-    accentSoft: "rgba(201, 169, 110, 0.28)",
+    accent: "#d4d7de",
+    accentSoft: "rgba(212, 215, 222, 0.28)",
   },
 ] as const;
 

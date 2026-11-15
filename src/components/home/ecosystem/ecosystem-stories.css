@@ -1663,7 +1663,7 @@ a.eco-photo-learn:focus-visible {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: var(--eco-accent);
+  background: var(--eco-blue);
   transform: scaleX(0);
   transform-origin: left center;
   transition: transform 80ms linear;
