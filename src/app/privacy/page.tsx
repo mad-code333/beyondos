@@ -3,18 +3,18 @@ import { Container } from "@/components/ui/Container";
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "How Beyond OS handles information you share with us.",
+  description: "How BeyondOS handles information you share with us.",
 };
 
 export default function PrivacyPage() {
   return (
     <main className="border-b border-line pb-24 pt-16">
       <Container className="max-w-2xl">
-        <p className="text-[10px] uppercase tracking-[0.18em] text-[#8a8a86]">Beyond OS</p>
+        <p className="text-[10px] uppercase tracking-[0.18em] text-[#8a8a86]">BeyondOS</p>
         <h1 className="mt-4 text-4xl tracking-[-0.04em]">Privacy Policy</h1>
         <div className="mt-8 space-y-5 text-[15px] leading-7 text-[#bdbdb8]">
           <p>
-            Beyond OS builds software, websites, and growth work for hotels and restaurants. This
+            BeyondOS builds software, websites, and growth work for hotels and restaurants. This
             page explains what happens to information you share on this site.
           </p>
           <p>

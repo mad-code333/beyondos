@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Eclipse Horizon — hero canvas (warm champagne palette):
+ * Eclipse Horizon — hero canvas (black / white, with a touch of navy in the dots):
  * a 26px dot lattice above a planetary arc, a vertical light beam that
  * sweeps left → right every few seconds (lighting the dots in its column),
  * a trail of "fail" squares left behind the beam, and a soft cursor glow.
@@ -16,13 +16,15 @@ import { useEffect, useRef } from "react";
 
 type RGB = readonly [number, number, number];
 
-// Warm champagne horizon (no violet/blue): a gold rim over a near-black planet.
-const BG: RGB = [6, 5, 4];
-const RIM: RGB = [222, 194, 148]; // #DEC294
-const CORE: RGB = [250, 240, 222]; // #FAF0DE
-const GLOW1: RGB = [176, 128, 66]; // #B08042 amber
-const GLOW2: RGB = [120, 96, 70]; // #786046 bronze
-const DOT: RGB = [236, 232, 224];
+// Monochrome horizon: a white rim over a near-black planet. Navy only lives in the dots.
+const BG: RGB = [4, 4, 6];
+const RIM: RGB = [228, 231, 238]; // silver-white rim
+const CORE: RGB = [255, 255, 255];
+const GLOW1: RGB = [150, 154, 166]; // soft grey bloom
+const GLOW2: RGB = [96, 100, 112]; // deeper grey bloom
+const DOT: RGB = [232, 234, 240];
+const NAVY: RGB = [74, 108, 235]; // lit dots, trail squares, a few resting dots
+const NAVY_SHARE = 0.16; // share of resting dots tinted navy
 
 const SPACING = 26;
 const SWEEP_SECONDS = 7;
@@ -66,9 +68,16 @@ export function EclipseHorizon({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const motionPaused = () =>
-      reduceMotion || document.documentElement.getAttribute("data-motion") === "paused";
+    // The background is ambient and slow, so it keeps running even when the OS
+    // asks for reduced motion; only the site's own "Pause motion" button (an
+    // explicit, stored choice) freezes it.
+    const motionPaused = () => {
+      try {
+        return window.localStorage.getItem("beyondos-motion") === "paused";
+      } catch {
+        return false;
+      }
+    };
 
     let W = 1;
     let H = 1;
@@ -202,7 +211,7 @@ export function EclipseHorizon({
         for (let r = 0; r < rows; r++) {
           const a = baseAlpha[c * rows + r];
           if (!a) continue;
-          dots.ctx.fillStyle = rgba(DOT, a);
+          dots.ctx.fillStyle = hash(r + 17, c + 5) < NAVY_SHARE ? rgba(NAVY, Math.min(1, a * 1.6)) : rgba(DOT, a);
           dots.ctx.beginPath();
           dots.ctx.arc(x, r * SPACING + SPACING / 2, 1, 0, Math.PI * 2);
           dots.ctx.fill();
@@ -305,7 +314,7 @@ export function EclipseHorizon({
 
             if (isFail[i] && trail > 0) {
               const a2 = trail * 0.9 * Math.max(0.35, fade[i]);
-              g.strokeStyle = rgba(RIM, a2);
+              g.strokeStyle = rgba(NAVY, Math.min(1, a2 * 1.2));
               g.lineWidth = 1.2;
               g.strokeRect(x - 3.5, y - 3.5, 7, 7);
               continue;
@@ -319,7 +328,8 @@ export function EclipseHorizon({
             const wt = weight[i];
             const alpha = m + (gBeam * 0.85 + trail * 0.12) * wt + w * 0.7;
             const radius = 1 + gBeam * 0.9 + w * 0.9;
-            g.fillStyle = gBeam > 0.25 || w > 0.3 ? rgba(RIM, alpha) : rgba(DOT, alpha);
+            g.fillStyle =
+              gBeam > 0.55 ? rgba(CORE, alpha) : gBeam > 0.12 || w > 0.3 ? rgba(NAVY, Math.min(1, alpha * 1.3)) : rgba(DOT, alpha);
             g.beginPath();
             g.arc(x, y, radius, 0, Math.PI * 2);
             g.fill();
@@ -329,12 +339,14 @@ export function EclipseHorizon({
 
       // Faint vertical beam light
       if (beam > -200 && beam < W + 200) {
-        const band = g.createLinearGradient(beam - 70, 0, beam + 70, 0);
-        band.addColorStop(0, rgba(RIM, 0));
-        band.addColorStop(0.5, rgba(RIM, 0.07));
-        band.addColorStop(1, rgba(RIM, 0));
+        const band = g.createLinearGradient(beam - 90, 0, beam + 90, 0);
+        band.addColorStop(0, rgba(NAVY, 0));
+        band.addColorStop(0.42, rgba(NAVY, 0.09));
+        band.addColorStop(0.5, rgba(CORE, 0.12));
+        band.addColorStop(0.58, rgba(NAVY, 0.09));
+        band.addColorStop(1, rgba(NAVY, 0));
         g.fillStyle = band;
-        g.fillRect(beam - 70, 0, 140, Math.min(H, arcY(beam)));
+        g.fillRect(beam - 90, 0, 180, Math.min(H, arcY(beam)));
       }
 
       // Planet + rim on top
@@ -394,10 +406,8 @@ export function EclipseHorizon({
     const mo = new MutationObserver(() => kick());
     mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-motion"] });
 
-    if (!reduceMotion) {
-      window.addEventListener("pointermove", onPointerMove, { passive: true });
-      document.addEventListener("pointerleave", onPointerLeave);
-    }
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    document.addEventListener("pointerleave", onPointerLeave);
     kick();
 
     return () => {

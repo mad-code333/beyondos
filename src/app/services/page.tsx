@@ -4,7 +4,7 @@ import { ServicesIndex } from "@/components/services/ServicesIndex";
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "CRM, restaurant OMS, hotel HMS, websites and digital growth — the Beyond OS toolkit for hospitality.",
+    "CRM, restaurant OMS, hotel HMS, websites and digital growth — the BeyondOS toolkit for hospitality.",
 };
 
 export default function ServicesPage() {

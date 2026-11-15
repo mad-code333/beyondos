@@ -20,11 +20,11 @@ const orbitron = Orbitron({
 
 export const metadata: Metadata = {
   title: {
-    default: "Beyond OS — Built around your business.",
-    template: "%s — Beyond OS",
+    default: "BeyondOS — Built around your business.",
+    template: "%s — BeyondOS",
   },
   description:
-    "Beyond OS builds CRM, restaurant OMS, hotel HMS, websites and digital growth for hospitality — connected to Beyond Georgia and Beyond Supply.",
+    "BeyondOS builds CRM, restaurant OMS, hotel HMS, websites and digital growth for hospitality — connected to Beyond Georgia and Beyond Supply.",
 };
 
 export default function RootLayout({

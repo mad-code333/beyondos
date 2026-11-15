@@ -196,7 +196,7 @@ export function WorkspaceDemo({
                 <i />
               </div>
               <span>workspace.beyondos · {tab}</span>
-              <div className="ws-kicker">Beyond OS</div>
+              <div className="ws-kicker">BeyondOS</div>
             </div>
 
             <div className="app-layout">
@@ -204,7 +204,7 @@ export function WorkspaceDemo({
                 <Link
                   className="wordmark"
                   href={explore[tab].href}
-                  aria-label="Beyond OS home"
+                  aria-label="BeyondOS home"
                 >
                   <BrandMark />
                   beyond

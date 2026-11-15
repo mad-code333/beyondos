@@ -538,7 +538,7 @@ a.eco-supply-cta:hover {
   filter: brightness(1.1);
 }
 
-/* Beyond OS Operations — glass workflow cards */
+/* BeyondOS Operations — glass workflow cards */
 @keyframes eco-ops-glow-pulse {
   0%,
   100% {

@@ -10,10 +10,9 @@ export function Footer() {
       <div className="footer-chrome">
         <div className="wrap footer-top">
           <div>
-            <Link href="/" className="wordmark" aria-label="Beyond OS home">
+            <Link href="/" className="wordmark" aria-label="BeyondOS home">
               <BrandMark />
-              beyond
-              <span className="os">os</span>
+              BeyondOS
             </Link>
             <p className="footer-copy">
               Software, websites and growth
@@ -54,7 +53,7 @@ export function Footer() {
         </div>
 
         <div className="footer-bottom wrap">
-          <span>© 2026 Beyond OS</span>
+          <span>© 2026 BeyondOS</span>
           <span>Tbilisi · Hotels, restaurants &amp; hospitality brands</span>
           <MotionToggle />
           <Link href="/#top">Back to top ↑</Link>

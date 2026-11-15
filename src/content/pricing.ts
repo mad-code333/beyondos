@@ -26,7 +26,7 @@ export const pricingPlans: PricingPlan[] = [
     priceLabel: "Fixed quote",
     priceNote: "After a 1–2 week Discovery",
     features: [
-      "One Beyond OS service, scoped in Discovery",
+      "One BeyondOS service, scoped in Discovery",
       "Set up around the tools you already use",
       "Staff training on real work",
       "30 days of support after launch",

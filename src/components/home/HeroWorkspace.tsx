@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useState } from "react";
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "framer-motion";
+import { HeroCrmView } from "./HeroCrmView";
 
 /**
- * "The Mountain House" — an illustrative property running on Beyond OS,
+ * "The Mountain House" — an illustrative property running on BeyondOS,
  * shown under the hero horizon. Original, coded UI (no third-party screenshots).
  * Operations borrows the live-service event pattern common to restaurant POS
  * tools; Guest CRM carries an assistant-style desk note.
@@ -119,7 +120,7 @@ export function HeroWorkspace({
   const view = VIEWS[tab];
 
   return (
-    <div className="hw" aria-label="The Mountain House, an illustrative Beyond OS workspace">
+    <div className="hw" aria-label="The Mountain House, an illustrative BeyondOS workspace">
       <header className="hw-head">
         <span className="hw-logo" aria-hidden="true">
           <svg viewBox="0 0 16 16">
@@ -128,7 +129,7 @@ export function HeroWorkspace({
         </span>
         <span className="hw-title">
           <strong>The Mountain House</strong>
-          <small>Illustrative property / Beyond OS</small>
+          <small>Illustrative property / BeyondOS</small>
         </span>
         <span className="hw-badge">Interactive concept</span>
       </header>
@@ -164,12 +165,16 @@ export function HeroWorkspace({
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={tab}
-            className="hw-view"
+            className={`hw-view${tab === "crm" ? " hw-view-crm" : ""}`}
             initial={reduce ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={reduce ? undefined : { opacity: 0, transition: { duration: 0.14 } }}
             transition={{ duration: 0.2 }}
           >
+            {tab === "crm" ? (
+              <HeroCrmView reduce={reduce} />
+            ) : (
+            <>
             <div className="hw-main">
               <div className="hw-view-head">
                 <span>
@@ -218,6 +223,8 @@ export function HeroWorkspace({
                 {view.note.action} <ArrowRight />
               </a>
             </motion.aside>
+            </>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>

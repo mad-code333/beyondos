@@ -5,7 +5,7 @@ import { ContactEnquiry } from "@/components/home/ContactEnquiry";
 export const metadata: Metadata = {
   title: "Book a demo",
   description:
-    "Tell Beyond OS what is slowing your property down. Share interest in Starter, Growth, or Custom engagement and we will reply with fit and timeline shape.",
+    "Tell BeyondOS what is slowing your property down. Share interest in Starter, Growth, or Custom engagement and we will reply with fit and timeline shape.",
 };
 
 type ContactSearchParams = Promise<{ interest?: string }>;

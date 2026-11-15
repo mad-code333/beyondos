@@ -1,4 +1,4 @@
-/** Beyond OS mascot mark: a soft four-lobed head with two eyes over a base line. */
+/** BeyondOS mascot mark: a soft four-lobed head with two eyes over a base line. */
 export function BrandMark({ className = "brand-icon" }: { className?: string }) {
   return (
     <svg className={className} viewBox="20 18 60 72" aria-hidden="true" focusable="false">

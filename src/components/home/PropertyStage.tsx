@@ -140,7 +140,7 @@ export function PropertyStage() {
       </div>
 
       <div className="world-bar">
-        <div className="world-tabs" role="tablist" aria-label="Beyond OS services">
+        <div className="world-tabs" role="tablist" aria-label="BeyondOS services">
           {practices.map((practice, i) => (
             <button
               key={practice.slug}

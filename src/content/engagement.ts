@@ -20,7 +20,7 @@ export const engagementPlans: EngagementPlan[] = [
     priceNote: "Fixed after discovery",
     features: [
       "Discovery workshop with your desk or floor lead",
-      "One Beyond OS capability scoped and launched",
+      "One BeyondOS capability scoped and launched",
       "Team training on real work, not slides",
       "30 days of support after go-live",
     ],

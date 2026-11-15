@@ -13,7 +13,7 @@ const LOGOS: LogoItem[] = [
   { id: "claude", label: "Claude", art: { src: "/media/logos/claude-symbol.png" } },
   { id: "figma", label: "Figma", art: { src: "/media/logos/figma.svg" } },
   { id: "vercel", label: "Vercel", art: { src: "/media/logos/vercel.svg" } },
-  { id: "beyond-os", label: "Beyond OS", art: { mark: "beyond" } },
+  { id: "beyond-os", label: "BeyondOS", art: { mark: "beyond" } },
   { id: "framer", label: "Framer Motion", art: { src: "/media/logos/framer.svg" } },
   { id: "typescript", label: "TypeScript", art: { src: "/media/logos/typescript-tile.svg" } },
   { id: "postgresql", label: "PostgreSQL", art: { glyph: "Pg" } },

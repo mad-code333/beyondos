@@ -250,7 +250,7 @@ export function ServicesList({
           className={`svc-stage${live ? " has-active" : " is-idle"}`}
           data-centre={live && active === centreIndex ? "" : undefined}
           role="listbox"
-          aria-label="Beyond OS services"
+          aria-label="BeyondOS services"
           tabIndex={0}
           onPointerMove={trackPointer}
           onMouseEnter={() => {

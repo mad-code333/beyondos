@@ -5,14 +5,14 @@ export type FaqItem = {
 
 export const faqItems: FaqItem[] = [
   {
-    question: "Who is Beyond OS for?",
+    question: "Who is BeyondOS for?",
     answer:
-      "Hotels, guesthouses, restaurants and hospitality brands. A city hotel in Tbilisi, a mountain stay in Kazbegi, a seaside apartment in Batumi, a dining room anywhere between them. Beyond OS is built for how that day actually runs.",
+      "Hotels, guesthouses, restaurants and hospitality brands. A city hotel in Tbilisi, a mountain stay in Kazbegi, a seaside apartment in Batumi, a dining room anywhere between them. BeyondOS is built for how that day actually runs.",
   },
   {
-    question: "How does Beyond OS fit the rest of Beyond?",
+    question: "How does BeyondOS fit the rest of Beyond?",
     answer:
-      "Beyond is one company with three practices. Beyond Georgia brings travellers into the country. Beyond Supply equips the properties they stay and dine in. Beyond OS is the technology and digital partner for those same properties: CRM, restaurant orders, hotel operations, websites and growth.",
+      "Beyond is one company with three practices. Beyond Georgia brings travellers into the country. Beyond Supply equips the properties they stay and dine in. BeyondOS is the technology and digital partner for those same properties: CRM, restaurant orders, hotel operations, websites and growth.",
   },
   {
     question: "Can we start with one service?",

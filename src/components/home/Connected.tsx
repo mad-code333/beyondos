@@ -75,7 +75,7 @@ export function Connected() {
 
   return (
     <section className="georgia-globe-section section" id="ecosystem" aria-label="The Beyond ecosystem">
-      <nav className="eco-nav-strip" aria-label="Beyond OS services">
+      <nav className="eco-nav-strip" aria-label="BeyondOS services">
         {navStrip.map((item) => (
           <Link key={item.href} href={item.href}>
             <i aria-hidden="true" />

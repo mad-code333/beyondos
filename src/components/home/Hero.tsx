@@ -141,7 +141,7 @@ export function Hero() {
   }, [paused, reduce, active]);
 
   return (
-    <section ref={heroRef} className="hero" aria-label="Beyond OS">
+    <section ref={heroRef} className="hero" aria-label="BeyondOS">
       <div className="hero-atmosphere" aria-hidden="true">
         <div className="hero-atmosphere-base" />
         <div className="hero-grid">

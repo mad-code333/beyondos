@@ -124,7 +124,7 @@ export function Vision() {
           </Reveal>
           <Reveal delay={0.16} y={18}>
             <p>
-              Beyond Georgia sends guests. Beyond Supply lowers the chase for goods. Beyond OS
+              Beyond Georgia sends guests. Beyond Supply lowers the chase for goods. BeyondOS
               connects the website, the booking, the desk and the kitchen — one partner in Tbilisi,
               not another tool stack.
             </p>

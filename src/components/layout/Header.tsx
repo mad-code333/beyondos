@@ -74,10 +74,9 @@ export function Header() {
 
   return (
     <header className="site-header">
-      <Link href="/" onClick={closeAll} className="wordmark" aria-label="Beyond OS home">
+      <Link href="/" onClick={closeAll} className="wordmark" aria-label="BeyondOS home">
         <BrandMark />
-        beyond
-        <span className="os">os</span>
+        BeyondOS
       </Link>
 
       <nav aria-label="Main navigation" className={menuOpen ? "open" : undefined}>
