@@ -203,8 +203,7 @@ export function WorkspaceDemo({
                   aria-label="BeyondOS home"
                 >
                   <BrandMark />
-                  beyond
-                  <span className="os">OS</span>
+                  BeyondOS
                 </Link>
                 {(nav[tab] ?? []).map((item, index) => (
                   <button

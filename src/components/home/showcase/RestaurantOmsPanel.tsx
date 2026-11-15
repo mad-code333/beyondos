@@ -93,6 +93,9 @@ export function RestaurantOmsPanel() {
         setTables((current) =>
           current.map((table) => (table.id === "t1" ? { ...table, status: "preparing" } : table)),
         );
+        // Drop any earlier "k0" first: this effect can re-run on the same state
+        // (motion toggled off/on, or a dev hot reload), and a second prepend
+        // would duplicate the key.
         setKds((current) => [
           {
             id: "k0",
@@ -102,7 +105,7 @@ export function RestaurantOmsPanel() {
             status: "New",
             active: true,
           },
-          ...current.map((card) => ({ ...card, active: false })),
+          ...current.filter((card) => card.id !== "k0").map((card) => ({ ...card, active: false })),
         ]);
       }, 3200),
       window.setTimeout(() => {

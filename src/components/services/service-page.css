@@ -225,6 +225,7 @@
 
 .service-hero-photo img {
   object-fit: cover;
+  filter: grayscale(1) contrast(1.05);
   transform-origin: center;
 }
 

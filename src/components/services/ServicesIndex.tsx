@@ -1,5 +1,6 @@
 import { services } from "@/content/services";
 import { Container } from "@/components/ui/Container";
+import { ServicesList } from "@/components/home/ServicesList";
 
 export function ServicesIndex() {
   return (
@@ -25,6 +26,9 @@ export function ServicesIndex() {
           </div>
         </Container>
       </section>
+
+      {/* The list itself: the same interactive toolkit as the home page. */}
+      <ServicesList id="all-services" kicker="All services" count="05 services" />
     </main>
   );
 }
