@@ -139,7 +139,7 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
           <div className="eco-story-flow" role="group" aria-label={`${story.title} stages`}>
             {story.stages.map((stage, index) => {
               const active = playback.stage === index;
-              const done = playback.stage > index || (reduce && index === 0);
+              const done = playback.stage > index || playback.finished || (reduce && index === 0);
               const Node = nodes[index];
               const wireScale = done ? 1 : active ? Math.min(1, stageProgress(index)) : 0;
               const photoCard = activeId === "georgia" || activeId === "supply" || activeId === "os";
@@ -154,6 +154,17 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
               const className = `eco-story-node${active ? " is-active" : ""}${done ? " is-done" : ""}${photoCard ? " eco-story-node--photo" : ""}${activeId === "supply" ? " eco-story-node--supply" : ""}${activeId === "os" ? " eco-story-node--ops" : ""}`;
               const visual = (
                 <div className="eco-story-node-visual">
+                  <span className="eco-story-tick" aria-hidden="true">
+                    <svg viewBox="0 0 16 16" width="12" height="12" fill="none">
+                      <path
+                        d="M3.5 8.4 6.6 11.4 12.5 4.8"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
                   <Node active={active} done={done} href={photoCard ? story.href : undefined} />
                 </div>
               );
@@ -267,7 +278,7 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
             aria-pressed={playback.playing}
           >
             {playback.playing ? <PauseIcon /> : <PlayIcon />}
-            {playback.playing ? "Pause" : "Play"}
+            {playback.playing ? "Pause" : playback.finished ? "Play again" : "Play"}
           </button>
           <button type="button" className="eco-story-btn eco-story-btn--ghost" onClick={playback.replay}>
             <ReplayIcon /> Replay story <span aria-hidden="true">→</span>
