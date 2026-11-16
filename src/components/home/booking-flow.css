@@ -1,6 +1,8 @@
 /* How a booking moves — alternating vertical timeline */
 
 .bf-block {
+  /* Monochrome: status dots and step accents are white, not the ecosystem blue. */
+  --eco-blue: var(--eco-paper);
   margin: 72px auto 24px;
   width: min(1120px, calc(100% - 100px));
   display: flex;
