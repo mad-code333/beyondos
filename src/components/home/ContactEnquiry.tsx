@@ -73,7 +73,7 @@ export function ContactEnquiry({ interest = "starter" }: ContactEnquiryProps) {
             This form is a local prototype. Wire it to email when you are ready to take live
             enquiries.
           </p>
-          <Link href="/#engagement">Back to ways of working</Link>
+          <Link href="/#pricing">Back to ways of working</Link>
         </div>
       ) : (
         <form className="contact-enquiry-form" onSubmit={onSubmit}>

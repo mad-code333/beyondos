@@ -30,6 +30,11 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Keep anchored sections clear of the sticky header when jumped to from the nav. */
+main section[id] {
+  scroll-margin-top: 84px;
+}
+
 body {
   margin: 0;
   background: var(--bg);

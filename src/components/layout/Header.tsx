@@ -35,12 +35,14 @@ const serviceItems = [
   },
 ];
 
-const links = [
-  { href: "/", label: "Home" },
-  { href: "/pricing", label: "Pricing" },
-  { href: "/#work", label: "Selected work" },
-  { href: "/#approach", label: "Our approach" },
-  { href: "/#insights", label: "Insights" },
+// Each link points at a section on the home page, in page order.
+const sectionLinks = [
+  { id: "pricing", label: "Pricing" },
+  { id: "ecosystem", label: "Ecosystem" },
+  { id: "approach", label: "Approach" },
+  { id: "work", label: "Work" },
+  { id: "insights", label: "Insights" },
+  { id: "faq", label: "FAQ" },
 ];
 
 export function Header() {
@@ -48,7 +50,9 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
   const dropRef = useRef<HTMLDivElement>(null);
+  const currentSection = pathname === "/" ? activeSection : null;
   const servicesActive = pathname === "/services" || pathname.startsWith("/services/");
 
   function closeAll() {
@@ -63,6 +67,33 @@ export function Header() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Scroll-spy: highlight the nav link of the home section currently in view.
+  useEffect(() => {
+    if (pathname !== "/") return;
+    const sections = sectionLinks
+      .map((link) => document.getElementById(link.id))
+      .filter((el): el is HTMLElement => Boolean(el));
+    if (!sections.length) return;
+
+    const onScroll = () => {
+      const marker = window.innerHeight * 0.35;
+      let current: string | null = null;
+      for (const section of sections) {
+        if (section.getBoundingClientRect().top <= marker) current = section.id;
+      }
+      const last = sections[sections.length - 1];
+      if (current === last.id && last.getBoundingClientRect().bottom < marker) current = null;
+      setActiveSection(current);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [pathname]);
 
   useEffect(() => {
     function onPointerDown(event: MouseEvent) {
@@ -93,7 +124,7 @@ export function Header() {
           href="/"
           data-nav="home"
           onClick={closeAll}
-          className={cn(pathname === "/" && !servicesActive && "active")}
+          className={cn(pathname === "/" && !currentSection && "active")}
         >
           Home
         </Link>
@@ -130,12 +161,13 @@ export function Header() {
           </div>
         </div>
 
-        {links.slice(1).map((link) => (
+        {sectionLinks.map((link) => (
           <Link
-            key={link.href}
-            href={link.href}
+            key={link.id}
+            href={`/#${link.id}`}
             onClick={closeAll}
-            className={cn(pathname === link.href && "active")}
+            aria-current={currentSection === link.id ? "location" : undefined}
+            className={cn(currentSection === link.id && "active")}
           >
             {link.label}
           </Link>
@@ -178,8 +210,13 @@ export function Header() {
                   <small>{item.note}</small>
                 </Link>
               ))}
-              {links.slice(1).map((link) => (
-                <Link key={link.href} href={link.href} onClick={closeAll}>
+              {sectionLinks.map((link) => (
+                <Link
+                  key={link.id}
+                  href={`/#${link.id}`}
+                  onClick={closeAll}
+                  className={cn(currentSection === link.id && "active")}
+                >
                   {link.label}
                 </Link>
               ))}

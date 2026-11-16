@@ -68,7 +68,7 @@ export function EngagementModels() {
   return (
     <section
       className="engagement-models engage-cassis"
-      id="engagement"
+      id="pricing"
       aria-labelledby="engage-heading"
     >
       <div className="engage-glow" aria-hidden="true" />
@@ -149,7 +149,7 @@ export function EngagementModels() {
           viewport={{ once: true, margin: "-40px" }}
           transition={{ duration: 0.55, ease, delay: reduce ? 0 : 0.35 }}
         >
-          <Link href="/pricing">Compare plans &amp; FAQ →</Link>
+          <Link href="/#faq">Questions? Read the FAQ →</Link>
         </motion.p>
       </div>
     </section>
