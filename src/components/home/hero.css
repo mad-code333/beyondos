@@ -98,7 +98,9 @@
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
   gap: clamp(24px, 4vw, 56px);
   align-items: center;
-  min-height: 420px;
+  /* Grows with the viewport so copy + orbit sit centred between the top row
+     and the horizon, instead of leaving a gap below them. */
+  min-height: clamp(520px, calc(100svh - 300px), 720px);
   padding-top: 18px;
 }
 
@@ -313,7 +315,7 @@
 
 .hero-orbit-stage {
   position: relative;
-  height: 420px;
+  height: 500px;
 }
 
 /* Desktop: the wrapper is invisible to layout — items keep their arc slots. */
@@ -370,8 +372,8 @@
   background: none;
   color: inherit;
   text-align: left;
-  transform: translate(-36px, -50%) scale(var(--s));
-  transform-origin: 36px center;
+  transform: translate(-46px, -50%) scale(var(--s));
+  transform-origin: 46px center;
   opacity: 0.6;
   cursor: pointer;
   transition:
@@ -409,8 +411,8 @@
 .hero-orbit-thumb-wrap {
   position: relative;
   flex: none;
-  width: 72px;
-  height: 72px;
+  width: 92px;
+  height: 92px;
 }
 
 .hero-orbit-pulse {
@@ -471,12 +473,12 @@
   z-index: 1;
   display: grid;
   place-items: center;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
   background: rgba(12, 12, 14, 0.92);
-  font-size: 8px;
+  font-size: 9px;
   color: #ddd;
 }
 
@@ -499,7 +501,7 @@
 .hero-orbit-label strong {
   overflow: hidden;
   font-family: var(--font-display), Manrope, sans-serif;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: 0.06em;
   line-height: 1.15;
@@ -513,7 +515,7 @@
 }
 
 .hero-orbit-item[aria-pressed="true"] .hero-orbit-label strong {
-  font-size: 17px;
+  font-size: 22px;
   font-weight: 700;
   color: #fff;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
@@ -521,7 +523,7 @@
 
 .hero-orbit-label small {
   overflow: hidden;
-  font-size: 12px;
+  font-size: 13.5px;
   font-style: italic;
   line-height: 1.35;
   text-overflow: ellipsis;
@@ -648,9 +650,7 @@
   display: flex;
   justify-content: center;
   gap: 18px;
-  /* Push the horizon (and the panel under it) toward the bottom of the first
-     screen; collapses back to 22px on short viewports. */
-  margin: clamp(22px, calc(100svh - 760px), 240px) 0 0;
+  margin: 22px 0 0;
   font-family: var(--font-display), Manrope, sans-serif;
   font-size: 9px;
   font-weight: 600;
@@ -1147,7 +1147,7 @@
   }
 
   .hero-orbit-item[aria-pressed="true"] .hero-orbit-label strong {
-    font-size: 15px;
+    font-size: 18px;
   }
 }
 
