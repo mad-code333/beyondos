@@ -20,8 +20,8 @@
   transform: translateX(-50%);
   background: radial-gradient(
     ellipse at center,
-    rgba(var(--ec-accent), 0.22) 0%,
-    rgba(var(--ec-accent), 0.1) 42%,
+    rgba(var(--ec-accent), 0.07) 0%,
+    rgba(var(--ec-accent), 0.03) 42%,
     transparent 72%
   );
 }
@@ -34,8 +34,8 @@
   filter: blur(18px);
   background: radial-gradient(
     ellipse at center,
-    rgba(var(--ec-accent), 0.24) 0%,
-    rgba(var(--ec-accent), 0.08) 48%,
+    rgba(var(--ec-accent), 0.08) 0%,
+    rgba(var(--ec-accent), 0.025) 48%,
     transparent 70%
   );
   animation: engage-glow-breathe 7.5s ease-in-out infinite;
@@ -117,8 +117,8 @@
    to the bottom, the popular plan fading into the accent. Own class names
    (ec-*) so the /pricing page's .pricing-* styles can't leak in. ── */
 .engagement-models {
-  --ec-accent: 74, 108, 235; /* navy, same as the hero dots */
-  --ec-accent-text: #9fb3ff;
+  --ec-accent: 255, 255, 255; /* monochrome: white accent */
+  --ec-accent-text: #ffffff;
 }
 
 .ec-grid {
@@ -142,7 +142,7 @@
 }
 
 .ec-card.is-popular {
-  background: linear-gradient(180deg, #121212 0%, rgba(var(--ec-accent), 0.5) 100%);
+  background: linear-gradient(180deg, #121212 0%, #2a2a2c 100%);
 }
 
 .ec-body {
@@ -178,7 +178,7 @@
   flex: none;
   padding: 5px 10px;
   border-radius: 16px;
-  background: rgba(var(--ec-accent), 0.25);
+  background: rgba(var(--ec-accent), 0.14);
   color: var(--ec-accent-text);
   font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   font-size: 11.2px;
