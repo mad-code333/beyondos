@@ -55,9 +55,11 @@ export function Header() {
   const currentSection = pathname === "/" ? activeSection : null;
   const servicesActive = pathname === "/services" || pathname.startsWith("/services/");
 
-  function closeAll() {
+  function closeAll(event?: { currentTarget: EventTarget }) {
     setMenuOpen(false);
     setServicesOpen(false);
+    // Drop focus after a click so the link does not keep a focus box once the page scrolls.
+    if (event?.currentTarget instanceof HTMLElement) event.currentTarget.blur();
   }
 
   // Sticky header: show the glass bar once the page has scrolled.

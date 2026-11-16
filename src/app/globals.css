@@ -265,6 +265,22 @@ html[data-motion="paused"] *::after {
   transition: color 0.22s ease;
 }
 
+/* No browser focus box on nav items after a click; keyboard users get an underline instead. */
+.site-header nav a:focus,
+.site-header nav button:focus,
+.site-header .nav-cta:focus,
+.site-header .wordmark:focus {
+  outline: none;
+}
+
+.site-header nav a:focus-visible,
+.site-header nav button:focus-visible {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 1px;
+}
+
 .site-header nav a.active,
 .site-header nav a:hover,
 .site-header nav button:hover,
