@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useId, useRef, useState, type PointerEvent } from "react";
-import { motion } from "framer-motion";
+import { animate, motion, useInView } from "framer-motion";
 import { useReducedMotion } from "@/lib/motion";
 import { Reveal } from "@/components/ui/Reveal";
 import "./capabilities.css";
@@ -28,6 +28,63 @@ const FLOW_STEPS = [
   { n: "3", label: "Notify housekeeping" },
   { n: "✓", label: "Send welcome message" },
 ] as const;
+
+// How far the copy and visuals travel when they slide in from the sides.
+const SLIDE = 72;
+
+const numberFormat = new Intl.NumberFormat("en-US");
+
+/** Counts from 0 to `value` once `start` is true; shows the final value when motion is paused. */
+function CountUp({
+  value,
+  start,
+  paused,
+  prefix = "",
+  suffix = "",
+  delay = 0,
+  duration = 1.6,
+}: {
+  value: number;
+  start: boolean;
+  paused: boolean;
+  prefix?: string;
+  suffix?: string;
+  delay?: number;
+  duration?: number;
+}) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const render = (n: number) => `${prefix}${numberFormat.format(Math.round(n))}${suffix}`;
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    if (paused) {
+      node.textContent = render(value);
+      return;
+    }
+    if (!start) {
+      node.textContent = render(0);
+      return;
+    }
+    const controls = animate(0, value, {
+      duration,
+      delay,
+      ease: [0.16, 1, 0.3, 1],
+      onUpdate: (latest) => {
+        node.textContent = render(latest);
+      },
+    });
+    return () => controls.stop();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [start, paused, value, prefix, suffix, delay, duration]);
+
+  // Server/first render shows the final value so the number is never blank or wrong without JS.
+  return (
+    <span ref={ref}>
+      {render(value)}
+    </span>
+  );
+}
 
 const ORBIT_RADIUS = 34;
 const ORBIT_START = (-110 * Math.PI) / 180;
@@ -64,6 +121,8 @@ function useMotionPaused(reduce: boolean) {
 function DashboardPreview({ paused }: { paused: boolean }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const shineRef = useRef<HTMLSpanElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(panelRef, { once: true, margin: "-80px" });
 
   function tilt(event: PointerEvent<HTMLDivElement>) {
     if (paused || !cardRef.current) return;
@@ -86,7 +145,10 @@ function DashboardPreview({ paused }: { paused: boolean }) {
   }
 
   return (
-    <div className="core-visual-panel core-dash" onPointerMove={tilt} onPointerLeave={untilt}>
+    <div
+      ref={panelRef}
+      className="core-visual-panel core-dash"
+      onPointerMove={tilt} onPointerLeave={untilt}>
       <div className="core-dash-atmosphere" aria-hidden="true">
         <span className="core-dash-grain" />
         <span className="core-dash-bloom" />
@@ -119,13 +181,21 @@ function DashboardPreview({ paused }: { paused: boolean }) {
         <div className="core-dash-metrics">
           <div className="core-dash-top">
             <span>Revenue</span>
-            <strong>₾53,000</strong>
-            <em className="is-pop">+55%</em>
+            <strong>
+              <CountUp value={53000} prefix="₾" start={inView} paused={paused} delay={0.3} />
+            </strong>
+            <em className="is-pop">
+              <CountUp value={55} prefix="+" suffix="%" start={inView} paused={paused} delay={0.5} />
+            </em>
           </div>
           <div className="core-dash-top">
             <span>Occupancy</span>
-            <strong>86%</strong>
-            <em className="is-pop">+12%</em>
+            <strong>
+              <CountUp value={86} suffix="%" start={inView} paused={paused} delay={0.4} />
+            </strong>
+            <em className="is-pop">
+              <CountUp value={12} prefix="+" suffix="%" start={inView} paused={paused} delay={0.6} />
+            </em>
           </div>
         </div>
         <div className="core-bars-wrap">
@@ -133,7 +203,7 @@ function DashboardPreview({ paused }: { paused: boolean }) {
             <span>Mon</span>
             <span>Sun</span>
           </div>
-          <div className={`core-bars${paused ? "" : " is-play"}`} aria-hidden="true">
+          <div className={`core-bars${!paused && inView ? " is-play" : ""}`} aria-hidden="true">
             {BAR_HEIGHTS.map((height, index) => (
               <i key={index} style={{ ["--h" as string]: `${height}%` }} />
             ))}
@@ -276,10 +346,10 @@ export function Capabilities() {
       <div className="wrap">
         <div className="core-head">
           <div>
-            <Reveal y={14}>
+            <Reveal x={-SLIDE} y={0}>
               <div className="eyebrow">Capabilities</div>
             </Reveal>
-            <Reveal delay={0.08} y={20}>
+            <Reveal delay={0.08} x={-SLIDE} y={0}>
               <h2 className="core-title">
                 Discover our core
                 <br />
@@ -291,7 +361,7 @@ export function Capabilities() {
               </h2>
             </Reveal>
           </div>
-          <Reveal delay={0.14} y={12}>
+          <Reveal delay={0.14} x={SLIDE} y={0}>
             <Link className="core-all" href="/#services">
               View all features <span aria-hidden="true">→</span>
             </Link>
@@ -301,21 +371,21 @@ export function Capabilities() {
         <div className="core-stack">
           <article className="core-row core-row-dashboard">
             <div className="core-copy">
-              <Reveal y={16}>
+              <Reveal x={-SLIDE} y={0}>
                 <span className="core-icon" aria-hidden="true">
                   ▦
                 </span>
               </Reveal>
-              <Reveal delay={0.06} y={16}>
+              <Reveal delay={0.06} x={-SLIDE} y={0}>
                 <h3>Custom Dashboard Creation</h3>
               </Reveal>
-              <Reveal delay={0.1} y={14}>
+              <Reveal delay={0.1} x={-SLIDE} y={0}>
                 <p>
                   See arrivals, covers, pipeline and occupancy in one property view — shaped around
                   how your team already decides.
                 </p>
               </Reveal>
-              <Reveal delay={0.14} y={12}>
+              <Reveal delay={0.14} x={-SLIDE} y={0}>
                 <ul className="core-points">
                   <li>
                     <i aria-hidden="true">✓</i>
@@ -332,28 +402,28 @@ export function Capabilities() {
                 </ul>
               </Reveal>
             </div>
-            <Reveal delay={0.12} y={22} className="core-media">
+            <Reveal delay={0.12} x={SLIDE} y={0} className="core-media">
               <DashboardPreview paused={paused} />
             </Reveal>
           </article>
 
           <article className="core-row core-row-integrations is-flip">
             <div className="core-copy">
-              <Reveal y={16}>
+              <Reveal x={SLIDE} y={0}>
                 <span className="core-icon" aria-hidden="true">
                   ◎
                 </span>
               </Reveal>
-              <Reveal delay={0.06} y={16}>
+              <Reveal delay={0.06} x={SLIDE} y={0}>
                 <h3>Third-Party Integration</h3>
               </Reveal>
-              <Reveal delay={0.1} y={14}>
+              <Reveal delay={0.1} x={SLIDE} y={0}>
                 <p>
                   Connect payments, messaging, channel managers and the tools you already rely on —
                   without forcing a rip-and-replace.
                 </p>
               </Reveal>
-              <Reveal delay={0.14} y={12}>
+              <Reveal delay={0.14} x={SLIDE} y={0}>
                 <ul className="core-points">
                   <li>
                     <i aria-hidden="true">✓</i>
@@ -370,28 +440,28 @@ export function Capabilities() {
                 </ul>
               </Reveal>
             </div>
-            <Reveal delay={0.12} y={22} className="core-media">
+            <Reveal delay={0.12} x={-SLIDE} y={0} className="core-media">
               <IntegrationNetwork paused={paused} />
             </Reveal>
           </article>
 
           <article className="core-row core-row-automation">
             <div className="core-copy">
-              <Reveal y={16}>
+              <Reveal x={-SLIDE} y={0}>
                 <span className="core-icon" aria-hidden="true">
                   ↻
                 </span>
               </Reveal>
-              <Reveal delay={0.06} y={16}>
+              <Reveal delay={0.06} x={-SLIDE} y={0}>
                 <h3>Workflow Automation</h3>
               </Reveal>
-              <Reveal delay={0.1} y={14}>
+              <Reveal delay={0.1} x={-SLIDE} y={0}>
                 <p>
                   Move a booking, an order or a lead through clear steps — so the next person
                   already has context.
                 </p>
               </Reveal>
-              <Reveal delay={0.14} y={12}>
+              <Reveal delay={0.14} x={-SLIDE} y={0}>
                 <ul className="core-points">
                   <li>
                     <i aria-hidden="true">✓</i>
@@ -408,7 +478,7 @@ export function Capabilities() {
                 </ul>
               </Reveal>
             </div>
-            <Reveal delay={0.12} y={22} className="core-media">
+            <Reveal delay={0.12} x={SLIDE} y={0} className="core-media">
               <WorkflowPreview paused={paused} />
             </Reveal>
           </article>

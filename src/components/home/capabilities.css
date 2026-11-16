@@ -372,7 +372,7 @@
   background: radial-gradient(circle, rgba(255, 255, 255, 0.094), transparent 70%);
 }
 
-.core-dash-top span {
+.core-dash-top > span {
   display: block;
   font-size: 9px;
   letter-spacing: 0.1em;
