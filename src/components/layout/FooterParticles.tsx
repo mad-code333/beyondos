@@ -11,9 +11,9 @@ type Particle = {
   vy: number;
   size: number;
   shade: number;
-  /** A few particles are navy, like the dots in the hero. */
-  navy: boolean;
   phase: number;
+  /** Seconds after the assemble starts before this particle is pulled home. */
+  delay: number;
   speed: number;
 };
 
@@ -22,10 +22,19 @@ type FooterParticlesProps = {
 };
 
 /**
- * Oversized footer wordmark built from thousands of particles — white,
- * brightening toward the bottom, with a sprinkle of navy (the hero's palette).
+ * Oversized footer wordmark built from thousands of monochrome particles,
+ * brightening toward the bottom. On first view they fly in from a scatter and
+ * assemble the word; a light band sweeps across it, the pointer pushes them
+ * away and a click bursts them outward.
  * Client-only Canvas 2D work runs entirely in useEffect after mount.
  */
+
+/** How long the fly-in takes once a particle starts moving (s). */
+const ASSEMBLE_S = 1.6;
+/** Largest per-particle stagger, left → right (s). */
+const ASSEMBLE_STAGGER_S = 1.1;
+/** One light sweep across the word every this many seconds. */
+const SWEEP_PERIOD_S = 5.5;
 export function FooterParticles({ text = "BeyondOS" }: FooterParticlesProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -57,6 +66,9 @@ export function FooterParticles({ text = "BeyondOS" }: FooterParticlesProps) {
     let cancelled = false;
     // Only animate while the footer is on screen and the tab is visible.
     let visible = false;
+    // The fly-in plays once, the first time the wordmark is seen.
+    let assembled = false;
+    let assembleStart = -1;
 
     const fontFamily =
       getComputedStyle(document.documentElement).getPropertyValue("--font-display").trim() ||
@@ -140,11 +152,47 @@ export function FooterParticles({ text = "BeyondOS" }: FooterParticlesProps) {
           vy: 0,
           size: 0.55 + Math.random() * 1.15 + c.shade * 0.35,
           shade: c.shade,
-          navy: Math.random() < 0.14,
           phase: Math.random() * Math.PI * 2,
+          // Left-to-right wave with a little randomness.
+          delay: (c.x / width) * ASSEMBLE_STAGGER_S * 0.75 + Math.random() * ASSEMBLE_STAGGER_S * 0.25,
           speed: 0.55 + Math.random() * 1.1,
         };
       });
+    }
+
+    /** Throw every particle far from home; paint() pulls them back in. */
+    function scatter(now: number) {
+      const cx = width * 0.5;
+      const cy = height * 0.58;
+      for (const p of particles) {
+        const angle = Math.random() * Math.PI * 2;
+        const reach = Math.max(width, height) * (0.35 + Math.random() * 0.55);
+        p.x = cx + Math.cos(angle) * reach;
+        p.y = cy + Math.sin(angle) * reach * 0.6;
+        p.vx = 0;
+        p.vy = 0;
+      }
+      assembleStart = now * 0.001;
+    }
+
+    function maybeAssemble() {
+      if (assembled || !visible || particles.length === 0) return;
+      assembled = true;
+      if (document.documentElement.getAttribute("data-motion") === "paused") return;
+      scatter(performance.now());
+    }
+
+    function burst(x: number, y: number) {
+      const radius = Math.min(320, width * 0.26);
+      for (const p of particles) {
+        const dx = p.x - x;
+        const dy = p.y - y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist > radius || dist < 0.01) continue;
+        const force = (1 - dist / radius) * (22 + Math.random() * 18);
+        p.vx += (dx / dist) * force;
+        p.vy += (dy / dist) * force;
+      }
     }
 
     function paint(now: number, dt: number) {
@@ -156,17 +204,31 @@ export function FooterParticles({ text = "BeyondOS" }: FooterParticlesProps) {
         document.hidden || document.documentElement.getAttribute("data-motion") === "paused";
 
       const t = now * 0.001;
-      const mouseRadius = Math.min(160, width * 0.14);
+      const mouseRadius = Math.min(240, width * 0.18);
       const mouseRadiusSq = mouseRadius * mouseRadius;
+      // A soft band of light travelling left → right, starting off-canvas.
+      const sweepX = ((t % SWEEP_PERIOD_S) / SWEEP_PERIOD_S) * width * 1.6 - width * 0.3;
+      const sweepSigma = Math.max(40, width * 0.045);
+      const sinceAssemble = assembleStart < 0 ? Infinity : t - assembleStart;
 
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
 
+        const sd = p.homeX - sweepX;
+        const glow = paused ? 0 : Math.exp(-(sd * sd) / (2 * sweepSigma * sweepSigma));
+
         if (!paused) {
           const ox = Math.sin(t * 0.55 * p.speed + p.phase) * 0.55;
-          const oy = Math.cos(t * 0.42 * p.speed + p.phase * 1.3) * 0.7;
-          p.vx += (p.homeX + ox - p.x) * 0.085;
-          p.vy += (p.homeY + oy - p.y) * 0.085;
+          const oy = Math.cos(t * 0.42 * p.speed + p.phase * 1.3) * 0.7 - glow * 7;
+          // During the fly-in the pull home ramps up per particle, so the word
+          // fills in as a wave instead of snapping together.
+          let pull = 0.085;
+          if (sinceAssemble < ASSEMBLE_S + ASSEMBLE_STAGGER_S) {
+            const k = Math.min(1, Math.max(0, (sinceAssemble - p.delay) / ASSEMBLE_S));
+            pull = k === 0 ? 0 : 0.006 + 0.079 * k * k;
+          }
+          p.vx += (p.homeX + ox - p.x) * pull;
+          p.vy += (p.homeY + oy - p.y) * pull;
 
           if (pointerActive) {
             const dx = p.x - pointerX;
@@ -174,7 +236,7 @@ export function FooterParticles({ text = "BeyondOS" }: FooterParticlesProps) {
             const distSq = dx * dx + dy * dy;
             if (distSq < mouseRadiusSq && distSq > 0.01) {
               const dist = Math.sqrt(distSq);
-              const force = (1 - dist / mouseRadius) * 18;
+              const force = (1 - dist / mouseRadius) * 34;
               p.vx += (dx / dist) * force * dt;
               p.vy += (dy / dist) * force * dt;
             }
@@ -194,17 +256,18 @@ export function FooterParticles({ text = "BeyondOS" }: FooterParticlesProps) {
         const twinkle = paused
           ? 1
           : 0.72 + 0.28 * (0.5 + 0.5 * Math.sin(t * 2.1 * p.speed + p.phase));
-        const alpha = Math.min(0.95, (0.18 + p.shade * 0.82) * twinkle);
+        const alpha = Math.min(1, (0.18 + p.shade * 0.82) * twinkle + glow * 0.7);
         if (alpha < 0.05) continue;
 
-        // White, dim at the top and bright at the bottom; navy particles stay navy.
-        const r = p.navy ? 74 : Math.round(110 + p.shade * 140);
-        const g = p.navy ? 108 : Math.round(112 + p.shade * 140);
-        const b = p.navy ? 235 : Math.round(118 + p.shade * 137);
+        // Monochrome: grey at the top, white at the bottom and inside the sweep.
+        const light = Math.min(1, p.shade + glow * 0.8);
+        const r = Math.round(110 + light * 145);
+        const g = Math.round(112 + light * 143);
+        const b = Math.round(118 + light * 137);
 
         ctx.beginPath();
         ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, p.size * (1 + glow * 0.9), 0, Math.PI * 2);
         ctx.fill();
       }
     }
@@ -223,6 +286,13 @@ export function FooterParticles({ text = "BeyondOS" }: FooterParticlesProps) {
       pointerX = e.clientX - rect.left;
       pointerY = e.clientY - rect.top;
       pointerActive = true;
+    }
+
+    function onPointerDown(e: PointerEvent) {
+      if (document.documentElement.getAttribute("data-motion") === "paused") return;
+      const rect = surface.getBoundingClientRect();
+      burst(e.clientX - rect.left, e.clientY - rect.top);
+      kick();
     }
 
     function onPointerLeave() {
@@ -257,14 +327,21 @@ export function FooterParticles({ text = "BeyondOS" }: FooterParticlesProps) {
     });
     if (surface.parentElement) ro.observe(surface.parentElement);
 
-    const io = new IntersectionObserver((entries) => {
-      visible = entries[0]?.isIntersecting ?? true;
-      kick();
-    });
+    const io = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        visible = entry?.isIntersecting ?? true;
+        // Hold the fly-in until a good part of the word is on screen.
+        if ((entry?.intersectionRatio ?? 1) >= 0.3) maybeAssemble();
+        kick();
+      },
+      { threshold: [0, 0.3] },
+    );
     io.observe(surface);
     document.addEventListener("visibilitychange", kick);
 
     surface.addEventListener("pointermove", onPointerMove, { passive: true });
+    surface.addEventListener("pointerdown", onPointerDown);
     surface.addEventListener("pointerleave", onPointerLeave);
     surface.addEventListener("pointercancel", onPointerLeave);
 
@@ -276,6 +353,7 @@ export function FooterParticles({ text = "BeyondOS" }: FooterParticlesProps) {
       io.disconnect();
       document.removeEventListener("visibilitychange", kick);
       surface.removeEventListener("pointermove", onPointerMove);
+      surface.removeEventListener("pointerdown", onPointerDown);
       surface.removeEventListener("pointerleave", onPointerLeave);
       surface.removeEventListener("pointercancel", onPointerLeave);
     };
