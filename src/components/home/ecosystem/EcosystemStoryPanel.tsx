@@ -3,7 +3,7 @@
 import { useRef, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useReducedMotion } from "@/lib/motion";
-import { getStory, type EcosystemStoryId } from "./stories";
+import { ECOSYSTEM_STORIES, getStory, type EcosystemStoryId } from "./stories";
 import { useStoryPlayback } from "./useStoryPlayback";
 import {
   GeorgiaDiscoverNode,
@@ -254,18 +254,14 @@ export function EcosystemStoryPanel({ activeId }: EcosystemStoryPanelProps) {
       </AnimatePresence>
 
       <footer className="eco-story-footer">
-        <div
-          className="eco-story-progress"
-          role="progressbar"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={Math.round(((playback.stage + playback.progress) / story.stages.length) * 100)}
-          aria-label={`${story.title} story progress`}
-        >
-          {story.stages.map((stage, index) => (
-            <span key={stage.id} className="eco-story-progress-seg">
-              <i style={{ transform: `scaleX(${stageProgress(index)})` }} />
-            </span>
+        {/* One fixed segment per story: Beyond Georgia → 1st, Beyond Supply → 2nd, BeyondOS → 3rd. */}
+        <div className="eco-story-progress" aria-label={`Story ${story.index} of ${ECOSYSTEM_STORIES.length}`}>
+          {ECOSYSTEM_STORIES.map((item) => (
+            <span
+              key={item.id}
+              className={`eco-story-progress-seg${item.id === activeId ? " is-current" : ""}`}
+              aria-hidden="true"
+            />
           ))}
         </div>
 
