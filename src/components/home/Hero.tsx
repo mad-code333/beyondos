@@ -68,34 +68,6 @@ function ArrowUpRight() {
   );
 }
 
-function Chevron({ dir }: { dir: "up" | "down" }) {
-  return (
-    <svg className="hero-chevron" viewBox="0 0 16 16" aria-hidden="true">
-      <path
-        d={dir === "up" ? "M4 10l4-4 4 4" : "M4 6l4 4 4-4"}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-/** Drawn play / pause glyphs — "▶" renders as a colour emoji on iOS. */
-function PlayPauseIcon({ playing }: { playing: boolean }) {
-  return (
-    <svg className="hero-playpause" viewBox="0 0 12 12" aria-hidden="true">
-      {playing ? (
-        <path d="M3.5 2.5v7M8.5 2.5v7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-      ) : (
-        <path d="M4 2.6v6.8L9.4 6z" fill="currentColor" />
-      )}
-    </svg>
-  );
-}
-
 /** Two stacked arrows: on hover the first flies out top-right, the second slides in. */
 function ArrowSwap() {
   return (
@@ -138,9 +110,7 @@ export function Hero() {
   const reduce = useReducedMotion();
   const router = useRouter();
   const [active, setActive] = useState(0);
-  // Two independent reasons to stop autoplay: the user pressed pause (sticky),
-  // or the pointer/focus is resting on the orbit or panel (temporary).
-  const [userPaused, setUserPaused] = useState(false);
+  // Autoplay rests while the pointer/focus is on the orbit or panel.
   const [hoverPaused, setHoverPaused] = useState(false);
   const [inView, setInView] = useState(true);
   const heroRef = useRef<HTMLElement>(null);
@@ -220,14 +190,14 @@ export function Hero() {
   // "Pause motion" toggle (data-motion) rather than the OS reduced-motion flag.
   // `active` is a dependency so a manual pick restarts the full interval.
   useEffect(() => {
-    if (userPaused || hoverPaused || !inView) return;
+    if (hoverPaused || !inView) return;
     const id = window.setInterval(() => {
       if (document.hidden) return;
       if (document.documentElement.getAttribute("data-motion") === "paused") return;
       setActive((current) => (current + 1) % slides.length);
     }, CYCLE_MS);
     return () => window.clearInterval(id);
-  }, [userPaused, hoverPaused, inView, active]);
+  }, [hoverPaused, inView, active]);
 
   // Hover-pause only for real mouse pointers: touch taps fire "enter" without
   // a matching "leave", which used to freeze autoplay for good on phones.
@@ -400,36 +370,14 @@ export function Hero() {
               </div>
             </div>
 
-            <div className="hero-orbit-controls">
-              <span className="hero-orbit-count mono" aria-hidden="true">
-                <b>{slides[active].number}</b> / 05
+            <Link className="hero-orbit-card" href={`/services/${slides[active].slug}`}>
+              <span className="hero-orbit-card-note mono">One booking. A connected journey.</span>
+              {/* key= replays the swap-in whenever the service changes. */}
+              <span className="hero-orbit-card-cta" key={slides[active].slug}>
+                See {slides[active].name}
+                <ArrowUpRight />
               </span>
-              <button
-                type="button"
-                className="hero-orbit-btn"
-                aria-label="Previous service"
-                onClick={() => select(active - 1)}
-              >
-                <Chevron dir="up" />
-              </button>
-              <button
-                type="button"
-                className="hero-orbit-btn"
-                aria-label="Next service"
-                onClick={() => select(active + 1)}
-              >
-                <Chevron dir="down" />
-              </button>
-              <button
-                type="button"
-                className="hero-orbit-btn is-play"
-                aria-pressed={userPaused}
-                aria-label={userPaused ? "Play service rotation" : "Pause service rotation"}
-                onClick={() => setUserPaused((value) => !value)}
-              >
-                <PlayPauseIcon playing={!userPaused} />
-              </button>
-            </div>
+            </Link>
           </div>
         </div>
 
