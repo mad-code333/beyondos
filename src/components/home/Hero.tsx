@@ -27,6 +27,13 @@ const slides: Slide[] = [
 
 const CYCLE_MS = 5500;
 
+/** Signed distance of an item from the active one on the wheel, in -2..2. */
+function wheelOffset(index: number, active: number) {
+  const n = slides.length;
+  const half = Math.floor(n / 2);
+  return ((((index - active + half) % n) + n) % n) - half;
+}
+
 /** Which Mountain House tab each service lights up. */
 const TAB_FOR: Record<Slide["slug"], TabId> = {
   crm: "crm",
@@ -116,6 +123,7 @@ export function Hero() {
   // "first tap selects" from "tap on the active item opens it".
   const pressedActive = useRef<boolean | null>(null);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const prevActive = useRef(active);
 
   const select = useCallback((index: number) => {
     setActive((index + slides.length) % slides.length);
@@ -135,6 +143,30 @@ export function Hero() {
     ro.observe(hero);
     return () => ro.disconnect();
   }, []);
+
+  // The wheel turns by transitioning each item's --o. An item whose offset jumps
+  // across the wheel (top ↔ bottom) would sweep through the centre, so snap it
+  // just past the far end of the arc, hidden, and let it glide in from there.
+  useLayoutEffect(() => {
+    const from = prevActive.current;
+    prevActive.current = active;
+    const list = listRef.current;
+    if (!list || from === active) return;
+    slides.forEach((_, index) => {
+      const before = wheelOffset(index, from);
+      const after = wheelOffset(index, active);
+      if (Math.abs(after - before) <= slides.length / 2) return;
+      const el = list.children[index] as HTMLElement | undefined;
+      if (!el) return;
+      el.style.transition = "none";
+      el.style.opacity = "0";
+      el.style.setProperty("--o", String(after + Math.sign(after)));
+      void el.offsetWidth; // commit the off-arc start before transitioning
+      el.style.transition = "";
+      el.style.opacity = "";
+      el.style.setProperty("--o", String(after));
+    });
+  }, [active]);
 
   // Phones: the services become a swipeable chip row — keep the active chip in view.
   // (On desktop the row is display: contents, so it never scrolls.)
@@ -273,12 +305,15 @@ export function Hero() {
               <div className="hero-orbit-list" ref={listRef}>
                 {slides.map((item, index) => {
                   const selected = index === active;
+                  const offset = wheelOffset(index, active);
                   return (
                     <button
                       key={item.slug}
                       className="hero-orbit-item"
                       type="button"
                       data-index={index}
+                      data-offset={offset}
+                      style={{ "--o": offset } as React.CSSProperties}
                       aria-pressed={selected}
                       tabIndex={selected ? 0 : -1}
                       aria-label={selected ? `Explore ${item.name}` : `Show ${item.name}`}

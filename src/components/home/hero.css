@@ -301,8 +301,8 @@
 }
 
 /* ── Orbit (beyondgeorgia-style C-arc) ──
-   Items keep fixed slots on a dashed arc; the active one grows, glows and
-   pulses. Dots on the right edge and ▲/▼ controls below drive it. */
+   Items rotate along a dashed arc so the active one sits at the centre and
+   grows, glows and pulses. Dots on the right edge and ▲/▼ controls below drive it. */
 .hero-orbit {
   position: relative;
   display: grid;
@@ -341,9 +341,21 @@
   animation: heroOrbitDash 18s linear infinite;
 }
 
+/* The wheel rotates: --o is each item's signed offset from the active one
+   (-2…2). Registered so it interpolates, and left/top are derived from it with
+   trig — items glide ALONG the arc (circle r204 at 300,210 in the 500×420 box)
+   rather than cutting straight across. */
+@property --o {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
 .hero-orbit-item {
-  --x: 37.4%;
-  --y: 50%;
+  --o: 0;
+  --a: calc(var(--o) * 33deg);
+  --x: calc((60 - 40.8 * cos(var(--a))) * 1%);
+  --y: calc((50 + 48.5714 * sin(var(--a))) * 1%);
   --s: 0.9;
   position: absolute;
   top: var(--y);
@@ -363,16 +375,16 @@
   opacity: 0.6;
   cursor: pointer;
   transition:
-    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    --o 0.55s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1),
+    opacity 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-/* Slot centres on the arc (viewBox 500×420, circle r204 at 300,210). */
-.hero-orbit-item[data-index="0"] { --x: 37.4%; --y: 9.5%; }
-.hero-orbit-item[data-index="1"] { --x: 22.9%; --y: 29.8%; --s: 0.96; }
-.hero-orbit-item[data-index="2"] { --x: 19.2%; --y: 50%; --s: 0.98; }
-.hero-orbit-item[data-index="3"] { --x: 22.9%; --y: 70.2%; --s: 0.96; }
-.hero-orbit-item[data-index="4"] { --x: 37.4%; --y: 90.5%; }
+/* Depth: neighbours dim, the ends of the arc fade further. */
+.hero-orbit-item[data-offset="-1"],
+.hero-orbit-item[data-offset="1"] { --s: 0.96; opacity: 0.62; }
+.hero-orbit-item[data-offset="-2"],
+.hero-orbit-item[data-offset="2"] { --s: 0.86; opacity: 0.32; }
 
 .hero-orbit-item:hover {
   --s: 1.04;
@@ -1108,9 +1120,10 @@
   }
 
   .hero-orbit-item,
-  .hero-orbit-item[data-index],
+  .hero-orbit-item[data-offset],
   .hero-orbit-item:hover,
   .hero-orbit-item[aria-pressed="true"] {
+    animation: none;
     position: relative;
     top: auto;
     left: auto;
