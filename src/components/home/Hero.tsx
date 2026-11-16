@@ -106,6 +106,34 @@ function ArrowSwap() {
   );
 }
 
+/** Small line glyphs for the capabilities band. */
+function CapIcon({ slug }: { slug: Slide["slug"] }) {
+  const paths: Record<Slide["slug"], React.ReactNode> = {
+    crm: (
+      <>
+        <circle cx="8" cy="8" r="5.5" />
+        <circle cx="8" cy="8" r="1.6" />
+      </>
+    ),
+    oms: <path d="M3 4.5h10M3 8h10M3 11.5h10" />,
+    hms: (
+      <>
+        <rect x="3" y="3" width="10" height="10" rx="1" />
+        <path d="M3 8h10M8 3v10" />
+      </>
+    ),
+    web: (
+      <path d="M6 6V4.5A1.5 1.5 0 1 0 4.5 6H11.5A1.5 1.5 0 1 0 10 4.5v7A1.5 1.5 0 1 0 11.5 10h-7A1.5 1.5 0 1 0 6 11.5Z" />
+    ),
+    growth: <path d="M4.5 11.5l7-7M6 4.5h5.5V10" />,
+  };
+  return (
+    <svg className="hero-caps-icon" viewBox="0 0 16 16" aria-hidden="true">
+      {paths[slug]}
+    </svg>
+  );
+}
+
 export function Hero() {
   const reduce = useReducedMotion();
   const router = useRouter();
@@ -421,6 +449,32 @@ export function Hero() {
           Showing {slides[active].name}
         </span>
       </div>
+
+      <nav className="hero-caps" aria-label="Beyond OS capabilities">
+        <div className="wrap hero-caps-inner">
+          <p className="hero-caps-note mono">
+            Beyond OS · For the property.
+            <br />
+            Five capabilities.
+            <br />
+            Start with one.
+          </p>
+          <ul className="hero-caps-list">
+            {slides.map((item, index) => (
+              <li key={item.slug}>
+                <Link
+                  className="hero-caps-link"
+                  href={`/services/${item.slug}`}
+                  aria-current={index === active ? "true" : undefined}
+                >
+                  <CapIcon slug={item.slug} />
+                  {item.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </nav>
     </section>
   );
 }

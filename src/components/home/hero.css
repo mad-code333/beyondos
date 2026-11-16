@@ -8,7 +8,7 @@
   isolation: isolate;
   overflow: clip;
   margin-top: -84px;
-  padding: calc(84px + 34px) 0 96px;
+  padding: calc(84px + 34px) 0 0;
   background: #050506;
   color: #f6f6f8;
 }
@@ -648,7 +648,9 @@
   display: flex;
   justify-content: center;
   gap: 18px;
-  margin: 22px 0 0;
+  /* Push the horizon (and the panel under it) toward the bottom of the first
+     screen; collapses back to 22px on short viewports. */
+  margin: clamp(22px, calc(100svh - 760px), 240px) 0 0;
   font-family: var(--font-display), Manrope, sans-serif;
   font-size: 9px;
   font-weight: 600;
@@ -663,8 +665,108 @@
 
 .hero-panel {
   max-width: 1040px;
-  margin: 150px auto 0;
+  margin: 30px auto 0;
   animation: heroEnter 1s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+}
+
+/* The console rises out of the horizon and runs into the band below. */
+.hero-panel .hw {
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* ── Capabilities band under the console ── */
+.hero-caps {
+  position: relative;
+  z-index: 3;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: #050506;
+}
+
+.hero-caps-inner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(24px, 5vw, 80px);
+  padding-top: 26px;
+  padding-bottom: 26px;
+}
+
+.hero-caps-note {
+  margin: 0;
+  font-family: var(--font-display), Manrope, sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1.7;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(225, 225, 227, 0.72);
+}
+
+.hero-caps-list {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hero-caps-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  color: rgba(236, 236, 238, 0.82);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.hero-caps-link:hover,
+.hero-caps-link[aria-current="true"] {
+  color: #fff;
+}
+
+.hero-caps-icon {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.55;
+  transition: opacity 0.25s ease;
+}
+
+.hero-caps-link:hover .hero-caps-icon,
+.hero-caps-link[aria-current="true"] .hero-caps-icon {
+  opacity: 1;
+}
+
+.hero-caps-link:focus-visible {
+  outline: 2px solid rgba(216, 216, 218, 0.9);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+@media (max-width: 1100px) {
+  .hero-caps-inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .hero-caps-list {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 14px 32px;
+  }
 }
 
 /* ───────── The Mountain House (hw-*) — neutral charcoal console ───────── */
@@ -1053,7 +1155,7 @@
 @media (max-width: 900px) {
   .hero {
     padding-top: calc(84px + 20px);
-    padding-bottom: 64px;
+    padding-bottom: 0;
   }
 
   .hero-top > span:last-child {
@@ -1201,7 +1303,7 @@
   }
 
   .hero-panel {
-    margin-top: 120px;
+    margin-top: 40px;
   }
 
   .hw-head {
