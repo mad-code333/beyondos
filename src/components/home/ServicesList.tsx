@@ -9,7 +9,15 @@ import {
   useState,
   type PointerEvent as ReactPointerEvent,
 } from "react";
-import { AnimatePresence, motion, useMotionValue, useSpring, useTransform, type MotionValue } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  useVelocity,
+  type MotionValue,
+} from "framer-motion";
 import { useReducedMotion } from "@/lib/motion";
 import { services as allServices, type Service, type ServiceSlug } from "@/content/services";
 import { ServicePreviewBody } from "./ServicePreviewBodies";
@@ -60,8 +68,10 @@ const pillSpring = { type: "spring" as const, stiffness: 380, damping: 34, mass:
 /** Content morph — short, no bounce */
 const morph = { duration: 0.34, ease: [0.22, 1, 0.36, 1] as const };
 const metaEase = { duration: 0.28, ease: [0.22, 1, 0.36, 1] as const };
-const followSpring = { stiffness: 140, damping: 22, mass: 0.55 };
-const tiltSpring = { stiffness: 180, damping: 24, mass: 0.4 };
+/** Card trails the pointer — loose, weighted, no overshoot snap */
+const followSpring = { stiffness: 120, damping: 20, mass: 0.6 };
+/** Velocity → tilt smoothing so the lean eases back when the pointer rests */
+const tiltSpring = { stiffness: 160, damping: 20, mass: 0.5 };
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
@@ -109,10 +119,14 @@ export function ServicesList({
   const followY = useMotionValue(0);
   const springX = useSpring(followX, reduce ? { stiffness: 1000, damping: 100 } : followSpring);
   const springY = useSpring(followY, reduce ? { stiffness: 1000, damping: 100 } : followSpring);
-  const tiltNX = useMotionValue(0);
-  const tiltNY = useMotionValue(0);
-  const springTiltX = useSpring(tiltNX, reduce ? { stiffness: 1000, damping: 100 } : tiltSpring);
-  const springTiltY = useSpring(tiltNY, reduce ? { stiffness: 1000, damping: 100 } : tiltSpring);
+  // Tilt follows how fast the card travels, not where it is (px/s → degrees, clamped).
+  const velX = useVelocity(springX);
+  const velY = useVelocity(springY);
+  const leanY = useTransform(velX, (v) => (reduce ? 0 : clamp(v * 0.015, -18, 18)));
+  const leanX = useTransform(velY, (v) => (reduce ? 0 : clamp(-v * 0.015, -14, 14)));
+  const springTiltX = useSpring(leanY, reduce ? { stiffness: 1000, damping: 100 } : tiltSpring);
+  const springTiltY = useSpring(leanX, reduce ? { stiffness: 1000, damping: 100 } : tiltSpring);
+  const railRef = useRef<HTMLElement>(null);
 
   const clearLeave = useCallback(() => {
     if (leaveTimer.current) {
@@ -124,9 +138,41 @@ export function ServicesList({
   const resetFollow = useCallback(() => {
     followX.set(0);
     followY.set(0);
-    tiltNX.set(0);
-    tiltNY.set(0);
-  }, [followX, followY, tiltNX, tiltNY]);
+  }, [followX, followY]);
+
+  /** Free-travel bounds for the card, relative to its parked spot in the rail. */
+  const followBounds = useCallback(() => {
+    const stage = stageRef.current;
+    const rail = railRef.current;
+    if (!stage || !rail) return null;
+    const stageRect = stage.getBoundingClientRect();
+    const cardW = rail.offsetWidth;
+    const cardH = rail.firstElementChild instanceof HTMLElement ? rail.firstElementChild.offsetHeight : 0;
+    // Parked centre of the card in stage coordinates.
+    const homeX = rail.offsetLeft + cardW / 2;
+    const homeY = stageRect.height / 2;
+    // Can travel left until its left edge reaches ~66% of the stage; never right (↑ ↓ live there).
+    const minX = Math.min(0, stageRect.width * 0.66 - (homeX - cardW / 2));
+    // Vertically it may roam the full list, letting the card overhang the stage a little.
+    const spanY = Math.max(0, (stageRect.height - cardH) / 2 + cardH * 0.18);
+    return { stageRect, cardW, homeX, homeY, minX, spanY };
+  }, []);
+
+  /** Keyboard / focus: glide the card beside the active row. */
+  const parkAtRow = useCallback(
+    (index: number) => {
+      if (reduce) return;
+      if (typeof window !== "undefined" && window.matchMedia("(max-width: 900px)").matches) return;
+      const bounds = followBounds();
+      const row = rowRefs.current[index];
+      if (!bounds || !row) return;
+      const rowRect = row.getBoundingClientRect();
+      const rowY = rowRect.top + rowRect.height / 2 - bounds.stageRect.top;
+      followX.set(0);
+      followY.set(clamp(rowY - bounds.homeY, -bounds.spanY, bounds.spanY));
+    },
+    [followBounds, followX, followY, reduce],
+  );
 
   const select = useCallback(
     (index: number) => {
@@ -142,9 +188,11 @@ export function ServicesList({
     (direction: 1 | -1) => {
       clearLeave();
       setLive(true);
-      setActive((value) => (value + direction + total) % total);
+      const next = (active + direction + total) % total;
+      setActive(next);
+      parkAtRow(next);
     },
-    [clearLeave, total],
+    [active, clearLeave, parkAtRow, total],
   );
 
   const measurePill = useCallback(() => {
@@ -167,26 +215,18 @@ export function ServicesList({
         resetFollow();
         return;
       }
-      const stage = stageRef.current;
-      if (!stage) return;
+      const bounds = followBounds();
+      if (!bounds) return;
+      const { stageRect, cardW, homeX, homeY, minX, spanY } = bounds;
+      const localX = event.clientX - stageRect.left;
+      const localY = event.clientY - stageRect.top;
 
-      const rect = stage.getBoundingClientRect();
-      const localX = event.clientX - rect.left;
-      const localY = event.clientY - rect.top;
-      const nx = clamp(localX / rect.width, 0, 1);
-      const ny = clamp(localY / rect.height, 0, 1);
-
-      // Home sits in the right pocket; pointer pulls the card freely without covering titles.
-      const homeX = rect.width * 0.82;
-      const homeY = rect.height * 0.5;
-      // Right bound stays small so the card never drifts over the ↑ ↓ controls.
-      followX.set(clamp((localX - homeX) * 0.3, -20, 6));
-      // Small vertical drift only — the card stays parked beside the list.
-      followY.set(clamp((localY - homeY) * 0.25, -36, 36));
-      tiltNX.set(nx - 0.5);
-      tiltNY.set(ny - 0.5);
+      // Card trails just right of / below the pointer (never under it, so rows stay
+      // hoverable), roaming freely inside its zone.
+      followX.set(clamp(localX + cardW / 2 + 28 - homeX, minX, 0));
+      followY.set(clamp(localY + 30 - homeY, -spanY, spanY));
     },
-    [followX, followY, live, reduce, resetFollow, tiltNX, tiltNY],
+    [followBounds, followX, followY, live, reduce, resetFollow],
   );
 
   useLayoutEffect(() => {
@@ -308,7 +348,10 @@ export function ServicesList({
                       trackPointer(event);
                     }}
                     onPointerMove={trackPointer}
-                    onFocus={() => select(index)}
+                    onFocus={() => {
+                      select(index);
+                      parkAtRow(index);
+                    }}
                     onClick={(event) => {
                       select(index);
                       const target = event.target as HTMLElement | null;
@@ -378,6 +421,7 @@ export function ServicesList({
           </div>
 
           <aside
+            ref={railRef}
             className="svc-preview-rail"
             aria-live="polite"
             aria-atomic="true"
@@ -461,16 +505,17 @@ function PreviewPanel({
   tiltX: MotionValue<number>;
   tiltY: MotionValue<number>;
 }) {
-  // Resting pose is a slight lean (matches the reference); pointer adds to it.
-  const rotateX = useTransform(tiltY, [-0.5, 0.5], [7, -3]);
-  const rotateY = useTransform(tiltX, [-0.5, 0.5], [-14, 2]);
+  // Resting pose is a slight lean; travel velocity swings it (tiltX/Y are degrees).
+  const rotateX = useTransform(tiltY, (v) => 6 + v);
+  const rotateY = useTransform(tiltX, (v) => -12 + v);
+  const rotate = useTransform(tiltX, (v) => -2 + v * 0.08);
 
   return (
     <motion.div
       className={`svc-preview is-${slug}`}
-      initial={reduce ? false : { opacity: 0, scale: 0.94, y: 18 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={reduce ? undefined : { opacity: 0, scale: 0.97, transition: { duration: 0.18 } }}
+      initial={reduce ? false : { opacity: 0, scale: 0.86 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={reduce ? undefined : { opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
       transition={reduce ? { duration: 0 } : { duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       style={
         reduce
@@ -478,7 +523,7 @@ function PreviewPanel({
           : {
               x,
               y,
-              rotate: -2,
+              rotate,
               rotateX,
               rotateY,
               transformPerspective: 1200,
