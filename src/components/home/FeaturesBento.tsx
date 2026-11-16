@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, type CSSProperties } from "react";
 import { motion, useInView, useScroll, useTransform, type Variants } from "framer-motion";
 import { useReducedMotion } from "@/lib/motion";
 import "./features-bento.css";
@@ -27,11 +27,12 @@ const cardReveal: Variants = {
   }),
 };
 
-function Equalizer({ small }: { small?: boolean }) {
+function Equalizer({ small, delay = 0 }: { small?: boolean; delay?: number }) {
   const heights = small ? eqBarsSm : eqBars;
   return (
     <div
       className={`dash-bars eq-bars${small ? " dash-bars-sm" : ""}`}
+      style={{ "--eq-delay": `${delay}s` } as CSSProperties}
       aria-hidden
     >
       {heights.map((height, index) => (
@@ -146,7 +147,7 @@ export function FeaturesBento() {
                   <em>In house</em>
                 </div>
               </motion.div>
-              <Equalizer />
+              <Equalizer delay={0.2} />
             </div>
             <h3>Software for this property</h3>
             <p>Reservations, orders and guest context — built for the desk, floor and kitchen.</p>
@@ -207,7 +208,7 @@ export function FeaturesBento() {
                       <span className="bento-count">3</span>
                     </strong>
                   </div>
-                  <Equalizer small />
+                  <Equalizer small delay={0.4} />
                 </div>
 
                 <ul>
@@ -280,7 +281,7 @@ export function FeaturesBento() {
                 </strong>
                 <span>Expected · 19:00</span>
               </motion.div>
-              <Equalizer small />
+              <Equalizer small delay={0.3} />
             </div>
             <h3>The room, before it fills</h3>
             <p>Covers, arrivals and open enquiries — while there’s still time to act.</p>
@@ -319,7 +320,7 @@ export function FeaturesBento() {
                   <span className="bento-count">18</span>
                 </strong>
               </div>
-              <Equalizer small />
+              <Equalizer small delay={0.45} />
             </div>
           </motion.article>
 
@@ -348,7 +349,7 @@ export function FeaturesBento() {
                     <span className="bento-count">₾2,024</span>
                   </strong>
                 </div>
-                <Equalizer small />
+                <Equalizer small delay={0.5} />
               </div>
               <ul>
                 {transactions.map((row, index) => (
