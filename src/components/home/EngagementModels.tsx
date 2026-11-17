@@ -71,9 +71,6 @@ export function EngagementModels() {
       id="pricing"
       aria-labelledby="engage-heading"
     >
-      <div className="engage-glow" aria-hidden="true" />
-      <div className="engage-glow engage-glow--pulse" aria-hidden="true" />
-
       <div className="wrap">
         <motion.div
           className="engage-head engage-head--center"
